@@ -5,7 +5,9 @@ import {
     signOut, 
     onAuthStateChanged, 
     validatePassword,
-    sendPasswordResetEmail
+    sendPasswordResetEmail,
+    signInWithPopup,
+    OAuthProvider,
 } from "firebase/auth";
 
 import { auth } from "../Firebase/firebaseConfig";
@@ -15,6 +17,7 @@ const UserContext = createContext();
 export const AuthContextProvider = ({children}) => {
     const [user, setUser] = useState({});
     const [loading, setLoading] = useState(true);
+    const provider = new OAuthProvider('microsoft.com');
 
     // REGISTER A USER
     const createUser = (email, password) => {
@@ -26,6 +29,10 @@ export const AuthContextProvider = ({children}) => {
     const signIn = (email, password) => {
         // setLoading(true);
         return signInWithEmailAndPassword(auth, email, password);
+    }
+
+    const signInWithMicrosoft = () =>{
+        return signInWithPopup(auth, provider);
     }
 
     // SIGN OUT
@@ -56,7 +63,7 @@ export const AuthContextProvider = ({children}) => {
     },[]);
 
     return (
-        <UserContext.Provider value={{ createUser, user, logOut, signIn, loading, validateUserPassword, sendPasswordReset }}>
+        <UserContext.Provider value={{ createUser, user, logOut, signIn, loading, validateUserPassword, sendPasswordReset, signInWithMicrosoft }}>
             {children}
         </UserContext.Provider>
     )
