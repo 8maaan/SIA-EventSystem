@@ -3,8 +3,9 @@ import { UserAuth } from '../Context-and-routes/AuthContext';
 import ReusableAppBar from '../ReusableComponents/ReusableAppBar';
 import { Typography } from '@mui/material';
 import "../PagesCSS/UserProfile.css";
+import EditableInfoContainer from '../ReusableComponents/ReusableUserInfoContainer';
 import Avatar from '@mui/material/Avatar';
-import DefaultProfileImage from '../ReusableComponents/Default-profile.jpg'; // Replace with the correct path to your default profile image
+import DefaultProfileImage from '../image/Default-profile.jpg';
 
 const UserProfile = () => {
   const { user } = UserAuth();
@@ -31,9 +32,21 @@ const UserProfile = () => {
                   </div>
                 </div>
                 <div className="additional-info">
-                    <Typography variant="h7" className="Fname" sx={{ marginTop: 5, marginRight: 20 }}>First Name: </Typography>
-                    <Typography variant="h7" className="Lname" sx={{ marginRight: 20 }}>Last Name: </Typography>
-                    <Typography variant="h7" className="Number" sx={{ marginRight: 22 }}>Number: </Typography>
+                    <EditableInfoContainer 
+                    title="First Name: "
+                    content={user.firstName || 'N/A'}
+                    
+                    />
+                    <EditableInfoContainer 
+                    title="Last Name: "
+                    content={user.lastName || 'N/A'}
+                    
+                    />
+                    <EditableInfoContainer 
+                    title="Number: "
+                    content={user.number || 'N/A'}
+                    
+                    />
                   </div>
               </div>
             ) : (

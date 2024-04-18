@@ -37,6 +37,24 @@
 
 .additional-info {
     display: flex;
-    flex-direction: column; /* Display items vertically */
-    align-items: flex-start; /* Align items to the left */
+    flex-direction: column; 
+    align-items: flex-start; 
+    margin-top: 50px;
+
+}
+
+
+.additional-info-container{
+    align-content: start;
+    min-width: 90% !important;
+    border: 2px solid black;
+    border-radius: 5px; 
+    border-style: dashed;
+    background-color: white;
+    margin: 1px;
+
+}
+
+.additional-info-container.h7 {
+    align-content: baseline;
 }
