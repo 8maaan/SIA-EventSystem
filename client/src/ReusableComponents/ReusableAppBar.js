@@ -1,68 +1,57 @@
-import { useState } from 'react';
-import {AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Avatar, Button, Tooltip, MenuItem} from '@mui/material'
+import React, { useState } from 'react';
+import { AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Avatar, Button, Tooltip, MenuItem } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import { Link, useNavigate } from 'react-router-dom'; // Import Link and useNavigate from React Router
 import { UserAuth } from '../Context-and-routes/AuthContext';
 
-
 export default function ReusableAppBar() {
-
-  const { signInWithMicrosoft, logOut, user} = UserAuth();
-  
-  const pages = user ? ['Home', 'Events'] : ['Home', 'Events', 'Sign In'];
+  const { signInWithMicrosoft, logOut, user } = UserAuth();
   const settings = ['Profile', 'Logout'];
 
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const navigate = useNavigate(); // Get navigate function from React Router
 
-  console.log('User:',user);
-
-  const handleSignIn = async () =>{
-      try{
-          const signIn = await signInWithMicrosoft();
-          console.log(signIn);
-      }catch(e){
-          console.log(e.message);
-      }
+  const handleSignIn = async () => {
+    try {
+      const signIn = await signInWithMicrosoft();
+      console.log(signIn);
+    } catch (e) {
+      console.log(e.message);
+    }
   }
 
-  const handleSignOut = async () =>{
-      try{
-          const signOut = await logOut();
-          console.log(signOut);
-          console.log('You are logged out');
-      }catch (e){
-          console.log(e.message);
-      }
+  const handleSignOut = async () => {
+    try {
+      const signOut = await logOut();
+      console.log(signOut);
+      console.log('You are logged out');
+    } catch (e) {
+      console.log(e.message);
+    }
   }
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
+
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
 
-  const handleCloseNavMenu = (page) => {
+  const handleCloseNavMenu = () => {
     setAnchorElNav(null);
-    switch(page){
-      case 'Sign In':
-        handleSignIn();
-        break;
-
-      case 'Home':
-        window.location.href = 'https://cit.edu/';
-        break;
-
-      default:
-        break;
-    }
   };
 
   const handleCloseUserMenu = (page) => {
     setAnchorElUser(null);
-    switch(page){
+    switch (page) {
       case 'Logout':
         handleSignOut();
+        break;
+
+      case 'Profile':
+        navigate('/profile'); // Navigate to UserProfile.js
         break;
 
       default:
@@ -70,18 +59,15 @@ export default function ReusableAppBar() {
     }
   };
 
- 
-
   return (
-    <AppBar position="static" sx={{backgroundColor: '#8a252c'}}>
+    <AppBar position="static" sx={{ backgroundColor: '#8a252c' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          
           <Typography
             variant="h6"
             noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
+            component={Link} // Use Link for navigation
+            to="/"
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -106,39 +92,15 @@ export default function ReusableAppBar() {
               color="inherit"
             >
               {/* MENU ICON */}
-              <MenuIcon/>
+              <MenuIcon />
             </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{
-                display: { xs: 'block', md: 'none' },
-              }}
-            >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
           </Box>
-          
+
           <Typography
             variant="h5"
             noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
+            component={Link} // Use Link for navigation
+            to="/"
             sx={{
               mr: 2,
               display: { xs: 'flex', md: 'none' },
@@ -152,16 +114,22 @@ export default function ReusableAppBar() {
           >
             Event Hub
           </Typography>
+
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end' }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={()=>{handleCloseNavMenu(page)}}
-                sx={{ my: 2, ml: 2, mr: 2, color: 'white', fontFamily: 'Poppins, sans-serif', display: 'block', fontWeight: '600' }}
-              >
-                {page}
-              </Button>
-            ))}
+            <Button
+              component={Link} // Use Link for navigation
+              to="/"
+              sx={{ my: 2, ml: 2, mr: 2, color: 'white', fontFamily: 'Poppins, sans-serif', display: 'block', fontWeight: '600' }}
+            >
+              Home
+            </Button>
+            <Button
+              component={Link} // Use Link for navigation
+              to="/events"
+              sx={{ my: 2, ml: 2, mr: 2, color: 'white', fontFamily: 'Poppins, sans-serif', display: 'block', fontWeight: '600' }}
+            >
+              Events
+            </Button>
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
@@ -169,7 +137,6 @@ export default function ReusableAppBar() {
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 {/* AVATAR */}
                 <Avatar src="https://imgur.com/ip7Owg9.png" />
-                
               </IconButton>
             </Tooltip>
             <Menu
@@ -189,7 +156,7 @@ export default function ReusableAppBar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={()=>{handleCloseUserMenu(setting)}}>
+                <MenuItem key={setting} onClick={() => handleCloseUserMenu(setting)}>
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}

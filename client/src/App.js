@@ -3,6 +3,7 @@ import  {BrowserRouter, Route, Routes} from 'react-router-dom'
 import { AuthContextProvider } from './Context-and-routes/AuthContext';
 
 import LandingPage from './Pages/LandingPage';
+import UserProfile from './Pages/UserProfile';
 
 
 function App() {
@@ -15,6 +16,8 @@ function App() {
 
             {/* COMMON ROUTES */}
             <Route index element={<LandingPage/>}/>
+            <Route path="/profile" element={<UserProfile />} />
+
 
           </Routes>
         </BrowserRouter>
