@@ -1,25 +1,31 @@
-import { useState } from 'react';
-import {AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Avatar, Button, Tooltip, MenuItem} from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu';
+import { AppBar, Avatar, Box, Button, Container, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography } from '@mui/material';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { UserAuth } from '../Context-and-routes/AuthContext';
+import { db } from "../Firebase/firebaseConfig";
 
 
 export default function ReusableAppBar() {
 
   const { signInWithMicrosoft, logOut, user} = UserAuth();
   
-  const pages = user ? ['Home', 'Events'] : ['Home', 'Events', 'Sign In'];
+  const pages = user ? ['Home', 'Community'] : ['Home', 'Community', 'Sign In'];
   const settings = ['Profile', 'Logout'];
 
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
 
-  console.log('User:',user);
+  const [loginState, setLoginState] = useState(false);
+
+  const navigateTo = useNavigate();
 
   const handleSignIn = async () =>{
       try{
           const signIn = await signInWithMicrosoft();
-          console.log(signIn);
+          setLoginState(true);
+          navigateTo('/home');
       }catch(e){
           console.log(e.message);
       }
@@ -29,7 +35,8 @@ export default function ReusableAppBar() {
       try{
           const signOut = await logOut();
           console.log(signOut);
-          console.log('You are logged out');
+          navigateTo('/');
+          setLoginState(false);
       }catch (e){
           console.log(e.message);
       }
@@ -50,7 +57,7 @@ export default function ReusableAppBar() {
         break;
 
       case 'Home':
-        window.location.href = 'https://cit.edu/';
+        navigateTo('/home');
         break;
 
       default:
@@ -70,7 +77,23 @@ export default function ReusableAppBar() {
     }
   };
 
- 
+  useEffect(() => {
+    if(loginState == true) {
+      const users = user;
+      const handleRegister = async () => {
+        const docRef = doc(db, 'user', users.uid);
+        const docSnap = await getDoc(docRef);
+    
+        if (!docSnap.exists()) {
+          await setDoc(doc(db, "user", users.uid), {
+            email: users.email,
+            displayName: users.displayName
+          });
+        }
+      };
+      handleRegister();
+    }
+},[loginState]);
 
   return (
     <AppBar position="static" sx={{backgroundColor: '#8a252c'}}>
@@ -81,7 +104,7 @@ export default function ReusableAppBar() {
             variant="h6"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            href="https://cit.edu/"
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -93,7 +116,7 @@ export default function ReusableAppBar() {
             }}
           >
             {/* LOGO */}
-            LOGO HERE
+            EvntListnr
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>

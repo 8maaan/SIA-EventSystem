@@ -1,8 +1,11 @@
-import React from 'react'
+import React from 'react';
+import "../PagesCSS/LandingPage.css";
 import ReusableAppBar from '../ReusableComponents/ReusableAppBar';
-import "../PagesCSS/LandingPage.css"
+
 
 const LandingPage = () => {
+
+   
     return (
         <div>
             <ReusableAppBar/>

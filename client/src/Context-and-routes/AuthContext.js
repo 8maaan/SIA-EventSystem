@@ -1,14 +1,14 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { 
-    createUserWithEmailAndPassword, 
-    signInWithEmailAndPassword, 
-    signOut, 
-    onAuthStateChanged, 
-    validatePassword,
-    sendPasswordResetEmail,
-    signInWithPopup,
+import {
     OAuthProvider,
+    createUserWithEmailAndPassword,
+    onAuthStateChanged,
+    sendPasswordResetEmail,
+    signInWithEmailAndPassword,
+    signInWithPopup,
+    signOut,
+    validatePassword,
 } from "firebase/auth";
+import { createContext, useContext, useEffect, useState } from "react";
 
 import { auth } from "../Firebase/firebaseConfig";
 
@@ -57,7 +57,8 @@ export const AuthContextProvider = ({children}) => {
             setUser(currentUser);
             setLoading(false);
         })
-        return () =>{
+
+        return () => {
             unsubscribe();
         }
     },[]);
