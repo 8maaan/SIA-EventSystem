@@ -17,14 +17,11 @@ export default function ReusableAppBar() {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
 
-  const [loginState, setLoginState] = useState(false);
-
   const navigateTo = useNavigate();
 
   const handleSignIn = async () =>{
       try{
           const signIn = await signInWithMicrosoft();
-          setLoginState(true);
           navigateTo('/home');
       }catch(e){
           console.log(e.message);
@@ -36,7 +33,6 @@ export default function ReusableAppBar() {
           const signOut = await logOut();
           console.log(signOut);
           navigateTo('/');
-          setLoginState(false);
       }catch (e){
           console.log(e.message);
       }
@@ -78,7 +74,7 @@ export default function ReusableAppBar() {
   };
 
   useEffect(() => {
-    if(loginState == true) {
+    if(user) {
       const users = user;
       const handleRegister = async () => {
         const docRef = doc(db, 'user', users.uid);
@@ -93,7 +89,7 @@ export default function ReusableAppBar() {
       };
       handleRegister();
     }
-},[loginState]);
+},[user]);
 
   return (
     <AppBar position="static" sx={{backgroundColor: '#8a252c'}}>

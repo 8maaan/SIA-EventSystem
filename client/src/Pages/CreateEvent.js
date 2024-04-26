@@ -1,4 +1,4 @@
-import { Box, Button, TextField } from '@mui/material';
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { addDoc, collection } from 'firebase/firestore';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -9,23 +9,40 @@ const CreateEvent = () => {
 
     const navigateTo = useNavigate();
 
-    const [eventName, setEventName] = useState("");
-    const [eventDate, setEventDate] = useState("");
-    const [eventTime, setEventTime] = useState("");
-    const [eventLocation, setEventLocation] = useState("");
-    const [eventDepartment, setEventDepartment] = useState("");
-    const [eventDescription, setEventDescription] = useState("");
+    const [eventData, setEventData] = useState({
+        eventName: "",
+        eventDate: "",
+        eventTime: "",
+        eventLocation: "",
+        eventDepartment: "",
+        eventDescription: ""
+      });
 
     const handleSubmit = async () => {
-        const docRef = await addDoc(collection(db, 'event'), {
-            eventName: eventName,
-            eventDate: eventDate,
-            eventTime: eventTime,
-            eventLocation: eventLocation,
-            eventDepartment: eventDepartment,
-            eventDescription: eventDescription
-        })
-        navigateTo('/home');
+
+        if(!eventData.eventName.trim() || !eventData.eventDate.trim() || !eventData.eventTime.trim() || 
+            !eventData.eventLocation.trim() || !eventData.eventDepartment.trim() || !eventData.eventDescription.trim()) {
+            alert('Please Enter All the Fields!');
+            return;
+        }
+
+        if(eventData.eventDescription.trim().split(/\s+/).length < 5) {
+            alert('Please enter a Event Description with atleast 5 words');
+            return;
+        }
+        try {
+            const docRef = await addDoc(collection(db, 'event'), {
+                eventName: eventData.eventName,
+                eventDate: eventData.eventDate,
+                eventTime: eventData.eventTime,
+                eventLocation: eventData.eventLocation,
+                eventDepartment: eventData.eventDepartment,
+                eventDescription: eventData.eventDescription
+            })
+            navigateTo('/home');   
+        } catch(e) {
+            console.log(e.message);
+        }
     }
 
     return (
@@ -40,17 +57,32 @@ const CreateEvent = () => {
                 noValidate
                 autoComplete="off">
             <div>
-                <TextField id="standard-basic" label="Event Name" variant="standard" onChange={(event) => {setEventName(event.target.value)}}/>
-                <TextField id="standard-basic" label="Date" variant="standard" onChange={(event) => {setEventDate(event.target.value)}}/>
+                <TextField id="standard-basic" label="Event Name" variant="standard" onChange={(event) => {setEventData(prevState => ({...prevState, eventName: event.target.value}))}}/>
+                <TextField id="standard-basic" label="Date" variant="standard" onChange={(event) => {setEventData(prevState => ({...prevState, eventDate: event.target.value}))}}/>
             </div>
             <div>
-                <TextField id="standard-basic" label="Time" variant="standard" onChange={(event) => {setEventTime(event.target.value)}}/>
-                <TextField id="standard-basic" label="Location" variant="standard" onChange={(event) => {setEventLocation(event.target.value)}}/>
+                <TextField id="standard-basic" label="Time" variant="standard" onChange={(event) => {setEventData(prevState => ({...prevState, eventTime: event.target.value}))}}/>
+                <TextField id="standard-basic" label="Location" variant="standard" onChange={(event) => {setEventData(prevState => ({...prevState, eventLocation: event.target.value}))}}/>
             </div>
             <div>
-                <TextField id="standard-basic" label="Department" variant="standard" onChange={(event) => {setEventDepartment(event.target.value)}}/>
-                <TextField id="standard-basic" label="Description" variant="standard" multiline  rows={4} maxRows={8} onChange={(event) => {setEventDescription(event.target.value)}}/>
+                <FormControl sx={{ m: 1, minWidth: 350 }}>
+                <InputLabel id="demo-simple-select-label">Department</InputLabel>
+                <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={eventData.eventDepartment}
+                    label="College Department"
+                    onChange={(event) => {setEventData(prevState => ({...prevState, eventDepartment: event.target.value}))}}>
 
+                    <MenuItem value={'College of Engineering and Architecture'}>College of Engineering and Architecture</MenuItem>
+                    <MenuItem value={'College of Management, Business and Accountancy'}>College of Management, Business and Accountancy</MenuItem>
+                    <MenuItem value={'College of Arts, Sciences, and Education'}>College of Arts, Sciences, and Education</MenuItem>
+                    <MenuItem value={'College of Nursing and Allied Health Sciences'}>College of Nursing and Allied Health Sciences</MenuItem>
+                    <MenuItem value={'College of Computer Studies'}>College of Computer Studies</MenuItem>
+                    <MenuItem value={'College of Criminal Justice'}>College of Criminal Justice</MenuItem>
+                </Select>
+                </FormControl>
+                <TextField id="standard-basic" label="Description" variant="standard" multiline  rows={4} maxRows={8} onChange={(event) => {setEventData(prevState => ({...prevState, eventDescription: event.target.value}))}}/>
             </div>
             <br></br>
             </Box>
