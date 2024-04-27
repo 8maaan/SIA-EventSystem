@@ -1,10 +1,9 @@
 import MenuIcon from '@mui/icons-material/Menu';
 import { AppBar, Avatar, Box, Button, Container, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography } from '@mui/material';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserAuth } from '../Context-and-routes/AuthContext';
-import { db } from "../Firebase/firebaseConfig";
+
 
 
 export default function ReusableAppBar() {
@@ -73,23 +72,28 @@ export default function ReusableAppBar() {
     }
   };
 
-  useEffect(() => {
-    if(user) {
-      const users = user;
-      const handleRegister = async () => {
-        const docRef = doc(db, 'user', users.uid);
-        const docSnap = await getDoc(docRef);
+  const navigateToLanding = () =>{
+    navigateTo('/');
+  }
+
+  // TO BE CHECKED AGAIN IN THE FUTURE
+  // useEffect(() => {
+  //   if(user) {
+  //     const users = user;
+  //     const handleRegister = async () => {
+  //       const docRef = doc(db, 'user', users.uid);
+  //       const docSnap = await getDoc(docRef);
     
-        if (!docSnap.exists()) {
-          await setDoc(doc(db, "user", users.uid), {
-            email: users.email,
-            displayName: users.displayName
-          });
-        }
-      };
-      handleRegister();
-    }
-},[user]);
+  //       if (!docSnap.exists()) {
+  //         await setDoc(doc(db, "user", users.uid), {
+  //           email: users.email,
+  //           displayName: users.displayName
+  //         });
+  //       }
+  //     };
+  //     handleRegister();
+  //   }
+  // },[user]);
 
   return (
     <AppBar position="static" sx={{backgroundColor: '#8a252c'}}>
@@ -100,7 +104,8 @@ export default function ReusableAppBar() {
             variant="h6"
             noWrap
             component="a"
-            href="https://cit.edu/"
+            // href="https://cit.edu/"
+            onClick={navigateToLanding}
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -109,6 +114,7 @@ export default function ReusableAppBar() {
               letterSpacing: '.3rem',
               color: 'inherit',
               textDecoration: 'none',
+              cursor: 'pointer'
             }}
           >
             {/* LOGO */}
