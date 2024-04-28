@@ -9,6 +9,8 @@
 
 .events-container{
     flex-direction: column;
+    justify-content: flex-start; 
+    /* ^tbh idk why adding this solves the top-layout problem of current and upcoming event wrappers lol */
     margin: 2rem;
     width: 80%;
     border-radius: 1.25rem;
@@ -20,9 +22,10 @@
 .currentEvent-wrapper,
 .upcomingEvent-wrapper{
     width: 95%;
-    height: 45vh;
-    /* border: solid black 1px; */
+    height: auto;
+    /* border: solid black 1px; */   
 }
+
 
 .currentEvent-wrapper p,
 .upcomingEvent-wrapper p{
@@ -30,21 +33,27 @@
     text-align: left;
 }
 
+.currentEvent-wrapper{
+    margin-top: 1%;
+}
+
 .event-info-container{
     display: flex;
-    justify-content: left;
+    justify-content: space-between;
+    flex-wrap: wrap;
     align-items: center;
-    margin-top: 2.5%;
-    height: 35vh;
-    gap: 3.5%;
+    /* margin-bottom: 2.5%; */
+    height: auto;
+    /* gap: 3.5%; */
     /* border: solid black 1px; */
 }
 
 .event-info-card{
-    width: 25%;
+    width: 23%;
     height: 80%;
-    border: solid black 1px;
+    border: solid gray 1px;
     border-radius: 20px;
+    margin-bottom: 2.5%;
 }
 
 .event-info-card-image {
@@ -64,12 +73,8 @@
     border-top-left-radius: 20px;
 }
 
-/* .event-info-card-details{
-    border: solid black 1px;
-} */
-
 .event-info-card-details p{
-    font-size: 14px;
+    font-size: 12px;
     margin: auto 0;
     margin-left: 0.5rem;
 }
@@ -86,4 +91,4 @@
         height: 100%;
     }
   
-  }
+}

@@ -19,6 +19,8 @@ const HomePage = () => {
     getEvents();
   },[]);
 
+  console.log(events);
+
   return (
     <div>
         <ReusableAppBar/>
@@ -34,8 +36,8 @@ const HomePage = () => {
                       </div>
                       <div className="event-info-card-details">
                         <p>{event.eventName}</p>
-                        <p>Time: {event.eventTime}</p>
                         <p>Date: {event.eventDate}</p>
+                        <p>Time: {event.eventTime}</p>
                       </div>
                     </div>
                   ))}
