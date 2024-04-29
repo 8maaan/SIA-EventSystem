@@ -12,19 +12,41 @@ const EventPage = () => {
 
     useEffect(() => {
         const getEvent = async () => {
-            const docRef = doc(db, 'event', eventId);
-            const docSnap = await getDoc(docRef);
-    
-            if (docSnap.exists()) {
-                setEvent(docSnap.data())
-                console.log(docSnap.data());
-            } else {
-                console.log("No such document!");
+            try {
+                const docRef = doc(db, 'event', eventId);
+                const docEntry = await getDoc(docRef);
+        
+                if (docEntry.exists()) {
+                    const data = docEntry.data();
+                    data.eventTimestamp = data.eventTimestamp.toDate();
+                    setEvent(data)
+                    console.log(docEntry.data());
+                } else {
+                    console.log("No such document!");
+                }
+            } catch(e) {
+                console.log(e.message)
             }
         }
 
         getEvent();
     },[eventId]);
+
+    function dateFormatter(timestamp) {
+        const formatDate = timestamp.toLocaleDateString('en-GB', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric'
+        });
+      
+        const formatTime = timestamp.toLocaleTimeString('en-US', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true 
+        });
+      
+        return `${formatDate} - ${formatTime}`;
+      }
 
     if (!event) {
         return <div><ReusableAppBar/></div>
@@ -38,7 +60,7 @@ const EventPage = () => {
             <p style={{display: 'flex', marginLeft: '50px', textDecoration: 'underline', marginTop: '50px'}}>{event.eventDepartment}</p>
             <p style={{display: 'flex', marginLeft: '50px'}}>{event.eventDescription}</p>
             <div style={{background: 'grey', paddingTop: '5px', paddingBottom: '5px'}}>
-                <h4 style={{display: 'flex', marginLeft: '50px'}}>{event.eventDate} - {event.eventTime} - {event.eventLocation}</h4>
+                <h4 style={{display: 'flex', marginLeft: '50px'}}>{dateFormatter(event.eventTimestamp)} - {event.eventLocation}</h4>
             </div>
             <br/>
             <br/>

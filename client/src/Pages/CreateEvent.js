@@ -1,4 +1,7 @@
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { addDoc, collection } from 'firebase/firestore';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -11,8 +14,7 @@ const CreateEvent = () => {
 
     const [eventData, setEventData] = useState({
         eventName: "",
-        eventDate: "",
-        eventTime: "",
+        eventTimestamp: "",
         eventLocation: "",
         eventDepartment: "",
         eventDescription: ""
@@ -20,7 +22,9 @@ const CreateEvent = () => {
 
     const handleSubmit = async () => {
 
-        if(!eventData.eventName.trim() || !eventData.eventDate.trim() || !eventData.eventTime.trim() || 
+        const eventDate = eventData.eventTimestamp ? eventData.eventTimestamp.toDate() : null;
+
+        if(!eventData.eventName.trim() || !eventData.eventTimestamp || 
             !eventData.eventLocation.trim() || !eventData.eventDepartment.trim() || !eventData.eventDescription.trim()) {
             alert('Please Enter All the Fields!');
             return;
@@ -30,16 +34,19 @@ const CreateEvent = () => {
             alert('Please enter a Event Description with atleast 5 words');
             return;
         }
+
+
         try {
-            const docRef = await addDoc(collection(db, 'event'), {
+            await addDoc(collection(db, 'event'), {
                 eventName: eventData.eventName,
-                eventDate: eventData.eventDate,
-                eventTime: eventData.eventTime,
+                eventTimestamp: eventDate,
                 eventLocation: eventData.eventLocation,
                 eventDepartment: eventData.eventDepartment,
                 eventDescription: eventData.eventDescription
             })
-            navigateTo('/home');   
+
+            navigateTo('/home');  
+
         } catch(e) {
             console.log(e.message);
         }
@@ -57,15 +64,14 @@ const CreateEvent = () => {
                 noValidate
                 autoComplete="off">
             <div>
-                <TextField id="standard-basic" label="Event Name" variant="standard" onChange={(event) => {setEventData(prevState => ({...prevState, eventName: event.target.value}))}}/>
-                <TextField id="standard-basic" label="Date" variant="standard" onChange={(event) => {setEventData(prevState => ({...prevState, eventDate: event.target.value}))}}/>
+                <TextField id="standard-basic" label="Event Name" onChange={(event) => {setEventData(prevState => ({...prevState, eventName: event.target.value}))}}/>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DateTimePicker label="Date & Time" onChange={(event) => {setEventData(prevState => ({...prevState, eventTimestamp: event}))}} />
+                </LocalizationProvider>
             </div>
             <div>
-                <TextField id="standard-basic" label="Time" variant="standard" onChange={(event) => {setEventData(prevState => ({...prevState, eventTime: event.target.value}))}}/>
-                <TextField id="standard-basic" label="Location" variant="standard" onChange={(event) => {setEventData(prevState => ({...prevState, eventLocation: event.target.value}))}}/>
-            </div>
-            <div>
-                <FormControl sx={{ m: 1, minWidth: 350 }}>
+                {/*TEXTFIELD IS OFF */}
+                <FormControl sx={{ m: 1.5, minWidth: 350}}>
                 <InputLabel id="demo-simple-select-label">Department</InputLabel>
                 <Select
                     labelId="demo-simple-select-label"
@@ -74,6 +80,8 @@ const CreateEvent = () => {
                     label="College Department"
                     onChange={(event) => {setEventData(prevState => ({...prevState, eventDepartment: event.target.value}))}}>
 
+
+                    {/* U CAN ADD A MAPPING FEATURE HERE SIMILAR TO LOADING EVENTS */}
                     <MenuItem value={'College of Engineering and Architecture'}>College of Engineering and Architecture</MenuItem>
                     <MenuItem value={'College of Management, Business and Accountancy'}>College of Management, Business and Accountancy</MenuItem>
                     <MenuItem value={'College of Arts, Sciences, and Education'}>College of Arts, Sciences, and Education</MenuItem>
@@ -82,7 +90,10 @@ const CreateEvent = () => {
                     <MenuItem value={'College of Criminal Justice'}>College of Criminal Justice</MenuItem>
                 </Select>
                 </FormControl>
-                <TextField id="standard-basic" label="Description" variant="standard" multiline  rows={4} maxRows={8} onChange={(event) => {setEventData(prevState => ({...prevState, eventDescription: event.target.value}))}}/>
+                <TextField id="standard-basic" label="Location" onChange={(event) => {setEventData(prevState => ({...prevState, eventLocation: event.target.value}))}}/>
+            </div>
+            <div>
+                <TextField id="standard-basic" label="Description" multiline rows={4} maxRows={8} onChange={(event) => {setEventData(prevState => ({...prevState, eventDescription: event.target.value}))}}/>
             </div>
             <br></br>
             </Box>

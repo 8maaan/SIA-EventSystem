@@ -1,18 +1,41 @@
-import React from 'react'
-import ReusableAppBar from '../ReusableComponents/ReusableAppBar'
-import "../PagesCSS/HomePage.css"
 import { collection, getDocs } from "firebase/firestore";
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { db } from "../Firebase/firebaseConfig";
+import "../PagesCSS/Homepage.css";
+import ReusableAppBar from '../ReusableComponents/ReusableAppBar';
 
 const HomePage = () => {
 
   const [events, setEvents] = useState(null);
 
   const getEvents = async () => {
-    const querySnapshot = await getDocs(collection(db, "event"));
-    const events = querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()}))
-    setEvents(events)
+    try {
+      const querySnapshot = await getDocs(collection(db, "event"));
+      const events = querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        data.eventTimestamp = data.eventTimestamp.toDate();
+        return {id: doc.id, ...data};
+      });
+        setEvents(events)
+    } catch (e) {
+      console.log(e.message)
+    }
+  }
+
+  function dateFormatter(timestamp) {
+    const formatDate = timestamp.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  
+    const formatTime = timestamp.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true 
+    });
+  
+    return `${formatDate} - ${formatTime}`;
   }
 
   useEffect(() => {
@@ -36,8 +59,7 @@ const HomePage = () => {
                       </div>
                       <div className="event-info-card-details">
                         <p>{event.eventName}</p>
-                        <p>Date: {event.eventDate}</p>
-                        <p>Time: {event.eventTime}</p>
+                        <p>{dateFormatter(event.eventTimestamp)}</p>
                       </div>
                     </div>
                   ))}
