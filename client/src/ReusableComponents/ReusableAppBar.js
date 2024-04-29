@@ -1,8 +1,10 @@
 import MenuIcon from '@mui/icons-material/Menu';
 import { AppBar, Avatar, Box, Button, Container, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography } from '@mui/material';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserAuth } from '../Context-and-routes/AuthContext';
+import { db } from "../Firebase/firebaseConfig";
 
 
 
@@ -21,6 +23,8 @@ export default function ReusableAppBar() {
   const handleSignIn = async () =>{
       try{
           const signIn = await signInWithMicrosoft();
+          // console.log(signIn);
+          handleRegister(signIn.user.uid, signIn.user.email, signIn.user.displayName);
           navigateTo('/home');
       }catch(e){
           console.log(e.message);
@@ -75,6 +79,22 @@ export default function ReusableAppBar() {
   const navigateToLanding = () =>{
     navigateTo('/');
   }
+
+  const handleRegister = async (uid, email, displayName) => {
+    try{
+      const docRef = doc(db, 'user', uid);
+      const docSnap = await getDoc(docRef);
+
+      if (!docSnap.exists()) {
+        await setDoc(doc(db, "user", uid), {
+          email: email,
+          displayName: displayName,
+        });
+      }
+    }catch(e){
+      console.log(e);
+    }
+  };
 
   // TO BE CHECKED AGAIN IN THE FUTURE
   // useEffect(() => {
