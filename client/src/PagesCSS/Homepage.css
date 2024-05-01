@@ -1,10 +1,17 @@
-.homepage-wrapper,
-.events-container {
+
+.homepage-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 80vh;
+    /* border: solid black 1px; */
+}
+
+.events-container{
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    /* border: solid black 1px; */
+    min-height: 70vh;
 }
 
 .events-container{
@@ -18,19 +25,15 @@
     box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.30);
 }
 
-
-.currentEvent-wrapper,
-.upcomingEvent-wrapper{
-    width: 95%;
-    height: auto;
-    /* border: solid black 1px; */   
+.selector-container{
+    margin-bottom: 2%;
+    text-align: left;
 }
 
-
-.currentEvent-wrapper p,
-.upcomingEvent-wrapper p{
-    margin-left: 1rem;
-    text-align: left;
+.currentEvent-wrapper{
+    width: 95%;
+    height: auto;
+    /* border: solid black 1px;    */
 }
 
 .currentEvent-wrapper{
@@ -39,25 +42,30 @@
 
 .event-info-container{
     display: flex;
-    justify-content: space-between;
+    justify-content: left;
     flex-wrap: wrap;
     align-items: center;
     /* margin-bottom: 2.5%; */
     height: auto;
-    /* gap: 3.5%; */
+    gap: 3.5%;
     /* border: solid black 1px; */
 }
 
 .event-info-card{
-    width: 23%;
-    height: 80%;
+    min-width: 23%;
+    height: 25vh;
     border: solid gray 1px;
     border-radius: 20px;
     margin-bottom: 2.5%;
+    transition: transform 0.3s ease;
+}
+
+.event-info-card:hover{
+    transform: scale(1.05);
 }
 
 .event-info-card-image {
-    height: 65%;
+    height: 70%;
     width: 100%; 
     /* border: solid black 1px; */
     overflow: hidden; 
@@ -73,10 +81,22 @@
     border-top-left-radius: 20px;
 }
 
-.event-info-card-details p{
-    font-size: 12px;
+.event-info-card-details p, h3{
     margin: auto 0;
-    margin-left: 0.5rem;
+    margin-left: 2.5%;
+    margin-top: 1%;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis; 
+    white-space: nowrap;
+}
+
+.event-info-card-details h3{
+    color: #8a252c;
+}
+
+.event-info-card-details p{
+    font-size: clamp(0.8rem, 1vw, 0.9rem);
 }
 
 @media (max-width: 768px) {
@@ -86,9 +106,20 @@
       padding: 1rem 0;
     }
 
+    .selector-container{
+        margin: 0 auto;
+        margin: 2.5%;
+        text-align: center;
+    }
+
     .event-info-card{
-        width: 90%;
+        width: 80%;
         height: 100%;
+        margin-top: 1.5%;
+    }
+
+    .event-info-card-details p{
+        margin-bottom: 2.5%;
     }
   
 }

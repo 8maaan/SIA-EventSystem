@@ -3,7 +3,7 @@ import './App.css';
 import { AuthContextProvider } from './Context-and-routes/AuthContext';
 import { GuestRoute } from './Context-and-routes/Routes';
 import CreateEvent from './Pages/CreateEvent';
-import Homepage from './Pages/Homepage';
+import Homepage from './Pages/HomePage';
 import LandingPage from './Pages/LandingPage';
 import ManageEventPage from './Pages/ManageEventPage';
 import PageNotFound from './Pages/PageNotFound';
@@ -26,6 +26,7 @@ function App() {
             <Route path="/manage-event" element={<ManageEventPage/>}/>
             <Route path="/manage-event/:eventId" element={<EventPage/>}/>
             <Route path="/create-event" element={<CreateEvent/>}/>
+            <Route path="/event/:eventId" element={<EventPage/>} />
             
 
             <Route path="*" element={<PageNotFound/>}/>

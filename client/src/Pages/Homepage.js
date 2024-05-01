@@ -1,12 +1,19 @@
 import { collection, getDocs } from "firebase/firestore";
 import React, { useEffect, useState } from 'react';
 import { db } from "../Firebase/firebaseConfig";
-import "../PagesCSS/Homepage.css";
+import "../PagesCSS/HomePage.css";
 import ReusableAppBar from '../ReusableComponents/ReusableAppBar';
+import { MenuItem, FormControl, Select } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
 
 const HomePage = () => {
 
   const [events, setEvents] = useState(null);
+  const [eventChoice, setEventChoice] = useState('This Week')
+
+  const handleChange = (event) => {
+    setEventChoice(event.target.value);
+  };
 
   const getEvents = async () => {
     try {
@@ -43,6 +50,7 @@ const HomePage = () => {
   },[]);
 
   console.log(events);
+  const navigateTo = useNavigate();
 
   return (
     <div>
@@ -50,23 +58,29 @@ const HomePage = () => {
         <div className='homepage-wrapper'>
             <div className='events-container'>
               <div className='currentEvent-wrapper'>
-                <p>This Week</p>
+                <div className='selector-container'>
+                  <FormControl size="small">
+                    <Select value={eventChoice} onChange={handleChange}>
+                      <MenuItem value={'This Week'}>This Week</MenuItem>
+                      <MenuItem value={'Upcoming Events'}>Upcoming Events</MenuItem>
+                    </Select>
+                  </FormControl>
+                </div>
                 <div className='event-info-container'>
-                  {events && events.map(event => (
-                    <div className='event-info-card' key={event.id}>
-                      <div className="event-info-card-image">
-                        <img src="https://www.wwf.org.uk/sites/default/files/styles/max_650x650/public/2022-05/_WW236934.jpg?itok=JlG-1l9V" alt="event-img"/>
+                  {events && events.map((event, id) => (
+                      <div className='event-info-card' key={event.id}>
+                        <Link style={{textDecoration: 'none', color: 'inherit'}} to={`/event/${event.id}`} key={id}>
+                          <div className="event-info-card-image">
+                            <img src="https://www.wwf.org.uk/sites/default/files/styles/max_650x650/public/2022-05/_WW236934.jpg?itok=JlG-1l9V" alt="event-img"/>
+                          </div>
+                          <div className="event-info-card-details">
+                            <h3>{event.eventName}</h3>
+                            <p>Date and Time: {dateFormatter(event.eventTimestamp)}</p>
+                          </div>
+                        </Link>
                       </div>
-                      <div className="event-info-card-details">
-                        <p>{event.eventName}</p>
-                        <p>{dateFormatter(event.eventTimestamp)}</p>
-                      </div>
-                    </div>
                   ))}
                 </div>
-              </div>
-              <div className='upcomingEvent-wrapper'>
-                <p>Upcoming Events</p>
               </div>
             </div>
         </div>
