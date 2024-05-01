@@ -4,7 +4,7 @@ import { db } from "../Firebase/firebaseConfig";
 import "../PagesCSS/HomePage.css";
 import ReusableAppBar from '../ReusableComponents/ReusableAppBar';
 import { MenuItem, FormControl, Select } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const HomePage = () => {
 
@@ -50,7 +50,6 @@ const HomePage = () => {
   },[]);
 
   console.log(events);
-  const navigateTo = useNavigate();
 
   return (
     <div>

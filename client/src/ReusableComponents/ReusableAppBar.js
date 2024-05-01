@@ -25,7 +25,7 @@ export default function ReusableAppBar() {
           const signIn = await signInWithMicrosoft();
           // console.log(signIn);
           handleRegister(signIn.user.uid, signIn.user.email, signIn.user.displayName);
-          navigateTo('/home');
+          navigateTo(0);
       }catch(e){
           console.log(e.message);
       }

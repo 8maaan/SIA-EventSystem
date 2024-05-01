@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
 import { AuthContextProvider } from './Context-and-routes/AuthContext';
-import { GuestRoute, ProtectedRoute } from './Context-and-routes/Routes';
+import { ProtectedRoute } from './Context-and-routes/Routes';
 import CreateEvent from './Pages/CreateEvent';
 import Homepage from './Pages/HomePage';
 import LandingPage from './Pages/LandingPage';
@@ -18,16 +18,15 @@ function App() {
         <BrowserRouter>
           <Routes>
 
-            {/* GUEST ROUTES */}
-            <Route path="/" element={<GuestRoute> <LandingPage/> </GuestRoute>}/>
+            {/* COMMON ROUTES */}
+            <Route path="/" element={<LandingPage/>}/>
             <Route path="/home" element={<Homepage/> }/>
+            <Route path="/event/:eventId" element={<EventPage/>} />
 
             {/*PROTECTED ROUTES */}
             <Route path="/manage-event" element={<ManageEventPage/>}/>
             <Route path="/manage-event/:eventId" element={<ProtectedRoute><EventPage/></ProtectedRoute>}/>
             <Route path="/create-event" element={<ProtectedRoute><CreateEvent/></ProtectedRoute>}/>
-            <Route path="/event/:eventId" element={<EventPage/>} />
-            
 
             <Route path="*" element={<PageNotFound/>}/>
           </Routes>
