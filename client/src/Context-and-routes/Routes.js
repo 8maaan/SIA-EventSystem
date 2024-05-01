@@ -16,7 +16,7 @@ export const ProtectedRoute = ({children}) => {
         return children;
     }
 
-    return <Navigate to='/login'/>
+    return <Navigate to='/'/>
 }
 
 // SIMILAR TO ProtectedRoute() BUT FOR LOGGED IN USERS

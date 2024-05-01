@@ -13,7 +13,7 @@ export default function ReusableAppBar() {
   const { signInWithMicrosoft, logOut, user} = UserAuth();
   
   const pages = user ? ['Home', 'Community'] : ['Home', 'Community', 'Sign In'];
-  const settings = ['Profile', 'Logout'];
+  const settings = ['Profile', 'Create Event', 'Logout'];
 
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
@@ -67,6 +67,9 @@ export default function ReusableAppBar() {
   const handleCloseUserMenu = (page) => {
     setAnchorElUser(null);
     switch(page){
+      case 'Create Event':
+        navigateTo('/create-event')
+        break;
       case 'Logout':
         handleSignOut();
         break;
@@ -211,11 +214,14 @@ export default function ReusableAppBar() {
 
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                {/* AVATAR */}
-                <Avatar src="https://imgur.com/ip7Owg9.png" />
-                
-              </IconButton>
+              {user ?
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  {/* AVATAR */}
+                  <Avatar src="https://imgur.com/ip7Owg9.png" />
+                </IconButton>
+                :
+                <></>
+              }
             </Tooltip>
             <Menu
               sx={{ mt: '45px' }}

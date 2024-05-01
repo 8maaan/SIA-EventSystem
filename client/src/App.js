@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
 import { AuthContextProvider } from './Context-and-routes/AuthContext';
-import { GuestRoute } from './Context-and-routes/Routes';
+import { GuestRoute, ProtectedRoute } from './Context-and-routes/Routes';
 import CreateEvent from './Pages/CreateEvent';
 import Homepage from './Pages/HomePage';
 import LandingPage from './Pages/LandingPage';
@@ -24,8 +24,8 @@ function App() {
 
             {/*PROTECTED ROUTES */}
             <Route path="/manage-event" element={<ManageEventPage/>}/>
-            <Route path="/manage-event/:eventId" element={<EventPage/>}/>
-            <Route path="/create-event" element={<CreateEvent/>}/>
+            <Route path="/manage-event/:eventId" element={<ProtectedRoute><EventPage/></ProtectedRoute>}/>
+            <Route path="/create-event" element={<ProtectedRoute><CreateEvent/></ProtectedRoute>}/>
             <Route path="/event/:eventId" element={<EventPage/>} />
             
 
