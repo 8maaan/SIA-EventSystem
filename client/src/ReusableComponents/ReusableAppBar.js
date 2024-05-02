@@ -11,7 +11,11 @@ import { db } from "../Firebase/firebaseConfig";
 export default function ReusableAppBar() {
 
   const { signInWithMicrosoft, logOut, user} = UserAuth();
-  const [isOrganizer, setIsOrganizer] = useState(null);
+  const [isOrganizer, setIsOrganizer] = useState(
+    localStorage.getItem('isOrganizer') !== null
+      ? JSON.parse(localStorage.getItem('isOrganizer'))
+      : null
+  );
 
   const pages = user ? ['Home', 'Community'] : ['Home', 'Community', 'Sign In'];
   const settings = isOrganizer ? ['Profile', 'Create Event', 'Logout'] : ['Profile', 'Logout'];
@@ -109,6 +113,7 @@ export default function ReusableAppBar() {
       
       console.log("userIsOrganizer value: ",userIsOrganizer);
       setIsOrganizer(userIsOrganizer);
+      localStorage.setItem('isOrganizer', JSON.stringify(userIsOrganizer));
 
       console.log("isOrganizer value: ", isOrganizer);
 
