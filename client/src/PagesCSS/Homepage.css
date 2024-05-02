@@ -47,7 +47,7 @@
     align-items: center;
     /* margin-bottom: 2.5%; */
     height: auto;
-    gap: 3.5%;
+    column-gap: 1.5%;
     /* border: solid black 1px; */
 }
 
@@ -99,7 +99,7 @@
     font-size: clamp(0.8rem, 1vw, 0.9rem);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 768px),(max-width: 1024px) {
     .event-info-container {
       flex-direction: column;
       min-height: auto;

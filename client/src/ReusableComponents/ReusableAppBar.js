@@ -1,6 +1,6 @@
 import MenuIcon from '@mui/icons-material/Menu';
 import { AppBar, Avatar, Box, Button, Container, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography } from '@mui/material';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, getDocs, collection } from 'firebase/firestore';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserAuth } from '../Context-and-routes/AuthContext';
@@ -11,9 +11,10 @@ import { db } from "../Firebase/firebaseConfig";
 export default function ReusableAppBar() {
 
   const { signInWithMicrosoft, logOut, user} = UserAuth();
-  
+  const [isOrganizer, setIsOrganizer] = useState(null);
+
   const pages = user ? ['Home', 'Community'] : ['Home', 'Community', 'Sign In'];
-  const settings = ['Profile', 'Create Event', 'Logout'];
+  const settings = isOrganizer ? ['Profile', 'Create Event', 'Logout'] : ['Profile', 'Logout'];
 
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
@@ -23,9 +24,10 @@ export default function ReusableAppBar() {
   const handleSignIn = async () =>{
       try{
           const signIn = await signInWithMicrosoft();
-          // console.log(signIn);
+          console.log(signIn);
           handleRegister(signIn.user.uid, signIn.user.email, signIn.user.displayName);
-          navigateTo(0);
+          checkIsOrganizer(signIn.user.email);
+          // navigateTo(0);
       }catch(e){
           console.log(e.message);
       }
@@ -33,8 +35,7 @@ export default function ReusableAppBar() {
 
   const handleSignOut = async () =>{
       try{
-          const signOut = await logOut();
-          console.log(signOut);
+          await logOut();
           navigateTo('/');
       }catch (e){
           console.log(e.message);
@@ -99,24 +100,25 @@ export default function ReusableAppBar() {
     }
   };
 
-  // TO BE CHECKED AGAIN IN THE FUTURE
-  // useEffect(() => {
-  //   if(user) {
-  //     const users = user;
-  //     const handleRegister = async () => {
-  //       const docRef = doc(db, 'user', users.uid);
-  //       const docSnap = await getDoc(docRef);
-    
-  //       if (!docSnap.exists()) {
-  //         await setDoc(doc(db, "user", users.uid), {
-  //           email: users.email,
-  //           displayName: users.displayName
-  //         });
-  //       }
-  //     };
-  //     handleRegister();
-  //   }
-  // },[user]);
+  const checkIsOrganizer = async (signedInEmail) =>{
+    try {
+      const querySnapshot = await getDocs(collection(db, "organizers"));
+      const organizers = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  
+      const userIsOrganizer = organizers.some((organizer) => organizer.email === signedInEmail);
+      
+      console.log("userIsOrganizer value: ",userIsOrganizer);
+      setIsOrganizer(userIsOrganizer);
+
+      console.log("isOrganizer value: ", isOrganizer);
+
+    } catch (error) {
+      console.error("Error checking if user is organizer:", error);
+    }
+  }
+
+  console.log(isOrganizer);
+  
 
   return (
     <AppBar position="static" sx={{backgroundColor: '#8a252c'}}>
