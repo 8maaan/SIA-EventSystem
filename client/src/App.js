@@ -7,6 +7,7 @@ import Homepage from './Pages/Homepage';
 import LandingPage from './Pages/LandingPage';
 import ManageEventPage from './Pages/ManageEventPage';
 import PageNotFound from './Pages/PageNotFound';
+import EditEvent from './ReusableComponents/EditEvent';
 import EventPage from './ReusableComponents/EventPage';
 
 
@@ -24,6 +25,7 @@ function App() {
 
             {/*PROTECTED ROUTES */}
             <Route path="/manage-event" element={<ManageEventPage/>}/>
+            <Route path="/edit-event/:eventId" element={<EditEvent/>}/>
             <Route path="/manage-event/:eventId" element={<EventPage/>}/>
             <Route path="/create-event" element={<CreateEvent/>}/>
             

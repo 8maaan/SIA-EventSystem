@@ -64,9 +64,10 @@ const CreateEvent = () => {
     };
 
     const handleSubmit = async () => {
+        console.log(eventData.eventTimestamp)
 
         const eventDate = eventData.eventTimestamp ? eventData.eventTimestamp.toDate() : null;
-
+        console.log(eventDate)
         try {
             console.log('hello')
             await addDoc(collection(db, 'event'), {
@@ -76,8 +77,7 @@ const CreateEvent = () => {
                 eventDepartment: eventData.eventDepartment,
                 eventDescription: eventData.eventDescription
             })
-            console.log('hit!')
-            navigateTo('/home');  
+            navigateTo('/manage-event');  
 
         console.log("hello")
         } catch(e) {
@@ -137,7 +137,7 @@ const CreateEvent = () => {
             </div>
             <div>
                 <TextField id="standard-basic" label="Description" required error={focused.eventDescription && eventData.eventDescription.trim() === ""} 
-                    helperText={(focused.eventDescription && eventData.eventDescription.trim() === "") ? 'Please input a value' : ''}  onFocus={() => handleFocus('eventDescription')} 
+                    helperText={(focused.eventDescription && eventData.eventDescription.trim() === "") ? 'Please input a description' : ''}  onFocus={() => handleFocus('eventDescription')} 
                     multiline rows={4} maxRows={8} onChange={(event) => {setEventData(prevState => ({...prevState, eventDescription: event.target.value}))}}/>
 
             </div>
