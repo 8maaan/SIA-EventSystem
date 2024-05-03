@@ -3,7 +3,7 @@ import './App.css';
 import { AuthContextProvider } from './Context-and-routes/AuthContext';
 import { ProtectedRoute } from './Context-and-routes/Routes';
 import CreateEvent from './Pages/CreateEvent';
-import Homepage from './Pages/HomePage';
+import Homepage from './Pages/Homepage';
 import LandingPage from './Pages/LandingPage';
 import ManageEventPage from './Pages/ManageEventPage';
 import PageNotFound from './Pages/PageNotFound';

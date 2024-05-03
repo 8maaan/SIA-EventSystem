@@ -1,12 +1,12 @@
 import { collection, getDocs } from "firebase/firestore";
 import React, { useEffect, useState } from 'react';
 import { db } from "../Firebase/firebaseConfig";
-import "../PagesCSS/HomePage.css";
+import "../PagesCSS/Homepage.css";
 import ReusableAppBar from '../ReusableComponents/ReusableAppBar';
 import { MenuItem, FormControl, Select } from "@mui/material";
 import { Link } from "react-router-dom";
 
-const HomePage = () => {
+const Homepage = () => {
 
   const [events, setEvents] = useState(null);
   const [eventChoice, setEventChoice] = useState('This Week')
@@ -85,4 +85,4 @@ const HomePage = () => {
   )
 }
 
-export default HomePage
+export default Homepage
