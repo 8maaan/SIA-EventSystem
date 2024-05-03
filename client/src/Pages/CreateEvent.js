@@ -7,9 +7,10 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db } from "../Firebase/firebaseConfig";
 import ReusableAppBar from '../ReusableComponents/ReusableAppBar';
+import ImageUploader from '../ReusableComponents/ImageUploader';
 
 const CreateEvent = () => {
-
+    
     const navigateTo = useNavigate();
 
     const [eventData, setEventData] = useState({
@@ -17,8 +18,9 @@ const CreateEvent = () => {
         eventTimestamp: "",
         eventLocation: "",
         eventDepartment: "",
-        eventDescription: ""
-      });
+        eventDescription: "",
+        eventImage: ""
+    });
 
     const [departments, setDepartments] = useState(null);
     const [fieldsFilled, setfieldsFilled] = useState(false);
@@ -27,6 +29,14 @@ const CreateEvent = () => {
         eventLocation: false,
         eventDescription: false
     });
+
+    const updateEventImage = (imgUrl) => {
+        setEventData((prevEvent) => ({
+          ...prevEvent,
+          eventImage: imgUrl
+        }));
+    };
+    
 
     const getDepartments = async () => {
 
@@ -75,7 +85,8 @@ const CreateEvent = () => {
                 eventTimestamp: eventDate,
                 eventLocation: eventData.eventLocation,
                 eventDepartment: eventData.eventDepartment,
-                eventDescription: eventData.eventDescription
+                eventDescription: eventData.eventDescription,
+                eventImage: eventData.eventImage
             })
             navigateTo('/manage-event');  
 
@@ -96,7 +107,6 @@ const CreateEvent = () => {
 
     return (
         <div>
-            <ReusableAppBar/>
             <h1 style={{fontSize: '40px', marginTop: '60px'}}>Create Event</h1>
             <Box
                 component="form"
@@ -140,8 +150,8 @@ const CreateEvent = () => {
                     helperText={(focused.eventDescription && eventData.eventDescription.trim() === "") ? 'Please input a description' : ''}  onFocus={() => handleFocus('eventDescription')} 
                     multiline rows={4} maxRows={8} onChange={(event) => {setEventData(prevState => ({...prevState, eventDescription: event.target.value}))}}/>
 
+                    <ImageUploader eventImage={eventData.eventImage} updateEventImage={updateEventImage}/>
             </div>
-            <br></br>
             </Box>
             <div>
                 <Button variant='contained' disabled={!fieldsFilled} size='large' color='success' type='submit' onClick={handleSubmit}>Submit</Button>

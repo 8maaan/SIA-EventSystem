@@ -153,7 +153,6 @@ const EditEvent = () => {
     
     return ( 
         <div>
-        <ReusableAppBar/>
         <h1 style={{fontSize: '40px', marginTop: '60px'}}>Edit Event</h1>
         <Box
             component="form"

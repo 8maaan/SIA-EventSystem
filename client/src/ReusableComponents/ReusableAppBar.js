@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserAuth } from '../Context-and-routes/AuthContext';
 import { db } from "../Firebase/firebaseConfig";
-
+import WildCatsLogo from '../Images/WildCatsLogo.jpg';
 
 
 export default function ReusableAppBar() {
@@ -14,7 +14,7 @@ export default function ReusableAppBar() {
   const [isOrganizer, setIsOrganizer] = useState(null);
 
   const pages = user ? ['Home', 'Community'] : ['Home', 'Community', 'Sign In'];
-  const settings = isOrganizer ? ['Profile', 'Create Event', 'Logout'] : ['Profile', 'Logout'];
+  const settings = isOrganizer ? ['Profile', 'Manage Events', 'Logout'] : ['Profile', 'Logout'];
 
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
@@ -76,8 +76,8 @@ export default function ReusableAppBar() {
   const handleCloseUserMenu = (page) => {
     setAnchorElUser(null);
     switch(page){
-      case 'Create Event':
-        navigateTo('/create-event')
+      case 'Manage Events':
+        navigateTo('/manage-event')
         break;
       case 'Logout':
         handleSignOut();
@@ -147,7 +147,7 @@ export default function ReusableAppBar() {
               cursor: 'pointer'
             }}
           >
-            {/* LOGO */}
+            
             EvntListnr
           </Typography>
 
@@ -224,7 +224,7 @@ export default function ReusableAppBar() {
               {user ?
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   {/* AVATAR */}
-                  <Avatar src="https://imgur.com/ip7Owg9.png" />
+                  <Avatar src={WildCatsLogo} />
                 </IconButton>
                 :
                 <></>

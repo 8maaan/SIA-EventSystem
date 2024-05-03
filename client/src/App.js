@@ -9,6 +9,7 @@ import ManageEventPage from './Pages/ManageEventPage';
 import PageNotFound from './Pages/PageNotFound';
 import EditEvent from './ReusableComponents/EditEvent';
 import EventPage from './ReusableComponents/EventPage';
+import ReusableAppBar from './ReusableComponents/ReusableAppBar';
 
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
     <div className="App">
       <AuthContextProvider>
         <BrowserRouter>
+          <ReusableAppBar/>
           <Routes>
 
             {/* COMMON ROUTES */}
@@ -25,8 +27,8 @@ function App() {
             <Route path="/event/:eventId" element={<EventPage/>} />
 
             {/*PROTECTED ROUTES */}
-            <Route path="/manage-event" element={<ManageEventPage/>}/>
-            <Route path="/edit-event/:eventId" element={<EditEvent/>}/>
+            <Route path="/manage-event" element={<ProtectedRoute><ManageEventPage/></ProtectedRoute>}/>
+            <Route path="/edit-event/:eventId" element={<ProtectedRoute><EditEvent/></ProtectedRoute>}/>
             <Route path="/manage-event/:eventId" element={<ProtectedRoute><EventPage/></ProtectedRoute>}/>
             <Route path="/create-event" element={<ProtectedRoute><CreateEvent/></ProtectedRoute>}/>
 

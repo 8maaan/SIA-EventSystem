@@ -65,7 +65,7 @@
 }
 
 .event-info-card-image {
-    height: 70%;
+    height: 180px;
     width: 100%; 
     /* border: solid black 1px; */
     overflow: hidden; 
@@ -73,7 +73,8 @@
   
 .event-info-card-image img {
     height: 100%; 
-    width: 100%; 
+    width: 100%;
+    aspect-ratio: 1 /1 ;
     object-fit: cover; 
     margin: 0; 
     padding: 0;
@@ -103,7 +104,7 @@
     .event-info-container {
       flex-direction: column;
       min-height: auto;
-      padding: 1rem 0;
+      /* padding: 1rem 0; */
     }
 
     .selector-container{

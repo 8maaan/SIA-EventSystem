@@ -8,7 +8,6 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db } from "../Firebase/firebaseConfig";
 import '../PagesCSS/ManageEventPage.css';
-import ReusableAppBar from '../ReusableComponents/ReusableAppBar';
 
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -52,7 +51,6 @@ const ManageEventPage = () => {
 
     return (
         <div>
-            <ReusableAppBar/>
             <h1 style={{fontSize: '40px '}}>Manage Events</h1>
             <div style={{display: 'flex', justifyContent: 'right', marginRight: '30px'}}><Button className='Button' variant="contained" sx={{background: '#FFD700', color: 'black', fontWeight: '600'}} onClick={handleCreate}>Create Event</Button></div>
             <div style={{display: 'flex', margin:'30px', gap: '50px'}}>
