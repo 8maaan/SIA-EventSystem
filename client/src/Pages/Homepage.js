@@ -49,8 +49,6 @@ const HomePage = () => {
     getEvents();
   },[]);
 
-  console.log(events);
-
   return (
     <div>
         <ReusableAppBar/>
