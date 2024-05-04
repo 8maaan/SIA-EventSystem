@@ -31,6 +31,10 @@ const EventPage = () => {
         getEvent();
     },[eventId]);
 
+    if (!event) {
+        return <div>Loading...</div>
+    }
+
     function dateFormatter(timestamp) {
         const formatDate = timestamp.toLocaleDateString('en-GB', {
           day: '2-digit',

@@ -69,6 +69,8 @@ const Homepage = () => {
       setFilteredEvents(filteredEvents);
     }
   }, [events, eventChoice]);
+  
+  console.log(events);
 
   return (
     <div>
