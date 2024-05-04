@@ -2,8 +2,7 @@ import { InputAdornment, TextField } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 
-
-const ImageUploader = ({ eventImage, updateEventImage }) => {
+const ImageUploader = ({ eventImage, handleTxtFieldChange, errorTxt }) => {
   const cloudinaryRef = useRef();
   const widgetRef = useRef();
   const [uploadedImgName, setUploadedImgName] = useState('');
@@ -18,8 +17,8 @@ const ImageUploader = ({ eventImage, updateEventImage }) => {
         if (!error && result && result.event === 'success') {
           console.log(result.info.secure_url);
 
-          // Call the callback function to update eventImage in App.js
-          updateEventImage(result.info.secure_url);
+          // Instead of calling updateEventImage directly, call handleTxtFieldChange
+          handleTxtFieldChange(result.info.secure_url, 'eventImage');
         }
         if (!error && result && result.event === 'queues-end') {
           const fileName = result.info.files[0].name;
@@ -28,16 +27,17 @@ const ImageUploader = ({ eventImage, updateEventImage }) => {
         }
       }
     );
-  }, [updateEventImage]);
+  }, [handleTxtFieldChange]);
 
   return (
     <div>
-      {/* <p className='attributeNames'></p> */}
       <TextField
+        fullWidth
         required 
-        disabled 
-        size="small" 
+        disabled
         label={eventImage ? uploadedImgName : "Upload Image"}
+        error={errorTxt}
+        helperText={errorTxt ? 'Please upload image for event cover' : ''}
         InputProps={{ endAdornment: ( 
         <InputAdornment 
           position="end" 
@@ -46,7 +46,6 @@ const ImageUploader = ({ eventImage, updateEventImage }) => {
             <FileUploadOutlinedIcon/>
         </InputAdornment>),}}
       />
-
     </div>
   );
 };

@@ -2,6 +2,7 @@ import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { db } from "../Firebase/firebaseConfig";
+import ReusableLoadingAnim from "../ReusableComponents/ReusableLoadingAnim"
 
 const EventPage = () => {
 
@@ -19,7 +20,6 @@ const EventPage = () => {
                     const data = docEntry.data();
                     data.eventTimestamp = data.eventTimestamp.toDate();
                     setEvent(data)
-                    console.log(docEntry.data());
                 } else {
                     console.log("No such document!");
                 }
@@ -32,7 +32,7 @@ const EventPage = () => {
     },[eventId]);
 
     if (!event) {
-        return <div>Loading...</div>
+        return <div><ReusableLoadingAnim/></div>
     }
 
     function dateFormatter(timestamp) {

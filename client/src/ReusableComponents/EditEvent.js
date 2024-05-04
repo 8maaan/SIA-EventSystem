@@ -7,7 +7,6 @@ import { collection, deleteDoc, doc, getDoc, getDocs, updateDoc } from "firebase
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { db } from "../Firebase/firebaseConfig";
-import ReusableAppBar from "./ReusableAppBar";
 
 
 
@@ -18,7 +17,6 @@ const EditEvent = () => {
     const [prevevent, setPrevEvent] = useState(null);
     const navigateTo = useNavigate();
     const [departments, setDepartments] = useState(null);
-    const [fieldsFilled, setfieldsFilled] = useState(false);
     const [focused, setFocused] = useState({
         eventName: false,
         eventLocation: false,
@@ -148,7 +146,7 @@ const EditEvent = () => {
     }
 
     if (!prevevent) {
-        return <div><ReusableAppBar/></div>
+        return <div>Loading...</div>
     }
     
     return ( 

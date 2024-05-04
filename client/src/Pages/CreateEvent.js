@@ -1,18 +1,16 @@
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { TextField, Button, Box, FormControl, Select, MenuItem, InputLabel } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import "../PagesCSS/CreateEvent.css"
+import ImageUploader from '../ReusableComponents/ImageUploader'
+import dayjs from 'dayjs';
 import { addDoc, collection, getDocs } from 'firebase/firestore';
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { db } from "../Firebase/firebaseConfig";
-import ReusableAppBar from '../ReusableComponents/ReusableAppBar';
-import ImageUploader from '../ReusableComponents/ImageUploader';
+import { db } from '../Firebase/firebaseConfig';
 
-const CreateEvent = () => {
-    
-    const navigateTo = useNavigate();
-
+function AddEvent() {
+    const [departments, setDepartments] = useState(null);
     const [eventData, setEventData] = useState({
         eventName: "",
         eventTimestamp: "",
@@ -22,65 +20,82 @@ const CreateEvent = () => {
         eventImage: ""
     });
 
-    const [departments, setDepartments] = useState(null);
-    const [fieldsFilled, setfieldsFilled] = useState(false);
-    const [focused, setFocused] = useState({
-        eventName: false,
-        eventLocation: false,
-        eventDescription: false
+    const [eventDataError, setEventDataError] = useState({
+        eventName: null, eventTimestamp: null,
+        eventLocation: null,
+        eventDepartment: null,
+        eventDescription: null,
+        eventImage: null
     });
 
-    const updateEventImage = (imgUrl) => {
-        setEventData((prevEvent) => ({
-          ...prevEvent,
-          eventImage: imgUrl
+    useEffect(()=>{
+        const getDepartments = async () => {
+            try {
+                const querySnapshot = await getDocs(collection(db, "departments"));
+                const departments = querySnapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return {id: doc.id, ...data};
+                });
+                    setDepartments(departments)
+            } catch (e) {
+                console.log(e.message)
+            }
+        }
+        getDepartments();
+    },[]);
+
+    const isTextFieldEmpty = (text) => {
+        const textStr = text ? text.toString() : '';
+        return textStr.trim() === '';
+    };
+
+    const updateEventTxtError = (fieldName, value) => {
+        setEventDataError(prevState => ({
+            ...prevState,
+            [fieldName]: value
         }));
     };
+
+
+
+    const handleTxtFieldChange = (value, name) => {
+        setEventData((prevEventData) => {
+            const updatedEventData = {
+                ...prevEventData,
+                [name]: value,
+            };
     
-
-    const getDepartments = async () => {
-
-        try {
-            const querySnapshot = await getDocs(collection(db, "departments"));
-            const departments = querySnapshot.docs.map(doc => {
-                const data = doc.data();
-                return {id: doc.id, ...data};
-            });
-
-            departments.sort((a, b) => {
-                const departmentA = a.department.toLowerCase();
-                const departmentB = b.department.toLowerCase();
-                if (departmentA < departmentB) {
-                    return -1;
-                }
-                if (departmentA > departmentB) {
-                    return 1;
-                }
-                return 0;
-            });
-                setDepartments(departments)
-        } catch (e) {
-            console.log(e.message)
-        }
-    }
-
-    const handleFocus = (field) => {
-        if (!focused[field]) {
-            setFocused(prevState => ({
-                ...prevState,
-                [field]: true
-            }));
-        }
+            // CHECK IF TEXTFIELD IS EMPTY
+            switch (name) {
+                case 'eventName':
+                case 'eventTimestamp':
+                case 'eventLocation':
+                case 'eventDepartment':
+                case 'eventImage':
+                case 'eventDescription':
+                    updateEventTxtError(name, isTextFieldEmpty(value));
+                    break;
+                default:
+                    break;
+            }
+            return updatedEventData;
+        });
     };
 
-    const handleSubmit = async () => {
-        console.log(eventData.eventTimestamp)
+    const handleSubmit = async (event) => {
+        event.preventDefault();
 
-        const eventDate = eventData.eventTimestamp ? eventData.eventTimestamp.toDate() : null;
-        console.log(eventDate)
-        try {
-            console.log('hello')
-            await addDoc(collection(db, 'event'), {
+        if(eventData.eventImage.trim() === ''){
+            console.log('Empty')
+            updateEventTxtError('eventImage', true);
+            return;
+        }else{
+            updateEventTxtError('eventImage', false);
+        }
+
+        const eventDate = eventData.eventTimestamp.toDate();
+        try{
+            await addDoc(collection(db, 'event'),{
                 eventName: eventData.eventName,
                 eventTimestamp: eventDate,
                 eventLocation: eventData.eventLocation,
@@ -88,76 +103,88 @@ const CreateEvent = () => {
                 eventDescription: eventData.eventDescription,
                 eventImage: eventData.eventImage
             })
-            navigateTo('/manage-event');  
-
-        console.log("hello")
-        } catch(e) {
-            console.log(e.message);
+        }catch(e){
+            console.error(e);
         }
-    }
-
-    useEffect(() => {
-        getDepartments();
-    }, [])
-
-    useEffect(() => {
-        const areAllFieldsFilled = Object.values(eventData).every(value => value !== "");
-        setfieldsFilled(areAllFieldsFilled);
-    }, [eventData])
+    };
 
     return (
-        <div>
-            <h1 style={{fontSize: '40px', marginTop: '60px'}}>Create Event</h1>
-            <Box
-                component="form"
-                sx={{
-                    '& .MuiTextField-root': { m: 2, width: '40ch' }, padding: '50px'
-                }}
-                noValidate
-                autoComplete="off">
-            <div>
-                <TextField id="standard-basic" label="Event Name" required error={focused.eventName && eventData.eventName.trim() === ""} 
-                    helperText={(focused.eventName && eventData.eventName.trim() === "") ? 'Please input a value' : ''}  onFocus={() => handleFocus('eventName')} 
-                    onChange={(event) => {setEventData(prevState => ({...prevState, eventName: event.target.value}))}}/>
-
+        <Box display="flex" justifyContent="center" alignItems="center" minHeight="90vh" position="relative">
+            <form onSubmit={handleSubmit} className='form-style'>
+                <h1 style={{ textAlign: 'center', color:'#464a4f' }}>Create Event</h1>
+                <TextField
+                    name="eventName"
+                    label="Event Name"
+                    value={eventData.eventName}
+                    required
+                    onChange={(e) => handleTxtFieldChange(e.target.value, e.target.name)}
+                    error={eventDataError.eventName}
+                    helperText={eventDataError.eventName ? 'Please input event name' : ''}
+                />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DateTimePicker label="Date & Time *" onChange={(event) => {setEventData(prevState => ({...prevState, eventTimestamp: event}))}} />
+                    <DateTimePicker
+                        name="eventTimestamp"
+                        disablePast
+                        label="Date & Time"
+                        value={eventData.eventTimestamp ? dayjs(eventData.eventTimestamp) : null}
+                        onChange={(newValue) => handleTxtFieldChange(newValue, 'eventTimestamp')}
+                        slotProps={{
+                            textField: {
+                                required: true,
+                                error: eventDataError.eventTimestamp,
+                                helperText: eventDataError.eventTimestamp ? 'Please specify the date & time' : ''
+                            },
+                        }}
+                    />
                 </LocalizationProvider>
-            </div>
-            <div>
-                {/*TEXTFIELD IS OFF */}
-                <FormControl sx={{ m: 1.5, minWidth: 350}}>
-                <InputLabel id="demo-simple-select-label" required >Department</InputLabel>
-                <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={eventData.eventDepartment}
-                    label="College Department"
-                    onChange={(event) => {setEventData(prevState => ({...prevState, eventDepartment: event.target.value}))}}>
 
-                    {departments && departments.map(department => (
-                        <MenuItem key={department.id} value={department.department}>{department.department}</MenuItem>
-                    ))}
-                </Select>
-                </FormControl>
-                <TextField id="standard-basic" label="Location" required error={focused.eventLocation && eventData.eventLocation.trim() === ""} 
-                    helperText={(focused.eventLocation && eventData.eventLocation.trim() === "") ? 'Please input a value' : ''}  onFocus={() => handleFocus('eventLocation')} 
-                    onChange={(event) => {setEventData(prevState => ({...prevState, eventLocation: event.target.value}))}}/>
+                <TextField
+                    name="eventLocation"
+                    label="Location"
+                    value={eventData.eventLocation}
+                    required
+                    onChange={(e) => handleTxtFieldChange(e.target.value, e.target.name)}
+                    error={eventDataError.eventLocation}
+                    helperText={eventDataError.eventLocation ? 'Please input the event location' : ''}
+                />
 
-            </div>
-            <div>
-                <TextField id="standard-basic" label="Description" required error={focused.eventDescription && eventData.eventDescription.trim() === ""} 
-                    helperText={(focused.eventDescription && eventData.eventDescription.trim() === "") ? 'Please input a description' : ''}  onFocus={() => handleFocus('eventDescription')} 
-                    multiline rows={4} maxRows={8} onChange={(event) => {setEventData(prevState => ({...prevState, eventDescription: event.target.value}))}}/>
+                <FormControl fullWidth style={{marginBottom: '20px', textAlign:'left'}}>
+                    <InputLabel>Department</InputLabel>
+                    <Select
+                        name="eventDepartment"
+                        label="Department"
+                        value={eventData.eventDepartment}
+                        required
+                        onChange={(e) => handleTxtFieldChange(e.target.value, e.target.name)}
+                    >
+                        {departments && departments.map(department => (
+                            <MenuItem key={department.id} value={department.department}>{department.department}</MenuItem>
+                        ))}
+                    </Select>
+                    </FormControl>
+                
+                {/* TEMPORARY SOLUTION ONLY, NOT YET FAMILIAR W/ FIREBASE STORAGE FOR IMAGE UPLOADING*/ }
+                {/* CORS ISSUE 💀 IF DAGHAN ERRORS SA CONSOLE THEN DISABLE ADBLOCK/UBLOCK FOR THIS PAGE TEMPORARILY*/ }
+                <ImageUploader required eventImage={eventData.eventImage} handleTxtFieldChange={handleTxtFieldChange} errorTxt={eventDataError.eventImage}/>
 
-                    <ImageUploader eventImage={eventData.eventImage} updateEventImage={updateEventImage}/>
-            </div>
-            </Box>
-            <div>
-                <Button variant='contained' disabled={!fieldsFilled} size='large' color='success' type='submit' onClick={handleSubmit}>Submit</Button>
-            </div>
-        </div>
-    )
+                <TextField
+                    name="eventDescription"
+                    label="Description"
+                    value={eventData.eventDescription}
+                    required
+                    onChange={(e) => handleTxtFieldChange(e.target.value, e.target.name)}
+                    multiline
+                    rows={4}
+                    error={eventDataError.eventDescription}
+                    helperText={eventDataError.eventDescription ? 'Please input a description' : ''}
+                />
+                
+                <Button type="submit" variant="contained" style={{ backgroundColor: '#8a252c', color: 'white', borderRadius: '5px', alignSelf: 'flex-end', fontWeight:'600' }}>
+                    Add Event
+                </Button>
+            </form>
+        </Box>
+    );
 }
 
-export default CreateEvent;
+export default AddEvent;

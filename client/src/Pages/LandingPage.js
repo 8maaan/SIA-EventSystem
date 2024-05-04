@@ -1,8 +1,5 @@
 import React from 'react';
 import "../PagesCSS/LandingPage.css";
-import ReusableAppBar from '../ReusableComponents/ReusableAppBar';
-
-
 const LandingPage = () => {
 
    
