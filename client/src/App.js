@@ -9,11 +9,8 @@ import ManageEventPage from './Pages/ManageEventPage';
 import PageNotFound from './Pages/PageNotFound';
 import EditEvent from './ReusableComponents/EditEvent';
 import EventPage from './ReusableComponents/EventPage';
-<<<<<<< Updated upstream
 import ReusableAppBar from './ReusableComponents/ReusableAppBar';
-=======
 import EventPageDisplay from './Pages/EventPageDisplay';
->>>>>>> Stashed changes
 
 
 function App() {
