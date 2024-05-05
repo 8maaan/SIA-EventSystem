@@ -1,37 +1,41 @@
 import MenuIcon from '@mui/icons-material/Menu';
 import { AppBar, Avatar, Box, Button, Container, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography } from '@mui/material';
 import { doc, getDoc, setDoc, getDocs, collection } from 'firebase/firestore';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserAuth } from '../Context-and-routes/AuthContext';
 import { db } from "../Firebase/firebaseConfig";
-
+import WildCatsLogo from '../Images/WildCatsLogo.jpg';
 
 
 export default function ReusableAppBar() {
 
   const { signInWithMicrosoft, logOut, user} = UserAuth();
-  const [isOrganizer, setIsOrganizer] = useState(
-    localStorage.getItem('isOrganizer') !== null
-      ? JSON.parse(localStorage.getItem('isOrganizer'))
-      : null
-  );
+  const [isOrganizer, setIsOrganizer] = useState(null);
 
   const pages = user ? ['Home', 'Community'] : ['Home', 'Community', 'Sign In'];
-  const settings = isOrganizer ? ['Profile', 'Create Event', 'Logout'] : ['Profile', 'Logout'];
+  const settings = isOrganizer ? ['Profile', 'Manage Events', 'Logout'] : ['Profile', 'Logout'];
 
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
 
   const navigateTo = useNavigate();
 
+  useEffect(() => {
+    try{
+      if (user) {
+        checkIsOrganizer(user.email);
+      }
+    }catch(e){
+      console.error(e);
+    }
+  }, [user]);
+
   const handleSignIn = async () =>{
       try{
           const signIn = await signInWithMicrosoft();
           console.log(signIn);
           handleRegister(signIn.user.uid, signIn.user.email, signIn.user.displayName);
-          checkIsOrganizer(signIn.user.email);
-          // navigateTo(0);
       }catch(e){
           console.log(e.message);
       }
@@ -72,8 +76,8 @@ export default function ReusableAppBar() {
   const handleCloseUserMenu = (page) => {
     setAnchorElUser(null);
     switch(page){
-      case 'Create Event':
-        navigateTo('/create-event')
+      case 'Manage Events':
+        navigateTo('/manage-event')
         break;
       case 'Logout':
         handleSignOut();
@@ -104,29 +108,25 @@ export default function ReusableAppBar() {
     }
   };
 
+
+
   const checkIsOrganizer = async (signedInEmail) =>{
     try {
       const querySnapshot = await getDocs(collection(db, "organizers"));
       const organizers = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   
       const userIsOrganizer = organizers.some((organizer) => organizer.email === signedInEmail);
-      
-      console.log("userIsOrganizer value: ",userIsOrganizer);
       setIsOrganizer(userIsOrganizer);
-      localStorage.setItem('isOrganizer', JSON.stringify(userIsOrganizer));
-
-      console.log("isOrganizer value: ", isOrganizer);
-
     } catch (error) {
-      console.error("Error checking if user is organizer:", error);
+      console.error(error);
     }
   }
 
-  console.log(isOrganizer);
+ 
   
 
   return (
-    <AppBar position="static" sx={{backgroundColor: '#8a252c'}}>
+    <AppBar position="static" sx={{backgroundColor: '#8a252c', zIndex: 1000}}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           
@@ -147,7 +147,7 @@ export default function ReusableAppBar() {
               cursor: 'pointer'
             }}
           >
-            {/* LOGO */}
+            
             EvntListnr
           </Typography>
 
@@ -224,7 +224,7 @@ export default function ReusableAppBar() {
               {user ?
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   {/* AVATAR */}
-                  <Avatar src="https://imgur.com/ip7Owg9.png" />
+                  <Avatar src={WildCatsLogo} />
                 </IconButton>
                 :
                 <></>
@@ -257,4 +257,4 @@ export default function ReusableAppBar() {
       </Container>
     </AppBar>
   );
-}
+} 

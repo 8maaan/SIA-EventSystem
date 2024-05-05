@@ -6,22 +6,43 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import "../PagesCSS/CreateEvent.css"
 import ImageUploader from '../ReusableComponents/ImageUploader'
 import dayjs from 'dayjs';
-import { addDoc, collection, getDocs } from 'firebase/firestore';
+import { updateDoc, collection, getDocs, doc, getDoc, deleteDoc} from 'firebase/firestore';
 import { db } from '../Firebase/firebaseConfig';
 import ReusableSnackBar from '../ReusableComponents/ReusableSnackBar'
+import { useParams, useNavigate } from 'react-router-dom';
+import ReusableDialog from '../ReusableComponents/ReusableDialog'
 
-function AddEvent() {
-    const eventDataInitialValues = {
-        eventName: "",
-        eventTimestamp: "",
-        eventLocation: "",
-        eventDepartment: "",
-        eventImage: "",
-        eventDescription: "",
-    };
+function EditEvent() {
+    const params = useParams();
+    const eventId = params.eventId;
+    const [eventData, setEventData] = useState(null);
+    const [prevEventDate, setPrevEventDate] = useState(null);
+
+    useEffect(() => {
+        const getEvent = async () => {
+            try {
+                const docRef = doc(db, 'event', eventId);
+                const docEntry = await getDoc(docRef);
+        
+                if (docEntry.exists()) {
+                    const data = docEntry.data();
+                    data.eventTimestamp = data.eventTimestamp.toDate();
+                    // BAND-AID FIX FOR "eventData.eventTimestamp.toDate is not a function" error
+                    setPrevEventDate(data.eventTimestamp);
+                    setEventData(data)
+                } else {
+                    console.error("No such document!");
+                }
+            } catch(e) {
+                console.error(e.message)
+            }
+        }
+
+        getEvent();
+    },[eventId]);
+
+
     const [departments, setDepartments] = useState(null);
-    
-    const [eventData, setEventData] = useState(eventDataInitialValues);
 
     const [eventDataError, setEventDataError] = useState({
         eventName: null, eventTimestamp: null,
@@ -59,7 +80,7 @@ function AddEvent() {
         }));
     };
 
-    
+    console.log(eventData);
 
     const handleTxtFieldChange = (value, name) => {
         setEventData((prevEventData) => {
@@ -84,12 +105,6 @@ function AddEvent() {
             return updatedEventData;
         });
     };
-    
-    const [resetImageUploader, setResetImageUploader] = useState(null);
-    const emptyTextFields = () =>{
-        setEventData(eventDataInitialValues);
-        setResetImageUploader(true);
-    }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -102,9 +117,11 @@ function AddEvent() {
             updateEventTxtError('eventImage', false);
         }
 
-        const eventDate = eventData.eventTimestamp.toDate();
+        // BAND AID FIX, THERE MIGHT BE OPTIMAL SOLUTION 4 THIS
+        const eventDate = eventData.eventTimestamp === prevEventDate ? eventData.eventTimestamp : eventData.eventTimestamp.toDate();
         try{
-            await addDoc(collection(db, 'event'),{
+            const eventRef = doc(db, 'event', eventId);
+            await updateDoc(eventRef, {
                 eventName: eventData.eventName,
                 eventTimestamp: eventDate,
                 eventLocation: eventData.eventLocation,
@@ -112,15 +129,35 @@ function AddEvent() {
                 eventDescription: eventData.eventDescription,
                 eventImage: eventData.eventImage
             })
-            emptyTextFields();
-            handleSnackbarOpen("success", "Event has been created successfully 🎉")
+            handleSnackbarOpen("success", "Event has been updated successfully 🎉")
         }catch(e){
             console.error(e);
-            handleSnackbarOpen("error", "Error creating an event, try again later.")
+            handleSnackbarOpen("error", "Error updating an event, try again later.")
         }
     };
+
+    const navigateTo = useNavigate();
+    const handleDelete = async () => {
+        try {
+            const docRef = doc(db, 'event', eventId);
+            await deleteDoc(docRef);
+            handleSnackbarOpen("success", "Event has been deleted successfully");
+            setTimeout(() => {
+                navigateTo('/manage-event', { replace: true });;
+            }, 1500);
+        } catch(e) {
+            console.error("No such document!");
+            handleSnackbarOpen("error", "Error deleting an event, try again later.");
+        }
+    }
+
+    if(eventData){
+        console.log(prevEventDate === eventData.eventTimestamp);
+    }
     
-    // FOR SNACKBAR XD
+    /* EXTRA STUFF BELOW TO REFRACTOR L8ER IF MORE TIME*/
+
+    // FOR SNACKBAR
     const [snackbar, setSnackbar] = useState(false);
     const [snackbarSeverity, setSnackbarSeverity] = useState('');
     const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -137,10 +174,31 @@ function AddEvent() {
         setSnackbar(false);
     };
 
+    // FOR CONFIRMATION DIALOG
+    const [openDialog, setOpenDialog] = useState(false);
+    const [confirmationStatus, setConfirmationStatus] = useState(false);
+    const handleOpenDialog = () => {
+        setOpenDialog(true);
+    };
+
+    const handleConfirmationDialogClose = (confirmed) => {
+        setOpenDialog(false);
+        setConfirmationStatus(confirmed);
+        console.log(confirmationStatus);
+
+        if (confirmed) {
+            handleDelete();
+        }
+    };
+
+    if(!eventData){
+        return <div>Loading...</div>
+    }
+
     return (
         <Box display="flex" justifyContent="center" alignItems="center" minHeight="90vh" position="relative">
             <form onSubmit={handleSubmit} className='form-style'>
-                <h1 style={{ textAlign: 'center', color:'#464a4f' }}>Create Event</h1>
+                <h1 style={{ textAlign: 'center', color:'#464a4f' }}>Edit Event</h1>
                 <TextField
                     name="eventName"
                     label="Event Name"
@@ -194,7 +252,7 @@ function AddEvent() {
                 
                 {/* TEMPORARY SOLUTION ONLY, NOT YET FAMILIAR W/ FIREBASE STORAGE FOR IMAGE UPLOADING*/ }
                 {/* CORS ISSUE 💀 IF DAGHAN ERRORS SA CONSOLE THEN DISABLE ADBLOCK/UBLOCK FOR THIS PAGE TEMPORARILY*/ }
-                <ImageUploader eventImage={eventData.eventImage} handleTxtFieldChange={handleTxtFieldChange} errorTxt={eventDataError.eventImage} reset={resetImageUploader}/>
+                <ImageUploader required eventImage={eventData.eventImage} handleTxtFieldChange={handleTxtFieldChange} errorTxt={eventDataError.eventImage} isEdit={true}/>
 
                 <TextField
                     name="eventDescription"
@@ -208,13 +266,19 @@ function AddEvent() {
                     helperText={eventDataError.eventDescription ? 'Please input a description' : ''}
                 />
                 
-                <Button type="submit" variant="contained" style={{ backgroundColor: '#8a252c', color: 'white', borderRadius: '5px', alignSelf: 'flex-end', fontWeight:'600' }}>
-                    Add Event
-                </Button>
+                <div style={{alignSelf: 'flex-end'}}>
+                    <Button variant="contained" style={{ backgroundColor: '#8a252c', color: 'white', borderRadius: '5px', fontWeight:'600', marginRight: '15px'}} onClick={handleOpenDialog}>
+                        Delete Event
+                    </Button>
+                    <Button type="submit" variant="contained" style={{ backgroundColor: '#faaa0a', color: 'white', borderRadius: '5px', fontWeight:'600' }}>
+                        Update Event
+                    </Button>
+                </div>
             </form>
             {snackbar && <ReusableSnackBar open={snackbar} onClose={handleSnackbarClose} severity={snackbarSeverity} message={snackbarMessage} />}
+            {openDialog && <ReusableDialog status={true} onClose={handleConfirmationDialogClose} title={"Are you sure you want to delete this event?"}/>}
         </Box>
     );
 }
 
-export default AddEvent;
+export default EditEvent;

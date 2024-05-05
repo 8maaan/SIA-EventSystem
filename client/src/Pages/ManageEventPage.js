@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db } from "../Firebase/firebaseConfig";
 import '../PagesCSS/ManageEventPage.css';
-import ReusableAppBar from '../ReusableComponents/ReusableAppBar';
+import ReusableLoadingAnim from '../ReusableComponents/ReusableLoadingAnim'
 
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -35,8 +35,12 @@ const ManageEventPage = () => {
         navigateTo('/create-event');
     }
 
+    const handleEdit = (event) => {
+        navigateTo(`/edit-event/${event.id}`);
+    }
     const handleView = (event) => {
-        navigateTo(`/manage-event/${event.id}`);
+       // navigateTo(`/manage-event/${event.id}`);
+        navigateTo(`/event-page/${event.id}`);
     }
 
     const getEvents = async () => {
@@ -45,11 +49,12 @@ const ManageEventPage = () => {
         setEvents(events)
     }
 
-
+    // if(!events){
+    //     return <div><ReusableLoadingAnim/></div>
+    // }
 
     return (
         <div>
-            <ReusableAppBar/>
             <h1 style={{fontSize: '40px '}}>Manage Events</h1>
             <div style={{display: 'flex', justifyContent: 'right', marginRight: '30px'}}><Button className='Button' variant="contained" sx={{background: '#FFD700', color: 'black', fontWeight: '600'}} onClick={handleCreate}>Create Event</Button></div>
             <div style={{display: 'flex', margin:'30px', gap: '50px'}}>
@@ -57,17 +62,18 @@ const ManageEventPage = () => {
                     <Grid container spacing={2} sx={{backgroundColor: 'rgba(44, 44, 44, 1)', padding: '20px', display: 'flex', flexWrap: 'wrap'}}>
                         {events ? (
                                 events.map((event) => (
-                                <Grid item xs={3}>
+                                <Grid item xs={3} key={event.id}>
                                     <Card sx={{ minWidth: 275, backgroundColor: 'rgba(88, 88, 88, 1)', color: 'white' }}>
                                         <CardContent>
                                             <Typography variant="h5" style={{display: 'flex'}}>
                                                 {event.eventName}
                                             </Typography>
                                             <Typography sx={{ mb: 1.5, display: 'flex'}} color="#FFFFF2">
-                                                {event.eventDate} - {event.eventTime}
+                                                {event.eventDescription}
                                             </Typography>
                                         </CardContent>
                                         <CardActions style={{display: 'flex', justifyContent: 'right'}}>
+                                            <Button size="small" onClick={() => handleEdit(event)} sx={{fontWeight: 700, color: 'white', background: '#800000'}}>Edit</Button>
                                             <Button size="small" onClick={() => handleView(event)} sx={{fontWeight: 700, color: 'white', background: '#800000'}}>View</Button>
                                         </CardActions>
                                     </Card>

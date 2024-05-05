@@ -1,0 +1,47 @@
+.container {
+    margin-left: 0 !important; 
+}
+
+
+.countdown-box {
+    display: flex;
+    flex-direction: column;  /* Align items vertically */
+    justify-content: center;
+    align-items: center;
+    width: 200px;  /* Increase width for better visibility */
+    height: 150px;  /* Increase height */
+    background-color: inherit;  /* Adjust color to fit the theme */
+    color: #333;  /* Ensure text is visible */
+    margin: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-size: 36px;  /* Larger font size for the timer */
+    font-weight: bold;
+}
+
+.countdown-label {
+    font-size: 18px;  /* Larger label text */
+    color: #555;
+    margin-top: 10px;  /* Space between number and label */
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+
+.ReusableAppBar {
+    z-index: 1000; 
+}
+
+.Styledbutton #hover{
+    color: black;
+}
+
+@font-face {
+    font-family: "Biome W01 Regular";
+    src: url("https://db.onlinewebfonts.com/t/dba3e777ccc7fa4a896dcf7e7f5b3bfb.eot");
+    src: url("https://db.onlinewebfonts.com/t/dba3e777ccc7fa4a896dcf7e7f5b3bfb.eot?#iefix")format("embedded-opentype"),
+    url("https://db.onlinewebfonts.com/t/dba3e777ccc7fa4a896dcf7e7f5b3bfb.woff2")format("woff2"),
+    url("https://db.onlinewebfonts.com/t/dba3e777ccc7fa4a896dcf7e7f5b3bfb.woff")format("woff"),
+    url("https://db.onlinewebfonts.com/t/dba3e777ccc7fa4a896dcf7e7f5b3bfb.ttf")format("truetype"),
+    url("https://db.onlinewebfonts.com/t/dba3e777ccc7fa4a896dcf7e7f5b3bfb.svg#Biome W01 Regular")format("svg");
+}

@@ -1,14 +1,10 @@
 import React from 'react';
 import "../PagesCSS/LandingPage.css";
-import ReusableAppBar from '../ReusableComponents/ReusableAppBar';
-
-
 const LandingPage = () => {
 
    
     return (
         <div>
-            <ReusableAppBar/>
             <div className='landing-wrapper'>
                 <div className='section-wrapper'>
                     <div className='first-section'>
@@ -19,7 +15,6 @@ const LandingPage = () => {
                                 It's like conducting a symphony where every instrument plays a crucial role in creating
                                 a haromonious melody. From meticulously planning the logistics to igniting the spark of 
                                 innovation in the theme and design, every aspect requires careful attention.
-
                             </p>
                         </div>
                         <div className='first-section-img'>
