@@ -87,24 +87,6 @@ const EventPageDisplay = () => {
 
     const Completionist = () => <span>The event has started!</span>;
 
-    {/*}
-    const countdownStyles = {
-        padding: '20px',
-        margin: '20px 0',
-        borderRadius: '10px',
-        backgroundColor: 'rgba(255, 0, 0, 0.3)', // Semi-transparent red background
-        color: 'white',
-        textShadow: '2px 2px 4px rgba(0,0,0,0.5)', // Text shadow for better readability
-        fontSize: '24px',
-        fontWeight: 'bold',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Soft box shadow
-        backdropFilter: 'blur(5px)' // Blur effect for the background
-    }; */}
-
-    // Modify the renderer function in your Countdown component to use these styles
     const CountdownBox = ({ value, label }) => (
         <div className="countdown-box">
             <div>{value}</div>
@@ -197,7 +179,7 @@ const EventPageDisplay = () => {
                     {/* Image Section */}
                     <Paper elevation={6} sx={{
                         background: 'inherit',
-                        marginBottom: 2, // Adds space below the image container
+                        marginBottom: 2, 
                         overflow: 'hidden',
                         borderRadius: '20px',
                         boxShadow: '0 10px 20px rgba(0, 0, 0, 0.2)',
@@ -252,7 +234,7 @@ const EventPageDisplay = () => {
                         background: 'inherit',
                         borderRadius: '20px',
                         boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
-                        marginBottom: 2 // Adds space below this container
+                        marginBottom: 2 
                     }}>
                         <Typography variant="h4" style={style} sx={{ fontWeight: 'bold', marginBottom: 1 }}>{event.eventName}</Typography>
                         <Typography variant="body1" style={style}>{event.eventDescription}</Typography>
@@ -271,7 +253,6 @@ const EventPageDisplay = () => {
                     zIndex: 3,
                 }}>
                     <Grid container spacing={5} sx={{ zIndex: 3, width: '100%' }}>
-                        {/* Container for the promotional text */}
                         <Grid item xs={12} md={6} sx={{
                             display: 'flex',
                             flexDirection: 'column',
@@ -289,7 +270,6 @@ const EventPageDisplay = () => {
                                 Join now!
                             </Typography>
                             <EastIcon sx={{ width: '100px', height: '100px', marginTop: '-175px', marginLeft: '450px' }} />
-
                         </Grid>
 
                         {/* RSVP Form Container */}
