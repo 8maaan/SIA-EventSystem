@@ -2,23 +2,24 @@ import React from "react";
 import { Box, CircularProgress } from "@mui/material";
 
 const LoadingComponent = () => {
-
   return (
-    <div style={{
+    <Box
+      sx={{
         position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
         backgroundColor: "rgba(255, 255, 255, 0.7)",
+        padding: "20px",
+        borderRadius: "10px",
+        boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
         display: "flex",
         justifyContent: "center",
         alignItems: "center"
-    }}>
-      <Box>
-        <CircularProgress />
-      </Box>
-    </div>
+      }}
+    >
+      <CircularProgress />
+    </Box>
   );
 };
 

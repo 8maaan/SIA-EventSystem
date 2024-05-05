@@ -101,7 +101,7 @@
     margin-bottom: 1%;
 }
 
-@media (max-width: 768px),(max-width: 1024px) {
+@media (max-width: 768px),(max-width: 1245px) {
     .event-info-container {
       flex-direction: column;
       min-height: auto;

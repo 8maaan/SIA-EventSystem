@@ -1,75 +1,22 @@
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { TextField, Button, Box, FormControl, Select, MenuItem, InputLabel } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import "../PagesCSS/CreateEvent.css"
+import ImageUploader from '../ReusableComponents/ImageUploader'
 import dayjs from 'dayjs';
-import { collection, deleteDoc, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { db } from "../Firebase/firebaseConfig";
+import { updateDoc, collection, getDocs, doc, getDoc, deleteDoc} from 'firebase/firestore';
+import { db } from '../Firebase/firebaseConfig';
+import ReusableSnackBar from '../ReusableComponents/ReusableSnackBar'
+import { useParams, useNavigate } from 'react-router-dom';
+import ReusableDialog from '../ReusableComponents/ReusableDialog'
 
-
-
-const EditEvent = () => {
-
+function EditEvent() {
     const params = useParams();
     const eventId = params.eventId;
-    const [prevevent, setPrevEvent] = useState(null);
-    const navigateTo = useNavigate();
-    const [departments, setDepartments] = useState(null);
-    const [focused, setFocused] = useState({
-        eventName: false,
-        eventLocation: false,
-        eventDescription: false
-    });
-    const [newevent, setNewEvent] = useState({
-        eventName: "",
-        eventTimestamp: "",
-        eventLocation: "",
-        eventDepartment: "",
-        eventDescription: ""
-      });
-
-    const getDepartments = async () => {
-
-        try {
-            const querySnapshot = await getDocs(collection(db, "departments"));
-            const departments = querySnapshot.docs.map(doc => {
-                const data = doc.data();
-                return {id: doc.id, ...data};
-            });
-
-            departments.sort((a, b) => {
-                const departmentA = a.department.toLowerCase();
-                const departmentB = b.department.toLowerCase();
-                if (departmentA < departmentB) {
-                    return -1;
-                }
-                if (departmentA > departmentB) {
-                    return 1;
-                }
-                return 0;
-            });
-                setDepartments(departments)
-        } catch (e) {
-            console.log(e.message)
-        }
-    }
-
-    const handleFocus = (field) => {
-        if (!focused[field]) {
-            setFocused(prevState => ({
-                ...prevState,
-                [field]: true
-            }));
-        }
-    };
-
-    // useEffect(() => {
-    //     const areAllFieldsFilled = Object.values(newevent).every(value => value !== "");
-    //     setfieldsFilled(areAllFieldsFilled);        
-
-    // }, [newevent])
+    const [eventData, setEventData] = useState(null);
+    const [prevEventDate, setPrevEventDate] = useState(null);
 
     useEffect(() => {
         const getEvent = async () => {
@@ -80,128 +27,258 @@ const EditEvent = () => {
                 if (docEntry.exists()) {
                     const data = docEntry.data();
                     data.eventTimestamp = data.eventTimestamp.toDate();
-                    setPrevEvent(data)
-                    console.log(docEntry.data());
+                    // BAND-AID FIX FOR "eventData.eventTimestamp.toDate is not a function" error
+                    setPrevEventDate(data.eventTimestamp);
+                    setEventData(data)
                 } else {
-                    console.log("No such document!");
+                    console.error("No such document!");
                 }
             } catch(e) {
-                console.log(e.message)
+                console.error(e.message)
             }
         }
 
         getEvent();
-        getDepartments();
     },[eventId]);
 
+
+    const [departments, setDepartments] = useState(null);
+
+    const [eventDataError, setEventDataError] = useState({
+        eventName: null, eventTimestamp: null,
+        eventLocation: null,
+        eventDepartment: null,
+        eventDescription: null,
+        eventImage: null
+    });
+
+    useEffect(()=>{
+        const getDepartments = async () => {
+            try {
+                const querySnapshot = await getDocs(collection(db, "departments"));
+                const departments = querySnapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return {id: doc.id, ...data};
+                });
+                    setDepartments(departments)
+            } catch (e) {
+                console.log(e.message)
+            }
+        }
+        getDepartments();
+    },[]);
+
+    const isTextFieldEmpty = (text) => {
+        const textStr = text ? text.toString() : '';
+        return textStr.trim() === '';
+    };
+
+    const updateEventTxtError = (fieldName, value) => {
+        setEventDataError(prevState => ({
+            ...prevState,
+            [fieldName]: value
+        }));
+    };
+
+    console.log(eventData);
+
+    const handleTxtFieldChange = (value, name) => {
+        setEventData((prevEventData) => {
+            const updatedEventData = {
+                ...prevEventData,
+                [name]: value,
+            };
+    
+            // CHECK IF TEXTFIELD IS EMPTY
+            switch (name) {
+                case 'eventName':
+                case 'eventTimestamp':
+                case 'eventLocation':
+                case 'eventDepartment':
+                case 'eventImage':
+                case 'eventDescription':
+                    updateEventTxtError(name, isTextFieldEmpty(value));
+                    break;
+                default:
+                    break;
+            }
+            return updatedEventData;
+        });
+    };
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        if(eventData.eventImage.trim() === ''){
+            console.log('Empty')
+            updateEventTxtError('eventImage', true);
+            return;
+        }else{
+            updateEventTxtError('eventImage', false);
+        }
+
+        // BAND AID FIX, THERE MIGHT BE OPTIMAL SOLUTION 4 THIS
+        const eventDate = eventData.eventTimestamp === prevEventDate ? eventData.eventTimestamp : eventData.eventTimestamp.toDate();
+        try{
+            const eventRef = doc(db, 'event', eventId);
+            await updateDoc(eventRef, {
+                eventName: eventData.eventName,
+                eventTimestamp: eventDate,
+                eventLocation: eventData.eventLocation,
+                eventDepartment: eventData.eventDepartment,
+                eventDescription: eventData.eventDescription,
+                eventImage: eventData.eventImage
+            })
+            handleSnackbarOpen("success", "Event has been updated successfully 🎉")
+        }catch(e){
+            console.error(e);
+            handleSnackbarOpen("error", "Error updating an event, try again later.")
+        }
+    };
+
+    const navigateTo = useNavigate();
     const handleDelete = async () => {
         try {
             const docRef = doc(db, 'event', eventId);
             await deleteDoc(docRef);
-            navigateTo('/manage-event');
+            handleSnackbarOpen("success", "Event has been deleted successfully");
+            setTimeout(() => {
+                navigateTo('/manage-event', { replace: true });;
+            }, 1500);
         } catch(e) {
-            console.log("No such document!");
+            console.error("No such document!");
+            handleSnackbarOpen("error", "Error deleting an event, try again later.");
         }
     }
 
-    const handleEdit = async () => {
-
-        var eventDate = newevent.eventTimestamp ? newevent.eventTimestamp.toDate() : null;
-
-        if(newevent.eventName === '' && newevent.eventName !== prevevent.eventName) {
-            newevent.eventName = prevevent.eventName;
-        }
-
-        if(eventDate === null && eventDate !== prevevent.eventTimestamp) {
-            eventDate = prevevent.eventTimestamp;
-        }
-
-        if(newevent.eventLocation === '' && newevent.eventLocation !== prevevent.eventTimestamp) {
-            newevent.eventLocation = prevevent.eventLocation;
-        }
-
-        if(newevent.eventDepartment === '' && newevent.eventDepartment !== prevevent.eventDepartment) {
-            newevent.eventDepartment = prevevent.eventDepartment;
-        }
-
-        if(newevent.eventDescription === '' && newevent.eventDescription !== prevevent.eventDescription) {
-            newevent.eventDescription = prevevent.eventDescription;
-        }
-
-        try {
-            const eventRef = doc(db, 'event', eventId);
-            await updateDoc(eventRef, {
-                eventName: newevent.eventName,
-                eventDate: eventDate,
-                eventLocation: newevent.eventLocation,
-                eventDepartment: newevent.eventDepartment,
-                eventDescription: newevent.eventDescription
-            });
-
-            navigateTo('/manage-event');
-        } catch(e) {
-            console.log("No such document!");
-        }
-
-    }
-
-    if (!prevevent) {
-        return <div>Loading...</div>
+    if(eventData){
+        console.log(prevEventDate === eventData.eventTimestamp);
     }
     
-    return ( 
-        <div>
-        <h1 style={{fontSize: '40px', marginTop: '60px'}}>Edit Event</h1>
-        <Box
-            component="form"
-            sx={{
-                '& .MuiTextField-root': { m: 2, width: '40ch' }, padding: '50px'
-            }}
-            noValidate
-            autoComplete="off">
-        <div>
-            <TextField id="standard-basic" label="Event Name" required onFocus={() => handleFocus('eventName')} 
-                defaultValue={prevevent.eventName} onChange={(event) => {setNewEvent(prevState => ({...prevState, eventName: event.target.value}))}}/>
+    /* EXTRA STUFF BELOW TO REFRACTOR L8ER IF MORE TIME*/
 
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DateTimePicker label="Date & Time *" defaultValue={dayjs(prevevent.eventTimestamp)} onChange={(event) => {setNewEvent(prevState => ({...prevState, eventTimestamp: event}))}} />
-            </LocalizationProvider>
-        </div>
-        <div>
-            {/*TEXTFIELD IS OFF */}
-            <FormControl sx={{ m: 1.5, minWidth: 350}}>
-            <InputLabel id="demo-simple-select-label" required >Department</InputLabel>
-            <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={prevevent.eventDepartment}
-                label="College Department"
-                onChange={(event) => {setNewEvent(prevState => ({...prevState, eventDepartment: event.target.value}))}}>
+    // FOR SNACKBAR
+    const [snackbar, setSnackbar] = useState(false);
+    const [snackbarSeverity, setSnackbarSeverity] = useState('');
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const handleSnackbarOpen = (severity, message) => {
+        setSnackbarSeverity(severity);
+        setSnackbarMessage(message);
+        setSnackbar(true);
+    }
 
-                {departments && departments.map(department => (
-                    <MenuItem key={department.id} value={department.department}>{department.department}</MenuItem>
-                ))}
-            </Select>
-            </FormControl>
-            <TextField id="standard-basic" label="Location" required defaultValue={prevevent.eventLocation} onFocus={() => handleFocus('eventLocation')} 
-                onChange={(event) => {setNewEvent(prevState => ({...prevState, eventLocation: event.target.value}))}}/>
+    const handleSnackbarClose = (event, reason) => {
+        if (reason === 'clickaway') {
+        return;
+        }
+        setSnackbar(false);
+    };
 
-        </div>
-        <div>
-            <TextField id="standard-basic" label="Description" required defaultValue={prevevent.eventDescription} onFocus={() => handleFocus('eventDescription')} 
-                multiline rows={4} maxRows={8} onChange={(event) => {setNewEvent(prevState => ({...prevState, eventDescription: event.target.value}))}}/>
+    // FOR CONFIRMATION DIALOG
+    const [openDialog, setOpenDialog] = useState(false);
+    const [confirmationStatus, setConfirmationStatus] = useState(false);
+    const handleOpenDialog = () => {
+        setOpenDialog(true);
+    };
 
-        </div>
-        <br></br>
+    const handleConfirmationDialogClose = (confirmed) => {
+        setOpenDialog(false);
+        setConfirmationStatus(confirmed);
+        console.log(confirmationStatus);
+
+        if (confirmed) {
+            handleDelete();
+        }
+    };
+
+    if(!eventData){
+        return <div>Loading...</div>
+    }
+
+    return (
+        <Box display="flex" justifyContent="center" alignItems="center" minHeight="90vh" position="relative">
+            <form onSubmit={handleSubmit} className='form-style'>
+                <h1 style={{ textAlign: 'center', color:'#464a4f' }}>Edit Event</h1>
+                <TextField
+                    name="eventName"
+                    label="Event Name"
+                    value={eventData.eventName}
+                    required
+                    onChange={(e) => handleTxtFieldChange(e.target.value, e.target.name)}
+                    error={eventDataError.eventName}
+                    helperText={eventDataError.eventName ? 'Please input event name' : ''}
+                />
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DateTimePicker
+                        name="eventTimestamp"
+                        disablePast
+                        label="Date & Time"
+                        value={eventData.eventTimestamp ? dayjs(eventData.eventTimestamp) : null}
+                        onChange={(newValue) => handleTxtFieldChange(newValue, 'eventTimestamp')}
+                        slotProps={{
+                            textField: {
+                                required: true,
+                                error: eventDataError.eventTimestamp,
+                                helperText: eventDataError.eventTimestamp ? 'Please specify the date & time' : ''
+                            },
+                        }}
+                    />
+                </LocalizationProvider>
+
+                <TextField
+                    name="eventLocation"
+                    label="Location"
+                    value={eventData.eventLocation}
+                    required
+                    onChange={(e) => handleTxtFieldChange(e.target.value, e.target.name)}
+                    error={eventDataError.eventLocation}
+                    helperText={eventDataError.eventLocation ? 'Please input the event location' : ''}
+                />
+
+                <FormControl fullWidth style={{marginBottom: '20px', textAlign:'left'}}>
+                    <InputLabel>Department</InputLabel>
+                    <Select
+                        name="eventDepartment"
+                        label="Department"
+                        value={eventData.eventDepartment}
+                        required
+                        onChange={(e) => handleTxtFieldChange(e.target.value, e.target.name)}
+                    >
+                        {departments && departments.map(department => (
+                            <MenuItem key={department.id} value={department.department}>{department.department}</MenuItem>
+                        ))}
+                    </Select>
+                    </FormControl>
+                
+                {/* TEMPORARY SOLUTION ONLY, NOT YET FAMILIAR W/ FIREBASE STORAGE FOR IMAGE UPLOADING*/ }
+                {/* CORS ISSUE 💀 IF DAGHAN ERRORS SA CONSOLE THEN DISABLE ADBLOCK/UBLOCK FOR THIS PAGE TEMPORARILY*/ }
+                <ImageUploader required eventImage={eventData.eventImage} handleTxtFieldChange={handleTxtFieldChange} errorTxt={eventDataError.eventImage} isEdit={true}/>
+
+                <TextField
+                    name="eventDescription"
+                    label="Description"
+                    value={eventData.eventDescription}
+                    required
+                    onChange={(e) => handleTxtFieldChange(e.target.value, e.target.name)}
+                    multiline
+                    rows={4}
+                    error={eventDataError.eventDescription}
+                    helperText={eventDataError.eventDescription ? 'Please input a description' : ''}
+                />
+                
+                <div style={{alignSelf: 'flex-end'}}>
+                    <Button variant="contained" style={{ backgroundColor: '#8a252c', color: 'white', borderRadius: '5px', fontWeight:'600', marginRight: '15px'}} onClick={handleOpenDialog}>
+                        Delete Event
+                    </Button>
+                    <Button type="submit" variant="contained" style={{ backgroundColor: '#faaa0a', color: 'white', borderRadius: '5px', fontWeight:'600' }}>
+                        Update Event
+                    </Button>
+                </div>
+            </form>
+            {snackbar && <ReusableSnackBar open={snackbar} onClose={handleSnackbarClose} severity={snackbarSeverity} message={snackbarMessage} />}
+            {openDialog && <ReusableDialog status={true} onClose={handleConfirmationDialogClose} title={"Are you sure you want to delete this event?"}/>}
         </Box>
-        <div>
-            {/*disabled={!fieldsFilled}*/}
-            <Button variant='contained' size='large' color='error' type='submit' onClick={handleDelete}>Delete</Button>
-                |
-            <Button variant='contained' size='large' color='success' type='submit' onClick={handleEdit}>Edit</Button>
-        </div>
-    </div>
     );
 }
- 
+
 export default EditEvent;

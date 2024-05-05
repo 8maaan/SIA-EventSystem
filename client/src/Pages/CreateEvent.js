@@ -8,17 +8,20 @@ import ImageUploader from '../ReusableComponents/ImageUploader'
 import dayjs from 'dayjs';
 import { addDoc, collection, getDocs } from 'firebase/firestore';
 import { db } from '../Firebase/firebaseConfig';
+import ReusableSnackBar from '../ReusableComponents/ReusableSnackBar'
 
 function AddEvent() {
-    const [departments, setDepartments] = useState(null);
-    const [eventData, setEventData] = useState({
+    const eventDataInitialValues = {
         eventName: "",
         eventTimestamp: "",
         eventLocation: "",
         eventDepartment: "",
+        eventImage: "",
         eventDescription: "",
-        eventImage: ""
-    });
+    };
+    const [departments, setDepartments] = useState(null);
+    
+    const [eventData, setEventData] = useState(eventDataInitialValues);
 
     const [eventDataError, setEventDataError] = useState({
         eventName: null, eventTimestamp: null,
@@ -56,7 +59,7 @@ function AddEvent() {
         }));
     };
 
-
+    
 
     const handleTxtFieldChange = (value, name) => {
         setEventData((prevEventData) => {
@@ -81,6 +84,12 @@ function AddEvent() {
             return updatedEventData;
         });
     };
+    
+    const [resetImageUploader, setResetImageUploader] = useState(null);
+    const emptyTextFields = () =>{
+        setEventData(eventDataInitialValues);
+        setResetImageUploader(true);
+    }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -103,9 +112,29 @@ function AddEvent() {
                 eventDescription: eventData.eventDescription,
                 eventImage: eventData.eventImage
             })
+            emptyTextFields();
+            handleSnackbarOpen("success", "Event has been created successfully 🎉")
         }catch(e){
             console.error(e);
+            handleSnackbarOpen("error", "Error creating an event, try again later.")
         }
+    };
+    
+    // FOR SNACKBAR XD
+    const [snackbar, setSnackbar] = useState(false);
+    const [snackbarSeverity, setSnackbarSeverity] = useState('');
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const handleSnackbarOpen = (severity, message) => {
+        setSnackbarSeverity(severity);
+        setSnackbarMessage(message);
+        setSnackbar(true);
+    }
+
+    const handleSnackbarClose = (event, reason) => {
+        if (reason === 'clickaway') {
+        return;
+        }
+        setSnackbar(false);
     };
 
     return (
@@ -165,7 +194,7 @@ function AddEvent() {
                 
                 {/* TEMPORARY SOLUTION ONLY, NOT YET FAMILIAR W/ FIREBASE STORAGE FOR IMAGE UPLOADING*/ }
                 {/* CORS ISSUE 💀 IF DAGHAN ERRORS SA CONSOLE THEN DISABLE ADBLOCK/UBLOCK FOR THIS PAGE TEMPORARILY*/ }
-                <ImageUploader required eventImage={eventData.eventImage} handleTxtFieldChange={handleTxtFieldChange} errorTxt={eventDataError.eventImage}/>
+                <ImageUploader eventImage={eventData.eventImage} handleTxtFieldChange={handleTxtFieldChange} errorTxt={eventDataError.eventImage} reset={resetImageUploader}/>
 
                 <TextField
                     name="eventDescription"
@@ -183,6 +212,7 @@ function AddEvent() {
                     Add Event
                 </Button>
             </form>
+            {snackbar && <ReusableSnackBar open={snackbar} onClose={handleSnackbarClose} severity={snackbarSeverity} message={snackbarMessage} />}
         </Box>
     );
 }

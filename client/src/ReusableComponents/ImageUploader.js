@@ -2,10 +2,16 @@ import { InputAdornment, TextField } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 
-const ImageUploader = ({ eventImage, handleTxtFieldChange, errorTxt }) => {
+const ImageUploader = ({ eventImage, handleTxtFieldChange, errorTxt, isEdit, reset }) => {
   const cloudinaryRef = useRef();
   const widgetRef = useRef();
   const [uploadedImgName, setUploadedImgName] = useState('');
+
+  useEffect(() => {
+    if (reset) {
+        setUploadedImgName('');
+    }
+}, [reset]);
 
   useEffect(() => {
     cloudinaryRef.current = window.cloudinary;
@@ -32,12 +38,14 @@ const ImageUploader = ({ eventImage, handleTxtFieldChange, errorTxt }) => {
   return (
     <div>
       <TextField
+        value={isEdit ? eventImage : uploadedImgName}
         fullWidth
         required 
         disabled
-        label={eventImage ? uploadedImgName : "Upload Image"}
+        label={"Upload Image"}
         error={errorTxt}
         helperText={errorTxt ? 'Please upload image for event cover' : ''}
+        InputLabelProps={{ shrink: eventImage ? true : false }}
         InputProps={{ endAdornment: ( 
         <InputAdornment 
           position="end" 

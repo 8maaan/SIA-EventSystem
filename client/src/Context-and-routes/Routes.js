@@ -1,6 +1,7 @@
 
 import { Navigate } from 'react-router-dom'
 import { UserAuth } from './AuthContext'
+import ReusableLoadingAnim from '../ReusableComponents/ReusableLoadingAnim'
 
 // TO BE OPTIMIZED
 
@@ -9,7 +10,7 @@ export const ProtectedRoute = ({children}) => {
     const { user, loading } = UserAuth();
 
     if(loading){
-        return <div>Loading...</div>;
+        return <div><ReusableLoadingAnim/></div>
     }
 
     if(user){

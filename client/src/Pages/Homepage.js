@@ -2,7 +2,7 @@ import { collection, getDocs } from "firebase/firestore";
 import React, { useEffect, useState } from 'react';
 import { db } from "../Firebase/firebaseConfig";
 import "../PagesCSS/Homepage.css";
-import { MenuItem, FormControl, Select } from "@mui/material";
+import { MenuItem, FormControl, Select, Skeleton } from "@mui/material"; // Import Skeleton
 import { Link } from "react-router-dom";
 
 const Homepage = () => {
@@ -84,19 +84,29 @@ const Homepage = () => {
               </FormControl>
             </div>
             <div className='event-info-container'>
-              {filteredEvents && filteredEvents.map((event, id) => (
-                <div className='event-info-card' key={event.id}>
-                  <Link style={{ textDecoration: 'none', color: 'inherit' }} to={`/event/${event.id}`} key={id}>
-                    <div className="event-info-card-image">
-                      <img src={event.eventImage}  loading="lazy" alt="event-img" />
-                    </div>
-                    <div className="event-info-card-details">
-                      <h3>{event.eventName}</h3>
-                      <p>Date and Time: {dateFormatter(event.eventTimestamp)}</p>
-                    </div>
-                  </Link>
-                </div>
-              ))}
+              {filteredEvents ? (
+                filteredEvents.map((event, id) => (
+                  <div className='event-info-card' key={event.id}>
+                    <Link style={{ textDecoration: 'none', color: 'inherit' }} to={`/event/${event.id}`} key={id}>
+                      <div className="event-info-card-image">
+                        <img src={event.eventImage}  loading="lazy" alt="event-img" />
+                      </div>
+                      <div className="event-info-card-details">
+                        <h3>{event.eventName}</h3>
+                        <p>Date and Time: {dateFormatter(event.eventTimestamp)}</p>
+                      </div>
+                    </Link>
+                  </div>
+                ))
+              ) : (
+                Array.from({ length: 8 }, (_, index) => (
+                  <div key={index}>
+                    <Skeleton animation="wave" key={index} variant="rectangular" width={340} height={180} />
+                    <Skeleton animation="wave"/>
+                    <Skeleton animation="wave"/>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>

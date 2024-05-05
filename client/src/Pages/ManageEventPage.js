@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db } from "../Firebase/firebaseConfig";
 import '../PagesCSS/ManageEventPage.css';
+import ReusableLoadingAnim from '../ReusableComponents/ReusableLoadingAnim'
 
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -47,7 +48,9 @@ const ManageEventPage = () => {
         setEvents(events)
     }
 
-
+    // if(!events){
+    //     return <div><ReusableLoadingAnim/></div>
+    // }
 
     return (
         <div>
