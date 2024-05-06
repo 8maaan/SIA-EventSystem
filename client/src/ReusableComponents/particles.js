@@ -18,15 +18,15 @@ const ParticlesComponent = (props) => {
     // Memoized particles options for performance
     const options = useMemo(() => ({
         background: {
-            color: {
-                value: "transparent"  // Set background color transparent to view the gradient underneath
-            },
+            // color: {
+            //     value: "transparent"  // Set background color transparent to view the gradient underneath
+            // },
             image: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",  // Background gradient
             position: "50% 50%",  // Center the background
             repeat: "no-repeat",  // Do not repeat the background
             
         },
-        fpsLimit: 120,
+        fpsLimit: 60,
         interactivity: {
             events: {
                 onClick: {
@@ -91,7 +91,7 @@ const ParticlesComponent = (props) => {
     }), []);
 
     return (
-        <Particles id="tsparticles" options={options} style={{ position: 'fixed', width: '100%', height: '100%', zIndex: 0 }} />
+        <Particles id="tsparticles" options={options} style={{}} />
     );
 };
 

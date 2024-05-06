@@ -3,13 +3,12 @@ import { useParams } from 'react-router-dom';
 import { styled } from '@mui/system';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from "../Firebase/firebaseConfig";
-import ReusableAppBar from '../ReusableComponents/ReusableAppBar';
 import ParticlesComponent from '../ReusableComponents/particles';
 import StaircaseEffect from '../ReusableComponents/StairCaseEffect';
 import "../PagesCSS/EventPage.css";
 import Countdown from 'react-countdown';
 import {
-    Container, Grid, Paper, Typography, CardMedia, TextField, Button, Box, Grow
+    Container, Grid, Paper, Typography, CardMedia, TextField, Button, Box,
 } from '@mui/material';
 import EventIcon from '@mui/icons-material/Event';
 import PlaceIcon from '@mui/icons-material/Place';
@@ -42,7 +41,7 @@ const settings = {
     },
 };
 
-{/*}  katung original nga background without particles 
+/*}  katung original nga background without particles 
 const StyledBackground = styled('div')({
   position: 'fixed',
   top: 0,
@@ -55,13 +54,13 @@ const StyledBackground = styled('div')({
   backgroundPosition: 'center',
   filter: 'blur(8px) brightness(50%)',
   zIndex: -1, // Ensure this is the lowest in the visual stack
-});  */}
+});  */
 
 
 const EventPageDisplay = () => {
     const [event, setEvent] = useState(null);
     const { eventId } = useParams();
-    {/* const navigate = useNavigate(); */ }
+    // {/* const navigate = useNavigate(); */ }
 
     useEffect(() => {
         const fetchEvent = async () => {
@@ -153,11 +152,9 @@ const EventPageDisplay = () => {
 
     return (
         <div>
-            <ReusableAppBar sx={{ backgroundColor: '#ffffff', opacity: 1, zIndex: 1000, boxShadow: '0 2px 4px rgba(0,0,0,0.5)', color: 'black', backdropFilter: 'none' }} />
-            <ParticlesComponent id="particles" sx={{ zIndex: -1 }} />
-            <ReusableAppBar />
-            <div style={{ position: 'relative', zIndex: 2 }}>
-                <Container maxWidth="md" sx={{ ...settings.paper, marginTop: '200px' }}>
+            {/* <ParticlesComponent/> */}
+            <div style={{ position: 'relative',}}>
+                <Container maxWidth="md" sx={{ ...settings.paper, marginTop: '5%' }}>
                     <Typography variant="h3" align="center">{event.eventName}</Typography>
                     <Paper elevation={3} sx={{ p: 4, borderRadius: '20px', background: 'inherit' }}>
                         <Countdown date={event.eventTimestamp} renderer={renderer} />
@@ -174,7 +171,7 @@ const EventPageDisplay = () => {
                 background: 'inherit',
                 color: '#ffffff'
             }}>
-                <Container maxWidth="lg" sx={{ zIndex: 3, background: 'inherit', marginTop: '250px' }}>
+                <Container maxWidth="lg" sx={{ zIndex: 3, background: 'inherit', marginTop: '3.5%' }}>
 
                     {/* Image Section */}
                     <Paper elevation={6} sx={{
@@ -243,16 +240,17 @@ const EventPageDisplay = () => {
             </Box>
 
 
-            <div style={{ height: '100vh', zIndex: 3 }}>
+            <div style={{ height: '100vh'}}>
                 <Container maxWidth="lg" sx={{
                     paddingY: '100px',
                     display: 'flex',
                     justifyContent: 'space-around',
                     alignItems: 'center',
-                    height: '100vh',
-                    zIndex: 3,
+                    height: '50%',
+                    border: 'solid black 1px'
+                    
                 }}>
-                    <Grid container spacing={5} sx={{ zIndex: 3, width: '100%' }}>
+                    <Grid container spacing={5} sx={{ width: '100%' }}>
                         <Grid item xs={12} md={6} sx={{
                             display: 'flex',
                             flexDirection: 'column',
@@ -283,7 +281,7 @@ const EventPageDisplay = () => {
                         }}>
                             <StyledPaper elevation={3} sx={{
                                 background: 'inherit',
-                                zIndex: 3,
+                                
                                 width: '80%',
                                 marginLeft: '100px'
                             }}>

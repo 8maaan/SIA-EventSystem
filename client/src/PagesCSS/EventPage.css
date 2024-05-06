@@ -27,11 +27,6 @@
     letter-spacing: 2px;
 }
 
-
-.ReusableAppBar {
-    z-index: 1000; 
-}
-
 .Styledbutton #hover{
     color: black;
 }
