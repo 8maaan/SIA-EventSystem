@@ -20,7 +20,6 @@ export default function ReusableAppBar() {
   const [anchorElUser, setAnchorElUser] = useState(null);
 
   const navigateTo = useNavigate();
-
   useEffect(() => {
     try{
       if (user) {
@@ -205,7 +204,7 @@ export default function ReusableAppBar() {
               textDecoration: 'none',
             }}
           >
-            Event Hub
+            EvntListnr
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end' }}>
             {pages.map((page) => (

@@ -9,8 +9,6 @@ const Homepage = () => {
   const [events, setEvents] = useState(null);
   const [eventChoice, setEventChoice] = useState('All Events');
   const [filteredEvents, setFilteredEvents] = useState(null);
-
-  console.log(events);
   
   const handleChange = (event) => {
     setEventChoice(event.target.value);
