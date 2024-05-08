@@ -33,7 +33,6 @@ const settings = {
         width: '100%',
         fontFamily: '"Biome W01 Regular", Arial, sans-serif',
         '& *': {
-            fontFamily: '"Biome W01 Regular", Arial, sans-serif', 
             color: 'black',
         },
     },
