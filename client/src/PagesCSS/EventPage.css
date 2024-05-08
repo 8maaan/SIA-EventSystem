@@ -2,38 +2,28 @@
     margin-left: 0 !important; 
 }
 
-
 .countdown-box {
     display: flex;
-    flex-direction: column;  /* Align items vertically */
+    flex-direction: column;  
     justify-content: center;
     align-items: center;
-    width: 200px;  /* Increase width for better visibility */
-    height: 150px;  /* Increase height */
-    background-color: inherit;  /* Adjust color to fit the theme */
-    color: #333;  /* Ensure text is visible */
+    width: 200px;  
+    height: 150px;  
+    background-color: inherit;  
+    color: #333;  
     margin: 10px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    font-size: 36px;  /* Larger font size for the timer */
+    font-size: 36px;  
     font-weight: bold;
 }
 
 .countdown-label {
-    font-size: 18px;  /* Larger label text */
+    font-size: 18px;  
     color: #555;
-    margin-top: 10px;  /* Space between number and label */
+    margin-top: 10px;  
     text-transform: uppercase;
     letter-spacing: 2px;
-}
-
-
-.ReusableAppBar {
-    z-index: 1000; 
-}
-
-.Styledbutton #hover{
-    color: black;
 }
 
 @font-face {

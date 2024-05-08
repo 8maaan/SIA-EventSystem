@@ -2,7 +2,6 @@ import { collection, getDocs } from "firebase/firestore";
 import React, { useEffect, useState } from 'react';
 import { db } from "../Firebase/firebaseConfig";
 import "../PagesCSS/Homepage.css";
-import ReusableAppBar from '../ReusableComponents/ReusableAppBar';
 import { MenuItem, FormControl, Select } from "@mui/material";
 import { Link } from "react-router-dom";
 
@@ -53,7 +52,6 @@ const HomePage = () => {
 
   return (
     <div>
-        <ReusableAppBar/>
         <div className='homepage-wrapper'>
             <div className='events-container'>
               <div className='currentEvent-wrapper'>

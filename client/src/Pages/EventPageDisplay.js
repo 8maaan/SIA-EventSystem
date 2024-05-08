@@ -3,40 +3,37 @@ import { useParams } from 'react-router-dom';
 import { styled } from '@mui/system';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from "../Firebase/firebaseConfig";
-import ReusableAppBar from '../ReusableComponents/ReusableAppBar';
 import ParticlesComponent from '../ReusableComponents/particles';
-import StaircaseEffect from '../ReusableComponents/StairCaseEffect';
 import "../PagesCSS/EventPage.css";
 import Countdown from 'react-countdown';
 import {
-    Container, Grid, Paper, Typography, CardMedia, TextField, Button, Box, Grow
+    Container, Grid, Paper, Typography, CardMedia, TextField, Button, Box
 } from '@mui/material';
 import EventIcon from '@mui/icons-material/Event';
 import PlaceIcon from '@mui/icons-material/Place';
 import LocationCityIcon from '@mui/icons-material/LocationCity';
-import EastIcon from '@mui/icons-material/East';
-
+import WavingHandIcon from '@mui/icons-material/WavingHand';
 
 const settings = {
     paper: {
         my: 5,
-        p: 4,
+        p: '32px',  
         flexGrow: 1,
         display: 'flex',
         flexDirection: 'column',
-        gap: 3,
+        gap: '24px',  
         padding: '0px',
-        backgroundColor: 'inherit',
+        background: 'linear-gradient(45deg, #DE3161 30%, #FF8E53 90%)',
         color: 'white',
         borderRadius: '20px',
         boxShadow: '0 0 10px rgba(255, 0, 0, 0.5)',
         overflow: 'hidden',
-        height: '400px',
+        height: '400px',  
         fontWeight: 'bold',
-        width: '100vw',
-        fontFamily: '"Biome W01 Regular", Arial, sans-serif', // Specifying font-family here
+        width: '100%',
+        fontFamily: '"Biome W01 Regular", Arial, sans-serif',
         '& *': {
-            fontFamily: '"Biome W01 Regular", Arial, sans-serif', // Ensure all children also use Biome
+            fontFamily: '"Biome W01 Regular", Arial, sans-serif', 
             color: 'black',
         },
     },
@@ -108,40 +105,31 @@ const EventPageDisplay = () => {
             );
         }
     };
-
-    const StyledPaper = styled(Paper)(({ theme }) => ({
-        padding: '40px',
-        borderRadius: '20px',
-        boxShadow: '0 6px 20px rgba(0, 0, 0, 0.1)',
-        backgroundColor: '#fff',
-    }));
-
-    const StyledTextField = styled(TextField)({
-        margin: '10px 0',
-        '& label.Mui-focused': {
-            color: 'primary.main',
-        },
-        '& .MuiInput-underline:after': {
-            borderBottomColor: 'primary.main',
-        },
-        '& .MuiOutlinedInput-root': {
-            '&.Mui-focused fieldset': {
-                borderColor: 'primary.main',
-            },
-        },
-    });
-
+    
     const StyledButton = styled(Button)({
-        background: 'inherit',
-        marginTop: '20px',
-        padding: '10px 0',
-        backgroundColor: 'inherit',
-        '&:hover': {
-            backgroundColor: 'white',
-        },
+        background: '#FF8E53',
+        marginTop: '1.25rem', 
+        padding: '0.625rem', 
+        borderRadius:'12px',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
         color: 'black',
-        fontSize: '18px',
+        fontSize: '1.125rem',
+        fontFamily: 'Biome W01 Regular',
+        '&:hover': {
+            background: '#E57A46', 
+        } 
     });
+    
+    {/* Particles adjustments */}
+    const ParticlesWrapper = styled('div')({
+        position: 'absolute', 
+        width: '100%',
+        height: '100%',
+        top: 0,
+        left: 0,
+        zIndex: -1, 
+        pointerEvents: 'none', 
+      });
 
     const style = {
         fontFamily: '"Biome W01 Regular", Arial, sans-serif'
@@ -153,32 +141,32 @@ const EventPageDisplay = () => {
 
     return (
         <div>
-            <ReusableAppBar sx={{ backgroundColor: '#ffffff', opacity: 1, zIndex: 1000, boxShadow: '0 2px 4px rgba(0,0,0,0.5)', color: 'black', backdropFilter: 'none' }} />
-            <ParticlesComponent id="particles" sx={{ zIndex: -1 }} />
-            <ReusableAppBar />
-            <div style={{ position: 'relative', zIndex: 2 }}>
-                <Container maxWidth="md" sx={{ ...settings.paper, marginTop: '200px' }}>
+            <ParticlesWrapper>
+            <ParticlesComponent id="particles"/>
+            </ParticlesWrapper>
+            <div style={{ position: 'relative', zIndex: 2, marginTop: '12.5 rem' }}>
+                <Container maxWidth="md" sx={{ ...settings.paper }}>
                     <Typography variant="h3" align="center">{event.eventName}</Typography>
-                    <Paper elevation={3} sx={{ p: 4, borderRadius: '20px', background: 'inherit' }}>
+                    <Paper elevation={3} sx={{ padding: '32px', borderRadius: '20 px', background: 'inherit', boxShadow:'none' }}>
                         <Countdown date={event.eventTimestamp} renderer={renderer} />
                     </Paper>
                 </Container>
             </div>
             <Box sx={{
                 display: 'flex',
-                flexDirection: 'column', // Stacks everything vertically
+                flexDirection: 'column',
                 alignItems: 'center',
                 height: '100vh',
                 zIndex: 3,
-                paddingY: '20px',
+                paddingY: '1.25 rem',
                 background: 'inherit',
                 color: '#ffffff'
             }}>
-                <Container maxWidth="lg" sx={{ zIndex: 3, background: 'inherit', marginTop: '250px' }}>
+                <Container maxWidth="lg" sx={{ zIndex: 3, background: 'inherit', marginTop: '350px' }}>
 
-                    {/* Image Section */}
+                    {/* Image */}
                     <Paper elevation={6} sx={{
-                        background: 'inherit',
+                        background: 'linear-gradient(45deg, #DE3161 30%, #FF8E53 90%)',
                         marginBottom: 2, 
                         overflow: 'hidden',
                         borderRadius: '20px',
@@ -205,7 +193,7 @@ const EventPageDisplay = () => {
                             padding: 2,
                             backgroundColor: '#ffffff',
                             background: 'inherit',
-                            borderRadius: '20px',
+                            borderRadius: '20 px',
                             boxShadow: 'none',
                             marginBottom: 1,
                             direction: 'row',
@@ -213,16 +201,16 @@ const EventPageDisplay = () => {
 
                         }}>
                             {/* Date */}
-                            <Typography variant="h6"><EventIcon sx={{ width: '50px', height: '50px' }} /></Typography>
-                            <Typography style={style} sx={{ marginLeft: '-120px', marginRight: '80px' }}>{dateFormatter(event.eventTimestamp)}</Typography>
+                            <Typography variant="h6"><EventIcon sx={{ width: '3.125 rem', height: '3.125 rem' }} /></Typography>
+                            <Typography style={style} sx={{ marginLeft: '120 px', marginRight: '80 px' }}>{dateFormatter(event.eventTimestamp)}</Typography>
 
                             {/* Place */}
-                            <Typography variant="h6"><PlaceIcon sx={{ width: '50px', height: '50px' }} /></Typography>
-                            <Typography style={style} sx={{ marginLeft: '-120px', marginRight: '80px' }}>{event.eventLocation}</Typography>
+                            <Typography variant="h6"><PlaceIcon sx={{ width: '3.125 rem', height: '3.125 rem' }} /></Typography>
+                            <Typography style={style} sx={{ marginLeft: '120 px', marginRight: '80 px' }}>{event.eventLocation}</Typography>
 
                             {/* Department*/}
-                            <Typography variant="h6"><LocationCityIcon sx={{ width: '50px', height: '50px' }} /></Typography>
-                            <Typography style={style} sx={{ marginLeft: '-120px' }}>{event.eventDepartment}</Typography>
+                            <Typography variant="h6"><LocationCityIcon sx={{ width: '3.125 rem', height: '3.125 rem' }} /></Typography>
+                            <Typography style={style} sx={{ marginLeft: '120 px' }}>{event.eventDepartment}</Typography>
 
                         </Paper>
                     </Paper>
@@ -231,77 +219,21 @@ const EventPageDisplay = () => {
                     <Paper elevation={6} sx={{
                         padding: 2,
                         backgroundColor: '#ffffff',
-                        background: 'inherit',
-                        borderRadius: '20px',
-                        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
+                        background: 'linear-gradient(45deg, #DE3161 30%, #FF8E53 90%)',
+                        borderRadius: '1.25 rem',
+                        boxShadow: '0 10px 1.875 30px rgba(0, 0, 0, 0.1)',
                         marginBottom: 2 
-                    }}>
-                        <Typography variant="h4" style={style} sx={{ fontWeight: 'bold', marginBottom: 1 }}>{event.eventName}</Typography>
+                    }}>  
+                        <Typography variant="h4" style={style} sx={{ fontWeight: 'bold', marginBottom: 1 }}>{event.eventName}
+                        </Typography>
                         <Typography variant="body1" style={style}>{event.eventDescription}</Typography>
+                        <StyledButton variant="contained" endIcon={<WavingHandIcon/>} sx={{width: '20%', height:'60%'}} onClick={() => console.log("Join Event")}>
+                    Join Event
+                </StyledButton>
                     </Paper>
                 </Container>
+    
             </Box>
-
-
-            <div style={{ height: '100vh', zIndex: 3 }}>
-                <Container maxWidth="lg" sx={{
-                    paddingY: '100px',
-                    display: 'flex',
-                    justifyContent: 'space-around',
-                    alignItems: 'center',
-                    height: '100vh',
-                    zIndex: 3,
-                }}>
-                    <Grid container spacing={5} sx={{ zIndex: 3, width: '100%' }}>
-                        <Grid item xs={12} md={6} sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            width: '50%',
-                        }}>
-                            <StaircaseEffect text="Don't miss out on the fun!" />
-                            <Typography variant="h5" sx={{
-                                fontWeight: 'bold',
-                                position: 'relative',
-                                top: '-109px',
-                                marginLeft: '200px'
-                            }}>
-                                Join now!
-                            </Typography>
-                            <EastIcon sx={{ width: '100px', height: '100px', marginTop: '-175px', marginLeft: '450px' }} />
-                        </Grid>
-
-                        {/* RSVP Form Container */}
-                        <Grid item xs={12} md={6} sx={{
-                            width: '50%',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                            padding: '20px',
-                            fontFamily: 'Biome W01 Regular'
-                        }}>
-                            <StyledPaper elevation={3} sx={{
-                                background: 'inherit',
-                                zIndex: 3,
-                                width: '80%',
-                                marginLeft: '100px'
-                            }}>
-                                <Typography variant="h6" gutterBottom>
-                                    RSVP
-                                </Typography>
-                                <form>
-                                    <StyledTextField fullWidth label="Name" variant="outlined" />
-                                    <StyledTextField fullWidth label="Email" variant="outlined" />
-                                    <StyledButton variant="contained" fullWidth type="submit">
-                                        Register
-                                    </StyledButton>
-                                </form>
-                            </StyledPaper>
-                        </Grid>
-                    </Grid>
-                </Container>
-            </div>
         </div>
     );
 
