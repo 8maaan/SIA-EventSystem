@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Typography, Avatar, Container, Box } from '@mui/material';
+import { Typography, Avatar, Container, Box, Card, CardContent, Grid } from '@mui/material';
 import { UserAuth } from "../Context-and-routes/AuthContext";
 
 const ProfilePage = () => {
@@ -10,17 +10,27 @@ const ProfilePage = () => {
     }, [user]);
 
     return (
-        <Container maxWidth="sm">
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4 }}>
-                <Avatar alt={user.name} src={user.photoUrl} sx={{ width: 100, height: 100, mb: 2 }} />
-                <Typography variant="h4" component="h1" gutterBottom>
-                    {user.name}
-                </Typography>
-                <Typography variant="subtitle1" gutterBottom>
-                    {user.email}
-                </Typography>
-            </Box>
-        </Container>
+        <Box sx={{ backgroundColor: '#f0f0f0', minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <Container maxWidth="md">
+                <Card>
+                    <CardContent>
+                        <Grid container spacing={2} alignItems="center">
+                            <Grid item>
+                                <Avatar alt={user.name} src={user.photoUrl} sx={{ width: 150, height: 150 }} />
+                            </Grid>
+                            <Grid item>
+                                <Typography variant="h4" component="h1">
+                                    {user.name}
+                                </Typography>
+                                <Typography variant="subtitle1" gutterBottom>
+                                    {user.email}
+                                </Typography>
+                            </Grid>
+                        </Grid>
+                    </CardContent>
+                </Card>
+            </Container>
+        </Box>
     );
 };
 
