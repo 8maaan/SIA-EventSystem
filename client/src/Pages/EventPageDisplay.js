@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { styled } from '@mui/system';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from "../Firebase/firebaseConfig";
 import ParticlesComponent from '../ReusableComponents/particles';
 import "../PagesCSS/EventPage.css";
 import Countdown from 'react-countdown';
-import {
-    Container, Grid, Paper, Typography, CardMedia, TextField, Button, Box
-} from '@mui/material';
+import { Container, Paper, Typography, CardMedia, Button, Box } from '@mui/material';
 import EventIcon from '@mui/icons-material/Event';
 import PlaceIcon from '@mui/icons-material/Place';
 import LocationCityIcon from '@mui/icons-material/LocationCity';
 import WavingHandIcon from '@mui/icons-material/WavingHand';
+import { UserAuth } from '../Context-and-routes/AuthContext';
+
 
 const settings = {
     paper: {
@@ -38,23 +38,8 @@ const settings = {
     },
 };
 
-/*}  katung original nga background without particles 
-const StyledBackground = styled('div')({
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  width: '100%',
-  height: '100%',
-  background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
-  backgroundColor: '#800000',
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
-  filter: 'blur(8px) brightness(50%)',
-  zIndex: -1, // Ensure this is the lowest in the visual stack
-});  */
-
-
 const EventPageDisplay = () => {
+    const { user } = UserAuth();
     const [event, setEvent] = useState(null);
     const { eventId } = useParams();
     // {/* const navigate = useNavigate(); */ }
@@ -138,6 +123,46 @@ const EventPageDisplay = () => {
         return <div>Loading...</div>;
     }
 
+    const handleJoinBtn = async () => {
+        // Get user data from wherever it's stored in your application
+        const userData = {
+            displayName: user.displayName,
+            email: user.email
+            // Add any other user data you need
+        };
+    
+        // Get a reference to the Firestore document
+        const docRef = doc(db, 'event', eventId);
+    
+        try {
+            // Retrieve the current document data
+            const docSnap = await getDoc(docRef);
+    
+            if (docSnap.exists()) {
+                // Get the current event data
+                const eventData = docSnap.data();
+                // Add the new participant to the eventParticipants array
+                eventData.eventParticipants = [
+                    ...(eventData.eventParticipants || []),
+                    userData
+                ];
+    
+                // Update the document in Firestore with the modified data
+                await setDoc(docRef, eventData);
+    
+                // Optionally, you can update the local state with the updated event data
+                // setEvent(eventData);
+                
+                console.log('Participant added successfully!');
+            } else {
+                console.log("No such document!");
+            }
+        } catch (error) {
+            console.error("Error updating document: ", error);
+        }
+    };
+    
+
     return (
         <div>
             <ParticlesWrapper>
@@ -161,7 +186,7 @@ const EventPageDisplay = () => {
                 background: 'inherit',
                 color: '#ffffff'
             }}>
-                <Container maxWidth="lg" sx={{ zIndex: 3, background: 'inherit', marginTop: '350px' }}>
+                <Container maxWidth="lg" sx={{ zIndex: 3, background: 'inherit', marginTop: '3.5%' }}>
 
                     {/* Image */}
                     <Paper elevation={6} sx={{
@@ -226,9 +251,9 @@ const EventPageDisplay = () => {
                         <Typography variant="h4" style={style} sx={{ fontWeight: 'bold', marginBottom: 1 }}>{event.eventName}
                         </Typography>
                         <Typography variant="body1" style={style}>{event.eventDescription}</Typography>
-                        <StyledButton variant="contained" endIcon={<WavingHandIcon/>} sx={{width: '20%', height:'60%'}} onClick={() => console.log("Join Event")}>
-                    Join Event
-                </StyledButton>
+                        <StyledButton variant="contained" endIcon={<WavingHandIcon/>} sx={{width: '20%', height:'60%'}} onClick={handleJoinBtn}>
+                            Join Event
+                        </StyledButton>
                     </Paper>
                 </Container>
     
