@@ -38,7 +38,7 @@ const settings = {
     },
 };
 
-{/*}  katung original nga background without particles 
+/*}  katung original nga background without particles 
 const StyledBackground = styled('div')({
   position: 'fixed',
   top: 0,
@@ -51,13 +51,13 @@ const StyledBackground = styled('div')({
   backgroundPosition: 'center',
   filter: 'blur(8px) brightness(50%)',
   zIndex: -1, // Ensure this is the lowest in the visual stack
-});  */}
+});  */
 
 
 const EventPageDisplay = () => {
     const [event, setEvent] = useState(null);
     const { eventId } = useParams();
-    {/* const navigate = useNavigate(); */ }
+    // {/* const navigate = useNavigate(); */ }
 
     useEffect(() => {
         const fetchEvent = async () => {
