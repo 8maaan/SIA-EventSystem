@@ -30,7 +30,7 @@ const LandingPage = () => {
             </div>
 
           </div>
-          <h2 style={{color: '#8a252c', marginTop:'5%', marginBottom:'2.5%'}}>HOW IT STARTED</h2>
+          <h2 style={{color: '#8a252c', marginTop:'10%', marginBottom:'2.5%'}}>HOW IT STARTED 🚀</h2>
           <div className="second-section">
             <div className='second-section-content'>
               <div className='second-section-img'>
