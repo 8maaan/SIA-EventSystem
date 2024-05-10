@@ -12,6 +12,7 @@ import PlaceIcon from '@mui/icons-material/Place';
 import LocationCityIcon from '@mui/icons-material/LocationCity';
 import WavingHandIcon from '@mui/icons-material/WavingHand';
 import { UserAuth } from '../Context-and-routes/AuthContext';
+import ReusableLoadingAnim from '../ReusableComponents/ReusableLoadingAnim'
 
 
 const settings = {
@@ -120,13 +121,14 @@ const EventPageDisplay = () => {
     };
 
     if (!event) {
-        return <div>Loading...</div>;
+        return <ReusableLoadingAnim/>
     }
 
     const handleJoinBtn = async () => {
         // Get user data from wherever it's stored in your application
         const userData = {
-            displayName: user.displayName,
+            uid: user.uid, // Replace "user_uid_here" with the actual UID of the current user
+            name:user.displayName,
             email: user.email
             // Add any other user data you need
         };
@@ -141,6 +143,17 @@ const EventPageDisplay = () => {
             if (docSnap.exists()) {
                 // Get the current event data
                 const eventData = docSnap.data();
+    
+                // Check if the user is already a participant
+                const isParticipant = eventData.eventParticipants.some(participant => 
+                    participant.uid === userData.uid
+                );
+    
+                if (isParticipant) {
+                    console.log("User already joined the event!");
+                    return; // Exit early if the user is already a participant
+                }
+    
                 // Add the new participant to the eventParticipants array
                 eventData.eventParticipants = [
                     ...(eventData.eventParticipants || []),
@@ -150,9 +163,6 @@ const EventPageDisplay = () => {
                 // Update the document in Firestore with the modified data
                 await setDoc(docRef, eventData);
     
-                // Optionally, you can update the local state with the updated event data
-                // setEvent(eventData);
-                
                 console.log('Participant added successfully!');
             } else {
                 console.log("No such document!");
@@ -161,6 +171,7 @@ const EventPageDisplay = () => {
             console.error("Error updating document: ", error);
         }
     };
+    
     
 
     return (
@@ -251,9 +262,17 @@ const EventPageDisplay = () => {
                         <Typography variant="h4" style={style} sx={{ fontWeight: 'bold', marginBottom: 1 }}>{event.eventName}
                         </Typography>
                         <Typography variant="body1" style={style}>{event.eventDescription}</Typography>
-                        <StyledButton variant="contained" endIcon={<WavingHandIcon/>} sx={{width: '20%', height:'60%'}} onClick={handleJoinBtn}>
-                            Join Event
+                        <StyledButton
+                            variant="contained"
+                            endIcon={<WavingHandIcon/>}
+                            sx={{width: '20%', height:'60%'}}
+                            onClick={handleJoinBtn}
+                            disabled={!user || event.eventParticipants.some(participant => participant.uid === user.uid)}
+                        >
+                            {(!user ? "Join Event" : (event.eventParticipants.some(participant => participant.uid === user.uid) ? "Already Joined" : "Join Event"))}
                         </StyledButton>
+                        <br></br>
+                        {!user && <p style={{color: 'red'}}>You need to log in first before joining an event.</p>}
                     </Paper>
                 </Container>
     
@@ -264,11 +283,3 @@ const EventPageDisplay = () => {
 };
 
 export default EventPageDisplay;
-
-
-
-
-
-
-
-

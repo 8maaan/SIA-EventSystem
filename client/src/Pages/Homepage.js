@@ -101,7 +101,7 @@ const Homepage = () => {
               ) : (
                 Array.from({ length: 8 }, (_, index) => (
                   <div key={index}>
-                    <Skeleton animation="wave" key={index} variant="rectangular" width={340} height={180} />
+                    <Skeleton animation="wave" key={index} variant="rectangular" width={275} height={180} />
                     <Skeleton animation="wave"/>
                     <Skeleton animation="wave"/>
                   </div>

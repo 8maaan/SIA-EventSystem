@@ -110,7 +110,8 @@ function AddEvent() {
                 eventLocation: eventData.eventLocation,
                 eventDepartment: eventData.eventDepartment,
                 eventDescription: eventData.eventDescription,
-                eventImage: eventData.eventImage
+                eventImage: eventData.eventImage,
+                eventParticipants: []
             })
             emptyTextFields();
             handleSnackbarOpen("success", "Event has been created successfully 🎉")
