@@ -8,9 +8,11 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: '#f0f0f0',
         minHeight: '100vh',
         display: 'flex',
-        justifyContent: 'center',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
         alignItems: 'center',
         padding: theme.spacing(2),
+        position: 'relative',
     },
     card: {
         maxWidth: 400,
@@ -18,6 +20,7 @@ const useStyles = makeStyles((theme) => ({
         textAlign: 'center',
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
         borderRadius: theme.spacing(1),
+        marginTop: theme.spacing(2),
     },
     avatar: {
         width: theme.spacing(12),
@@ -26,7 +29,9 @@ const useStyles = makeStyles((theme) => ({
         marginBottom: theme.spacing(2),
     },
     button: {
-        marginTop: theme.spacing(2),
+        position: 'absolute',
+        top: theme.spacing(2),
+        left: theme.spacing(2),
     },
 }));
 
@@ -35,9 +40,8 @@ const ProfilePage = () => {
     const { user } = UserAuth();
     const history = useHistory();
 
-    const handleUpdateAccount = () => {
-        // Redirect to Microsoft update account page
-        window.location.href = 'https://account.microsoft.com/profile/';
+    const handleBack = () => {
+        history.goBack(); 
     };
 
     useEffect(() => {
@@ -46,6 +50,9 @@ const ProfilePage = () => {
 
     return (
         <Container className={classes.container}>
+            <Button variant="contained" color="primary" className={classes.button} onClick={handleBack}>
+                Back
+            </Button>
             <Card className={classes.card}>
                 <Avatar alt={user.name} src={user.photoUrl} className={classes.avatar} />
                 <Typography variant="h5" component="h1" gutterBottom>
@@ -54,7 +61,7 @@ const ProfilePage = () => {
                 <Typography variant="subtitle1" gutterBottom>
                     {user.email}
                 </Typography>
-                <Button variant="contained" color="primary" className={classes.button} onClick={handleUpdateAccount}>
+                <Button variant="contained" color="primary" onClick={handleUpdateAccount}>
                     Update Account
                 </Button>
             </Card>
