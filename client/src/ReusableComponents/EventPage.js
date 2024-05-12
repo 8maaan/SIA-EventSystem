@@ -58,7 +58,7 @@ const EventPage = () => {
             <h1 style={{fontSize: '40px ', display: 'flex', marginTop: '60px'}}>{event.eventName}</h1>
             <hr style={{border: '4px solid #FFD700'}}/>
             <p style={{display: 'flex', textDecoration: 'underline', marginTop: '50px'}}>{event.eventDepartment}</p>
-            <p style={{display: 'flex'}}>{event.eventDescription}</p>
+            <p style={{display: 'flex', textAlign:'justify'}}>{event.eventDescription}</p>
             <div style={{background: 'grey', paddingTop: '5px', paddingBottom: '5px'}}>
                 <h4 style={{display: 'flex'}}>{dateFormatter(event.eventTimestamp)} - {event.eventLocation}</h4>
             </div>

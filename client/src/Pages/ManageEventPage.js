@@ -10,18 +10,6 @@ import { db } from "../Firebase/firebaseConfig";
 import '../PagesCSS/ManageEventPage.css';
 import ReusableLoadingAnim from '../ReusableComponents/ReusableLoadingAnim';
 
-// COMMENTED ITEM BECAUSE NOT USED
-
-// const Item = styled(Paper)(({ theme }) => ({
-//     backgroundColor: 'rgba(68, 68, 68, 1)',
-//     ...theme.typography.body2,
-//     padding: '50px',
-//     paddingLeft: '100px',
-//     paddingRight: '100px',
-//     textAlign: 'center',
-//     color: 'white',
-// }));
-
 const ManageEventPage = () => {
     useEffect(() => {
         getEvents();
@@ -44,30 +32,51 @@ const ManageEventPage = () => {
     };
 
     const getEvents = async () => {
-        const querySnapshot = await getDocs(collection(db, "event"));
-        const events = querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
-        setEvents(events);
+        try {
+            const querySnapshot = await getDocs(collection(db, "event"));
+            const events = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
+            // Loop through each event and check if eventTimestamp exists before converting it
+            events.forEach(event => {
+                if (event.eventTimestamp) {
+                    event.eventTimestamp = new Date(event.eventTimestamp.toDate().toString()).toLocaleString() // Convert to string
+                }
+            });
+    
+            setEvents(events);
+        } catch (e) {
+            console.error(e);
+        }
     };
 
     return (
-        <div>
+        <div style={{display: 'inline-block', marginTop:'1.5%'}}>
             <h1 style={{fontSize: '40px', color:'maroon'}}>Manage Events</h1>
-            <div style={{display: 'flex', justifyContent: 'right', margin:'30px'}}>
-                <Button className='Button' variant="contained" sx={{background: '#faaa0a', color: 'white', fontWeight: '600', '&:hover': {backgroundColor: '#d69500'} }} onClick={handleCreate}>Create Event</Button>
+            <div style={{display: 'flex', justifyContent: 'right',}}>
+                <Button 
+                    variant="contained" 
+                    sx={{marginBottom:'30px',background: '#faaa0a', color: 'white', fontWeight: '600', '&:hover': {backgroundColor: '#d69500'} }} 
+                    onClick={handleCreate}
+                >
+                    Create Event
+                </Button>
             </div>
-            <div style={{margin:'30px'}}>
+            <div>
                 <Box sx={{ flexGrow: 1 }}>
-                    <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }} sx={{backgroundColor: 'rgba(44, 44, 44, 1)', padding: '1.5%'}}>
+                    <Grid container spacing={{ xs: 1, md: 1 }} columns={{ xs: 4, sm: 8, md: 12 }} sx={{backgroundColor: 'rgba(44, 44, 44, 1)', padding:' 2.5%'}}>
                         {events ? (
                                 events.map((event) => (
-                                <Grid item xs={12} sm={6} md={4} lg={3} key={event.id}>
-                                    <Card sx={{minHeight: '100%', backgroundColor: 'rgba(88, 88, 88, 1)', color: 'white' , border: 'solid black 1px'}}>
-                                        <CardContent>
+                                <Grid item xs={12} sm={6} md={3} lg={3} key={event.id}>
+                                    <Card sx={{height:'100%', backgroundColor: 'rgba(88, 88, 88, 1)', color: 'white',}}>
+                                        <CardContent sx={{height:'50%'}}>
                                             <Typography variant="h5" style={{display: 'flex', textAlign: 'left'}}>
                                                 {event.eventName}
                                             </Typography>
-                                            <Typography sx={{ mb: 1.5, display: 'flex'}} color="#FFFFF2">
-                                                {event.eventDescription}
+                                            <Typography sx={{ mb: 1.5, textAlign:'left'}} color="#FFFFF2">
+                                                {event.eventDepartment}
+                                            </Typography>
+                                            <Typography sx={{textAlign: 'left'}}>
+                                                {event.eventTimestamp}
                                             </Typography>
                                         </CardContent>
                                         <CardActions style={{display: 'flex', justifyContent: 'flex-end'}}>
