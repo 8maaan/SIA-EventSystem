@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { TextField, Button, Box, FormControl, Select, MenuItem, InputLabel } from '@mui/material';
+import { TextField, Button, Box, FormControl, Select, MenuItem, InputLabel, CircularProgress } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -9,6 +9,7 @@ import dayjs from 'dayjs';
 import { addDoc, collection, getDocs } from 'firebase/firestore';
 import { db } from '../Firebase/firebaseConfig';
 import ReusableSnackBar from '../ReusableComponents/ReusableSnackBar'
+import ReusableDialog from '../ReusableComponents/ReusableDialog';
 
 function AddEvent() {
     const eventDataInitialValues = {
@@ -91,12 +92,13 @@ function AddEvent() {
         setResetImageUploader(true);
     }
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
+    const handleSubmit = async () => {
+        setLoading(true);
 
         if(eventData.eventImage.trim() === ''){
             console.log('Empty')
             updateEventTxtError('eventImage', true);
+            setLoading(false);
             return;
         }else{
             updateEventTxtError('eventImage', false);
@@ -119,16 +121,15 @@ function AddEvent() {
             console.error(e);
             handleSnackbarOpen("error", "Error creating an event, try again later.")
         }
+        setLoading(false);
     };
     
-    // FOR SNACKBAR XD
-    const [snackbar, setSnackbar] = useState(false);
-    const [snackbarSeverity, setSnackbarSeverity] = useState('');
-    const [snackbarMessage, setSnackbarMessage] = useState('');
+    // FOR SNACKBAR, LOADING AND DIALOG
+    const [loading, setLoading] = useState(false);
+    
+    const [snackbar, setSnackbar] = useState({ status: false, severity: '', message: ''});
     const handleSnackbarOpen = (severity, message) => {
-        setSnackbarSeverity(severity);
-        setSnackbarMessage(message);
-        setSnackbar(true);
+        setSnackbar({ status: true, severity, message });
     }
 
     const handleSnackbarClose = (event, reason) => {
@@ -138,9 +139,26 @@ function AddEvent() {
         setSnackbar(false);
     };
 
+    const [openDialog, setOpenDialog] = useState(false);
+    const [confirmationStatus, setConfirmationStatus] = useState(false);
+    const handleOpenDialog = (event) => {
+        event.preventDefault();
+        setOpenDialog(true);
+    };
+
+    const handleConfirmationDialogClose = (confirmed) => {
+        setOpenDialog(false);
+        setConfirmationStatus(confirmed);
+        console.log(confirmationStatus);
+
+        if (confirmed) {
+            handleSubmit();
+        }
+    };
+
     return (
         <Box display="flex" justifyContent="center" alignItems="center" minHeight="90vh" position="relative">
-            <form onSubmit={handleSubmit} className='form-style'>
+            <form onSubmit={handleOpenDialog} className='form-style'>
                 <h1 style={{ textAlign: 'center', color:'#464a4f' }}>Create Event</h1>
                 <TextField
                     name="eventName"
@@ -210,10 +228,11 @@ function AddEvent() {
                 />
                 
                 <Button type="submit" variant="contained" style={{ backgroundColor: '#8a252c', color: 'white', borderRadius: '5px', alignSelf: 'flex-end', fontWeight:'600' }}>
-                    Add Event
+                    {loading ? <CircularProgress color="inherit" size="1.5rem" /> : "Add Event"}
                 </Button>
             </form>
-            {snackbar && <ReusableSnackBar open={snackbar} onClose={handleSnackbarClose} severity={snackbarSeverity} message={snackbarMessage} />}
+            {snackbar && <ReusableSnackBar open={snackbar.status} onClose={handleSnackbarClose} severity={snackbar.severity} message={snackbar.message} />}
+            {openDialog && <ReusableDialog status={true} onClose={handleConfirmationDialogClose} title={"Confirm event submission?"}/>}
         </Box>
     );
 }

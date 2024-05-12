@@ -16,3 +16,13 @@
 .form-style .MuiTextField-root {
     margin-bottom: 20px;
 }
+
+.form-style .MuiButton-root {
+    width: 150px;
+}
+
+@media (max-width: 480px){
+    .form-style{
+        width: 100%;
+    }
+}

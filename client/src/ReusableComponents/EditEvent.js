@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { TextField, Button, Box, FormControl, Select, MenuItem, InputLabel } from '@mui/material';
+import { TextField, Button, Box, FormControl, Select, MenuItem, InputLabel, CircularProgress } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -11,12 +11,15 @@ import { db } from '../Firebase/firebaseConfig';
 import ReusableSnackBar from '../ReusableComponents/ReusableSnackBar'
 import { useParams, useNavigate } from 'react-router-dom';
 import ReusableDialog from '../ReusableComponents/ReusableDialog'
+import ReusableLoadingAnim from '../ReusableComponents/ReusableLoadingAnim'
 
 function EditEvent() {
     const params = useParams();
     const eventId = params.eventId;
     const [eventData, setEventData] = useState(null);
     const [prevEventDate, setPrevEventDate] = useState(null);
+    const [loadingUpdate, setLoadingUpdate] = useState(false);
+    const [loadingDelete, setLoadingDelete] = useState(false);
 
     useEffect(() => {
         const getEvent = async () => {
@@ -108,6 +111,7 @@ function EditEvent() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setLoadingUpdate(true);
 
         if(eventData.eventImage.trim() === ''){
             console.log('Empty')
@@ -134,10 +138,13 @@ function EditEvent() {
             console.error(e);
             handleSnackbarOpen("error", "Error updating an event, try again later.")
         }
+
+        setLoadingUpdate(false);
     };
 
     const navigateTo = useNavigate();
     const handleDelete = async () => {
+        setLoadingDelete(true);
         try {
             const docRef = doc(db, 'event', eventId);
             await deleteDoc(docRef);
@@ -149,22 +156,16 @@ function EditEvent() {
             console.error("No such document!");
             handleSnackbarOpen("error", "Error deleting an event, try again later.");
         }
+        setLoadingDelete(false);
     }
 
     if(eventData){
         console.log(prevEventDate === eventData.eventTimestamp);
     }
-    
-    /* EXTRA STUFF BELOW TO REFRACTOR L8ER IF MORE TIME*/
 
-    // FOR SNACKBAR
-    const [snackbar, setSnackbar] = useState(false);
-    const [snackbarSeverity, setSnackbarSeverity] = useState('');
-    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbar, setSnackbar] = useState({ status: false, severity: '', message: ''});
     const handleSnackbarOpen = (severity, message) => {
-        setSnackbarSeverity(severity);
-        setSnackbarMessage(message);
-        setSnackbar(true);
+        setSnackbar({ status: true, severity, message });
     }
 
     const handleSnackbarClose = (event, reason) => {
@@ -192,7 +193,7 @@ function EditEvent() {
     };
 
     if(!eventData){
-        return <div>Loading...</div>
+        return <div><ReusableLoadingAnim/></div>
     }
 
     return (
@@ -267,15 +268,15 @@ function EditEvent() {
                 />
                 
                 <div style={{alignSelf: 'flex-end'}}>
-                    <Button variant="contained" style={{ backgroundColor: '#8a252c', color: 'white', borderRadius: '5px', fontWeight:'600', marginRight: '15px'}} onClick={handleOpenDialog}>
-                        Delete Event
+                    <Button variant="contained" sx={{ backgroundColor: '#8a252c', color: 'white', borderRadius: '5px', fontWeight:'600', marginRight: '15px', '&:hover': {backgroundColor: '#4d0606'}}} onClick={handleOpenDialog}>
+                        {loadingDelete ? <CircularProgress color='inherit' size={'1.5rem'}/> : 'Delete Event'}
                     </Button>
-                    <Button type="submit" variant="contained" style={{ backgroundColor: '#faaa0a', color: 'white', borderRadius: '5px', fontWeight:'600' }}>
-                        Update Event
+                    <Button type="submit" variant="contained" sx={{ backgroundColor: '#faaa0a', color: 'white', borderRadius: '5px', fontWeight:'600', '&:hover': {backgroundColor: '#d69500'} }}>
+                        {loadingUpdate ? <CircularProgress color='inherit' size={'1.5rem'}/> : 'Update Event'}
                     </Button>
                 </div>
             </form>
-            {snackbar && <ReusableSnackBar open={snackbar} onClose={handleSnackbarClose} severity={snackbarSeverity} message={snackbarMessage} />}
+            {snackbar && <ReusableSnackBar open={snackbar.status} onClose={handleSnackbarClose} severity={snackbar.severity} message={snackbar.message} />}
             {openDialog && <ReusableDialog status={true} onClose={handleConfirmationDialogClose} title={"Are you sure you want to delete this event?"}/>}
         </Box>
     );

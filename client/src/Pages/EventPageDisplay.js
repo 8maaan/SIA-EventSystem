@@ -6,13 +6,15 @@ import { db } from "../Firebase/firebaseConfig";
 import ParticlesComponent from '../ReusableComponents/particles';
 import "../PagesCSS/EventPage.css";
 import Countdown from 'react-countdown';
-import { Container, Paper, Typography, CardMedia, Button, Box } from '@mui/material';
+import { Container, Paper, Typography, CardMedia, Button, Box, CircularProgress } from '@mui/material';
 import EventIcon from '@mui/icons-material/Event';
 import PlaceIcon from '@mui/icons-material/Place';
 import LocationCityIcon from '@mui/icons-material/LocationCity';
 import WavingHandIcon from '@mui/icons-material/WavingHand';
+// import CancelIcon from '@mui/icons-material/Cancel';
 import { UserAuth } from '../Context-and-routes/AuthContext';
 import ReusableLoadingAnim from '../ReusableComponents/ReusableLoadingAnim'
+import ReusableSnackBar from '../ReusableComponents/ReusableSnackBar'
 
 
 const settings = {
@@ -43,7 +45,21 @@ const EventPageDisplay = () => {
     const { user } = UserAuth();
     const [event, setEvent] = useState(null);
     const { eventId } = useParams();
-    // {/* const navigate = useNavigate(); */ }
+    const [btnText, setBtnText] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    // FOR SNACKBAR
+    const [snackbar, setSnackbar] = useState({ status: false, severity: '', message: ''});
+    const handleSnackbarOpen = (severity, message) => {
+        setSnackbar({ status: true, severity, message });
+    }
+
+    const handleSnackbarClose = (event, reason) => {
+        if (reason === 'clickaway') {
+        return;
+        }
+        setSnackbar(false);
+    };
 
     useEffect(() => {
         const fetchEvent = async () => {
@@ -55,12 +71,12 @@ const EventPageDisplay = () => {
                 eventData.eventTimestamp = eventData.eventTimestamp.toDate();
                 setEvent(eventData);
             } else {
-                console.log("No such document!");
+                console.error("No such document!");
             }
         };
 
         fetchEvent();
-    }, [eventId]);
+    }, [btnText, eventId]);
 
     const dateFormatter = (timestamp) => {
         return `${timestamp.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })} - 
@@ -105,7 +121,7 @@ const EventPageDisplay = () => {
         } 
     });
     
-    {/* Particles adjustments */}
+    // {/* Particles adjustments */}
     const ParticlesWrapper = styled('div')({
         position: 'absolute', 
         width: '100%',
@@ -124,13 +140,27 @@ const EventPageDisplay = () => {
         return <ReusableLoadingAnim/>
     }
 
+    const handleToggleBtn = async () => {
+        setLoading(true);
+        if (event.eventParticipants.some(participant => participant.uid === user.uid)) {
+            // If user is already a participant, cancel attendance
+            await handleCancelBtn();
+        } else {
+            // If user is not a participant, join the event
+            await handleJoinBtn();
+        }
+        setLoading(false)
+    };
+
     const handleJoinBtn = async () => {
-        // Get user data from wherever it's stored in your application
+        
+        const currentDate = new Date().toLocaleString();  
         const userData = {
-            uid: user.uid, // Replace "user_uid_here" with the actual UID of the current user
+            uid: user.uid, 
             name:user.displayName,
-            email: user.email
-            // Add any other user data you need
+            email: user.email,
+            dateJoined: currentDate
+            
         };
     
         // Get a reference to the Firestore document
@@ -162,17 +192,53 @@ const EventPageDisplay = () => {
     
                 // Update the document in Firestore with the modified data
                 await setDoc(docRef, eventData);
-    
-                console.log('Participant added successfully!');
+
+                handleSnackbarOpen('success', 'You have successfully joined the event!');
+                setBtnText('Cancel Attendance');
             } else {
-                console.log("No such document!");
+                handleSnackbarOpen('warning', 'No such document!');
             }
         } catch (error) {
+            handleSnackbarOpen('error', 'Error updating document: Try again later');
             console.error("Error updating document: ", error);
         }
     };
+
+    const handleCancelBtn = async () => {
+        // Get a reference to the Firestore document
+        const docRef = doc(db, 'event', eventId);
     
+        try {
+            // Retrieve the current document data
+            const docSnap = await getDoc(docRef);
     
+            if (docSnap.exists()) {
+                // Get the current event data
+                const eventData = docSnap.data();
+    
+                // Find the index of the current user in the participant list
+                const participantIndex = eventData.eventParticipants.findIndex(participant => participant.uid === user.uid);
+    
+                if (participantIndex !== -1) {
+                    // Remove the participant from the eventParticipants array
+                    eventData.eventParticipants.splice(participantIndex, 1);
+    
+                    // Update the document in Firestore with the modified data
+                    await setDoc(docRef, eventData);
+    
+                    handleSnackbarOpen('success', 'You have successfully withdrawn from the event.');
+                    setBtnText('Join Event');
+                } else {
+                    handleSnackbarOpen('warning', 'User is not a participant of this event!');
+                }
+            } else {
+                handleSnackbarOpen('warning', 'No such document!');
+            }
+        } catch (error) {
+            handleSnackbarOpen('warning', 'Error updating document, try again later.');
+            console.error("Error updating document: ", error);
+        }
+    };
 
     return (
         <div>
@@ -259,23 +325,23 @@ const EventPageDisplay = () => {
                         boxShadow: '0 10px 1.875 30px rgba(0, 0, 0, 0.1)',
                         marginBottom: 2 
                     }}>  
-                        <Typography variant="h4" style={style} sx={{ fontWeight: 'bold', marginBottom: 1 }}>{event.eventName}
-                        </Typography>
-                        <Typography variant="body1" style={style}>{event.eventDescription}</Typography>
+                        <Typography variant="h4" style={style} sx={{ fontWeight: 'bold', marginBottom: 1 }}>{event.eventName}</Typography>
+                        <Typography variant="body1" style={style} textAlign={'justify'}>{event.eventDescription}</Typography>
                         <StyledButton
                             variant="contained"
-                            endIcon={<WavingHandIcon/>}
-                            sx={{width: '20%', height:'60%'}}
-                            onClick={handleJoinBtn}
-                            disabled={!user || event.eventParticipants.some(participant => participant.uid === user.uid)}
+                            endIcon={loading ? '' : <WavingHandIcon/>}
+                            sx={{width: '30%', height:'60%'}}
+                            onClick={handleToggleBtn}
+                            disabled={!user}
                         >
-                            {(!user ? "Join Event" : (event.eventParticipants.some(participant => participant.uid === user.uid) ? "Already Joined" : "Join Event"))}
+                            {/* TEMP FIX NEEDS REFACTORING */}
+                            {loading ? <CircularProgress color='inherit'/> : (!user ? "Join Event" : (event.eventParticipants.findIndex(participant => participant.uid === user.uid) !== -1 ? 'Cancel Event' : 'Join Event'))}
                         </StyledButton>
                         <br></br>
-                        {!user && <p style={{color: 'red'}}>You need to log in first before joining an event.</p>}
+                        {!user && <p style={{color: 'white'}}>You need to <span style={{color: 'maroon', fontWeight:'600'}}>sign in</span> first before joining an event.</p>}
                     </Paper>
                 </Container>
-    
+                {snackbar && <ReusableSnackBar open={snackbar.status} onClose={handleSnackbarClose} severity={snackbar.severity} message={snackbar.message} />}
             </Box>
         </div>
     );

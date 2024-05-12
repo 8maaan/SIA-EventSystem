@@ -181,7 +181,7 @@ export default function ReusableAppBar() {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                <MenuItem key={page} onClick={()=>{handleCloseNavMenu(page)}}>
                   <Typography textAlign="center">{page}</Typography>
                 </MenuItem>
               ))}
@@ -211,7 +211,7 @@ export default function ReusableAppBar() {
               <Button
                 key={page}
                 onClick={()=>{handleCloseNavMenu(page)}}
-                sx={{ my: 2, ml: 2, mr: 2, color: 'white', fontFamily: 'Poppins, sans-serif', display: 'block', fontWeight: '600' }}
+                sx={{ my: 2, ml: 2, mr: 2, color: 'white', fontFamily: 'Poppins, sans-serif', display: 'block', fontWeight: '600', '&:hover': {backgroundColor: 'rgba(255, 255, 255, 0.1)'} }}
               >
                 {page}
               </Button>

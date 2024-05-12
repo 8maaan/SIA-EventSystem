@@ -17,14 +17,18 @@ const Homepage = () => {
   const filterEvents = (events, eventChoice) => {
     const today = new Date();
     const endOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 6);
-
+  
     switch (eventChoice) {
       case 'This Week':
-        return events.filter(event => event.eventTimestamp >= today && event.eventTimestamp <= endOfWeek);
+        return events.filter(event => event.eventTimestamp >= today && event.eventTimestamp <= endOfWeek)
+                    .sort((a, b) => a.eventTimestamp - b.eventTimestamp);
       case 'Upcoming Events':
-        return events.filter(event => event.eventTimestamp > endOfWeek);
+        return events.filter(event => event.eventTimestamp > endOfWeek)
+                    .sort((a, b) => a.eventTimestamp - b.eventTimestamp);
       default:
-        return events;
+        // Filter out events that are in the past and sort by date
+        return events.filter(event => event.eventTimestamp >= today)
+                    .sort((a, b) => a.eventTimestamp - b.eventTimestamp);
     }
   };
 

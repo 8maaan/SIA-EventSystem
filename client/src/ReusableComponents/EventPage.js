@@ -3,12 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { db } from "../Firebase/firebaseConfig";
 import ReusableLoadingAnim from "../ReusableComponents/ReusableLoadingAnim"
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 
 const EventPage = () => {
 
     const params = useParams();
     const eventId = params.eventId;
     const [event, setEvent] = useState(null);
+    console.log(event);
 
     useEffect(() => {
         const getEvent = async () => {
@@ -52,20 +54,41 @@ const EventPage = () => {
       }
 
     return (
-        <div>
-            <h1 style={{fontSize: '40px ', display: 'flex', marginLeft: '50px', marginTop: '60px'}}>{event.eventName}</h1>
+        <div style={{margin: '5%'}}>
+            <h1 style={{fontSize: '40px ', display: 'flex', marginTop: '60px'}}>{event.eventName}</h1>
             <hr style={{border: '4px solid #FFD700'}}/>
-            <p style={{display: 'flex', marginLeft: '50px', textDecoration: 'underline', marginTop: '50px'}}>{event.eventDepartment}</p>
-            <p style={{display: 'flex', marginLeft: '50px'}}>{event.eventDescription}</p>
+            <p style={{display: 'flex', textDecoration: 'underline', marginTop: '50px'}}>{event.eventDepartment}</p>
+            <p style={{display: 'flex'}}>{event.eventDescription}</p>
             <div style={{background: 'grey', paddingTop: '5px', paddingBottom: '5px'}}>
-                <h4 style={{display: 'flex', marginLeft: '50px'}}>{dateFormatter(event.eventTimestamp)} - {event.eventLocation}</h4>
+                <h4 style={{display: 'flex'}}>{dateFormatter(event.eventTimestamp)} - {event.eventLocation}</h4>
             </div>
             <br/>
             <br/>
             <div style={{display: 'flex', justifyContent: 'space-evenly'}}>
                 <h4>List of Participants:</h4>
-                <h4>Invite Options:</h4>
             </div>
+            <TableContainer>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell align="center">Name</TableCell>
+                            <TableCell align="center">Email</TableCell>
+                            <TableCell align="center">Date and Time Joined</TableCell>
+                            {/* Add more columns as needed */}
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {event.eventParticipants.map((participant, index) => (
+                            <TableRow key={index}>
+                                <TableCell align="center">{participant.name}</TableCell>
+                                <TableCell align="center">{participant.email}</TableCell>
+                                <TableCell align="center">{participant.dateJoined}</TableCell>
+                                {/* Add more cells for additional participant details */}
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
         </div>
     )
 }

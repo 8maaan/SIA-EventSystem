@@ -43,25 +43,27 @@ const ReusableDialog = ({ status, onClose, title, context}) => {
             variant="contained" 
             onClick={() => handleClose(true)} 
             autoFocus
-            style={{
+            sx={{
                 backgroundColor: '#faaa0a', 
                 color: 'white', 
                 borderRadius: '5px', 
                 fontWeight:'600',
-                width:'20%'
+                width:'30%',
+                '&:hover': {backgroundColor: '#d69500'}
             }}
         >
-            Yes
+            Confirm
           </Button>
           <Button 
             variant="contained" 
             onClick={() => handleClose(false)}
-            style={{
+            sx={{
                 backgroundColor: '#8a252c', 
                 color: 'white', 
                 borderRadius: '5px', 
                 fontWeight:'600',
-                width:'20%'
+                width:'30%',
+                '&:hover': {backgroundColor: '#4d0606'}
             }}
         >
             Cancel

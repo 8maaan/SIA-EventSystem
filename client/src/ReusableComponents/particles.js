@@ -10,7 +10,7 @@ const ParticlesComponent = (props) => {
             await loadSlim(engine);  
         }).then(() => {
             setInit(true);
-            console.log("Particles engine initialized.");
+            // console.log("Particles engine initialized.");
         });
     }, []);
 
