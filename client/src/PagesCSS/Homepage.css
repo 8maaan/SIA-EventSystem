@@ -1,0 +1,127 @@
+
+.homepage-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 80vh;
+    /* border: solid black 1px; */
+}
+
+.events-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 70vh;
+}
+
+.events-container{
+    flex-direction: column;
+    justify-content: flex-start; 
+    /* ^tbh idk why adding this solves the top-layout problem of current and upcoming event wrappers lol */
+    margin: 2rem;
+    width: 80%;
+    border-radius: 1.25rem;
+    background-color: rgba(128, 128, 128, 0.2);
+    box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.30);
+}
+
+.selector-container{
+    margin-bottom: 2%;
+    text-align: left;
+}
+
+.currentEvent-wrapper{
+    width: 95%;
+    height: auto;
+    /* border: solid black 1px;    */
+}
+
+.currentEvent-wrapper{
+    margin-top: 1%;
+}
+
+.event-info-container{
+    display: flex;
+    justify-content: left;
+    flex-wrap: wrap;
+    align-items: center;
+    /* margin-bottom: 2.5%; */
+    height: auto;
+    column-gap: 1.5%;
+    /* border: solid black 1px; */
+}
+
+.event-info-card{
+    min-width: 23%;
+    /* height: 25vh; */
+    border: solid gray 1px;
+    border-radius: 20px;
+    margin-bottom: 2.5%;
+    transition: transform 0.3s ease;
+}
+
+.event-info-card:hover{
+    transform: scale(1.05);
+}
+
+.event-info-card-image {
+    height: 180px;
+    width: 100%; 
+    /* border: solid black 1px; */
+    overflow: hidden; 
+  }
+  
+.event-info-card-image img {
+    height: 100%; 
+    width: 100%;
+    aspect-ratio: 1 /1 ;
+    object-fit: cover; 
+    margin: 0; 
+    padding: 0;
+    border-top-right-radius: 20px;
+    border-top-left-radius: 20px;
+}
+
+.event-info-card-details p, h3{
+    margin: auto 0;
+    margin-left: 2.5%;
+    margin-top: 1%;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis; 
+    white-space: nowrap;
+}
+
+.event-info-card-details h3{
+    color: #8a252c;
+}
+
+.event-info-card-details p{
+    font-size: clamp(0.8rem, 1vw, 0.9rem);
+    margin-bottom: 1%;
+}
+
+@media (max-width: 768px),(max-width: 1245px) {
+    .event-info-container {
+      flex-direction: column;
+      min-height: auto;
+      /* padding: 1rem 0; */
+    }
+
+    .selector-container{
+        margin: 0 auto;
+        margin: 2.5%;
+        text-align: center;
+    }
+
+    .event-info-card{
+        width: 80%;
+        height: 100%;
+        margin-top: 1.5%;
+    }
+
+    .event-info-card-details p{
+        margin-bottom: 2.5%;
+    }
+  
+}
