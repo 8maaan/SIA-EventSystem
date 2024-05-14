@@ -1,29 +1,24 @@
 import MenuIcon from '@mui/icons-material/Menu';
 import { AppBar, Avatar, Box, Button, Container, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography } from '@mui/material';
-import { getDocs, collection, query, where } from 'firebase/firestore';
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserAuth } from '../Context-and-routes/AuthContext';
-import { db } from "../Firebase/firebaseConfig";
 import WildCatsLogo from '../Images/WildCatsLogo.jpg';
 import LoginModal from './LoginModal';
+import { useUserRoles } from './useUserRoles';
 
 export default function ReusableAppBar() {
   const { logOut, user } = UserAuth();
-  const [isOrganizer, setIsOrganizer] = useState(null);
+
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const navigateTo = useNavigate();
 
-  const pages = user ? ['Home', 'Community'] : ['Home', 'Community', 'Sign In'];
-  const settings = isOrganizer ? ['Profile', 'Manage Events', 'Logout'] : ['Profile', 'Logout'];
+  const { isOrganizer, isAdmin } = useUserRoles(user ? user.email : null);
 
-  useEffect(() => {
-    if (user) {
-      checkIsOrganizer(user.email);
-    }
-  }, [user]);
+  const pages = user ? (!isAdmin ? ['Home', 'Community'] : ['Home', 'Community', 'Applicants']) : ['Home', 'Community', 'Sign In'];
+  const settings = isOrganizer ? ['Profile', 'Manage Events', 'Logout'] : ['Profile', 'Logout'];
 
   const handleModalClose = () => setOpenModal(false);
   const handleSignIn = () => setOpenModal(true);
@@ -69,20 +64,6 @@ export default function ReusableAppBar() {
   };
 
   const navigateToLanding = () => navigateTo('/');
-
-  const checkIsOrganizer = useCallback(async (signedInEmail) => {
-    try {
-      const querySnapshot = await getDocs(
-        query(
-          collection(db, "organizers"),
-          where("email", "==", signedInEmail)
-        )
-      );
-      setIsOrganizer(!querySnapshot.empty);
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
 
   return (
     <AppBar position="static" sx={{backgroundColor: '#8a252c'}}>
