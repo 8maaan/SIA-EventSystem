@@ -1,72 +1,54 @@
 import MenuIcon from '@mui/icons-material/Menu';
 import { AppBar, Avatar, Box, Button, Container, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography } from '@mui/material';
-import { doc, getDoc, setDoc, getDocs, collection } from 'firebase/firestore';
-import { useState, useEffect } from 'react';
+import { getDocs, collection, query, where } from 'firebase/firestore';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserAuth } from '../Context-and-routes/AuthContext';
 import { db } from "../Firebase/firebaseConfig";
 import WildCatsLogo from '../Images/WildCatsLogo.jpg';
-
+import LoginModal from './LoginModal';
 
 export default function ReusableAppBar() {
-
-  const { signInWithMicrosoft, logOut, user} = UserAuth();
+  const { logOut, user } = UserAuth();
   const [isOrganizer, setIsOrganizer] = useState(null);
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
+  const navigateTo = useNavigate();
 
   const pages = user ? ['Home', 'Community'] : ['Home', 'Community', 'Sign In'];
   const settings = isOrganizer ? ['Profile', 'Manage Events', 'Logout'] : ['Profile', 'Logout'];
 
-  const [anchorElNav, setAnchorElNav] = useState(null);
-  const [anchorElUser, setAnchorElUser] = useState(null);
-
-  const navigateTo = useNavigate();
   useEffect(() => {
-    try{
-      if (user) {
-        checkIsOrganizer(user.email);
-      }
-    }catch(e){
-      console.error(e);
+    if (user) {
+      checkIsOrganizer(user.email);
     }
   }, [user]);
 
-  const handleSignIn = async () =>{
-      try{
-          const signIn = await signInWithMicrosoft();
-          console.log(signIn);
-          handleRegister(signIn.user.uid, signIn.user.email, signIn.user.displayName);
-      }catch(e){
-          console.log(e.message);
-      }
+  const handleModalClose = () => setOpenModal(false);
+  const handleSignIn = () => setOpenModal(true);
+
+  const handleSignOut = async () => {
+    try {
+      await logOut();
+      navigateTo('/');
+    } catch (e) {
+      console.log(e.message);
+    }
   }
 
-  const handleSignOut = async () =>{
-      try{
-          await logOut();
-          navigateTo('/');
-      }catch (e){
-          console.log(e.message);
-      }
-  }
-
-  const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget);
-  };
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
-  };
-
+  const handleOpenNavMenu = (event) => setAnchorElNav(event.currentTarget);
+  const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget);
+  
   const handleCloseNavMenu = (page) => {
     setAnchorElNav(null);
-    switch(page){
+    switch (page) {
       case 'Sign In':
         handleSignIn();
         break;
-
       case 'Home':
         navigateTo('/home');
         break;
-
       default:
         break;
     }
@@ -74,66 +56,42 @@ export default function ReusableAppBar() {
 
   const handleCloseUserMenu = (page) => {
     setAnchorElUser(null);
-    switch(page){
+    switch (page) {
       case 'Manage Events':
         navigateTo('/manage-event')
         break;
       case 'Logout':
         handleSignOut();
         break;
-
       default:
         break;
     }
   };
 
-  const navigateToLanding = () =>{
-    navigateTo('/');
-  }
+  const navigateToLanding = () => navigateTo('/');
 
-  const handleRegister = async (uid, email, displayName) => {
-    try{
-      const docRef = doc(db, 'user', uid);
-      const docSnap = await getDoc(docRef);
-
-      if (!docSnap.exists()) {
-        await setDoc(doc(db, "user", uid), {
-          email: email,
-          displayName: displayName,
-        });
-      }
-    }catch(e){
-      console.log(e);
-    }
-  };
-
-
-
-  const checkIsOrganizer = async (signedInEmail) =>{
+  const checkIsOrganizer = useCallback(async (signedInEmail) => {
     try {
-      const querySnapshot = await getDocs(collection(db, "organizers"));
-      const organizers = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-  
-      const userIsOrganizer = organizers.some((organizer) => organizer.email === signedInEmail);
-      setIsOrganizer(userIsOrganizer);
+      const querySnapshot = await getDocs(
+        query(
+          collection(db, "organizers"),
+          where("email", "==", signedInEmail)
+        )
+      );
+      setIsOrganizer(!querySnapshot.empty);
     } catch (error) {
       console.error(error);
     }
-  }
-
- 
-  
+  }, []);
 
   return (
     <AppBar position="static" sx={{backgroundColor: '#8a252c'}}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          
           <Typography
             variant="h6"
             noWrap
             component="a"
-            // href="https://cit.edu/"
             onClick={navigateToLanding}
             sx={{
               mr: 2,
@@ -146,7 +104,6 @@ export default function ReusableAppBar() {
               cursor: 'pointer'
             }}
           >
-            
             EvntListnr
           </Typography>
 
@@ -159,8 +116,7 @@ export default function ReusableAppBar() {
               onClick={handleOpenNavMenu}
               color="inherit"
             >
-              {/* MENU ICON */}
-              <MenuIcon/>
+              <MenuIcon />
             </IconButton>
             <Menu
               id="menu-appbar"
@@ -181,7 +137,7 @@ export default function ReusableAppBar() {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={()=>{handleCloseNavMenu(page)}}>
+                <MenuItem key={page} onClick={() => handleCloseNavMenu(page)}>
                   <Typography textAlign="center">{page}</Typography>
                 </MenuItem>
               ))}
@@ -210,8 +166,8 @@ export default function ReusableAppBar() {
             {pages.map((page) => (
               <Button
                 key={page}
-                onClick={()=>{handleCloseNavMenu(page)}}
-                sx={{ my: 2, ml: 2, mr: 2, color: 'white', fontFamily: 'Poppins, sans-serif', display: 'block', fontWeight: '600', '&:hover': {backgroundColor: 'rgba(255, 255, 255, 0.1)'} }}
+                onClick={() => handleCloseNavMenu(page)}
+                sx={{ my: 2, ml: 2, mr: 2, color: 'white', fontFamily: 'Poppins, sans-serif', display: 'block', fontWeight: '600', '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.1)' } }}
               >
                 {page}
               </Button>
@@ -222,7 +178,6 @@ export default function ReusableAppBar() {
             <Tooltip title="Open settings">
               {user ?
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  {/* AVATAR */}
                   <Avatar src={WildCatsLogo} />
                 </IconButton>
                 :
@@ -246,14 +201,15 @@ export default function ReusableAppBar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={()=>{handleCloseUserMenu(setting)}}>
+                <MenuItem key={setting} onClick={() => handleCloseUserMenu(setting)}>
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}
             </Menu>
           </Box>
         </Toolbar>
+        {openModal && (<LoginModal open={openModal} onClose={handleModalClose} />)}
       </Container>
     </AppBar>
   );
-} 
+}
