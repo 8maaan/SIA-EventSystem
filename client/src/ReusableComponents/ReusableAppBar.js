@@ -44,6 +44,9 @@ export default function ReusableAppBar() {
       case 'Home':
         navigateTo('/home');
         break;
+      case 'Applicants':
+        navigateTo('/organizer-applicants');
+        break;
       default:
         break;
     }

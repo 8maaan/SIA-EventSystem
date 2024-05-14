@@ -1,0 +1,11 @@
+.oa-body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    min-height: 45vh;
+}
+
+.table-container{
+    width: 90%;
+}
