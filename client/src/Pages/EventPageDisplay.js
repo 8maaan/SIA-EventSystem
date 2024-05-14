@@ -1,20 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import EventIcon from '@mui/icons-material/Event';
+import GroupIcon from '@mui/icons-material/Group';
+import LocationCityIcon from '@mui/icons-material/LocationCity';
+import PlaceIcon from '@mui/icons-material/Place';
+import WavingHandIcon from '@mui/icons-material/WavingHand';
+import { Box, Button, CardMedia, CircularProgress, Container, Paper, Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { db } from "../Firebase/firebaseConfig";
-import ParticlesComponent from '../ReusableComponents/particles';
-import "../PagesCSS/EventPage.css";
+import React, { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
-import { Container, Paper, Typography, CardMedia, Button, Box, CircularProgress } from '@mui/material';
-import EventIcon from '@mui/icons-material/Event';
-import PlaceIcon from '@mui/icons-material/Place';
-import LocationCityIcon from '@mui/icons-material/LocationCity';
-import WavingHandIcon from '@mui/icons-material/WavingHand';
+import { useParams } from 'react-router-dom';
+import { db } from "../Firebase/firebaseConfig";
+import "../PagesCSS/EventPage.css";
+import ParticlesComponent from '../ReusableComponents/particles';
 // import CancelIcon from '@mui/icons-material/Cancel';
 import { UserAuth } from '../Context-and-routes/AuthContext';
-import ReusableLoadingAnim from '../ReusableComponents/ReusableLoadingAnim'
-import ReusableSnackBar from '../ReusableComponents/ReusableSnackBar'
+import ReusableLoadingAnim from '../ReusableComponents/ReusableLoadingAnim';
+import ReusableSnackBar from '../ReusableComponents/ReusableSnackBar';
 
 
 const settings = {
@@ -312,6 +313,10 @@ const EventPageDisplay = () => {
                             {/* Department*/}
                             <Typography variant="h6"><LocationCityIcon sx={{ width: '3.125 rem', height: '3.125 rem' }} /></Typography>
                             <Typography style={style} sx={{ marginLeft: '120 px' }}>{event.eventDepartment}</Typography>
+                            
+                            {/* Organizer*/}
+                            <Typography variant="h6"><GroupIcon sx={{ width: '3.125 rem', height: '3.125 rem' }} /></Typography>
+                            <Typography style={style} sx={{ marginLeft: '120 px' }}>{event.eventOrganizer ? event.eventOrganizer : '-'}</Typography>
 
                         </Paper>
                     </Paper>
