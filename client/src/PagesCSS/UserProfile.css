@@ -1,0 +1,60 @@
+/* UserProfile.css */
+
+.user-profile-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.profile-container {
+    width: 80%; /* Adjust the width as needed */
+    max-width: 600px; /* Limit the maximum width */
+    padding: 20px;
+    background-color: #f7f7f7;
+    border: 2px solid gray; 
+    border-radius: 5px; 
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+}
+
+.profile-section {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+
+
+
+.profile-image-container {
+    display: contents;
+    margin-right: 20px; 
+    align-self: flex-start;
+}
+
+.welcome-message-container {
+    flex: 1; 
+}
+
+.additional-info {
+    display: flex;
+    flex-direction: column; 
+    align-items: flex-start; 
+    margin-top: 50px;
+
+}
+
+
+.additional-info-container{
+    align-content: start;
+    min-width: 90% !important;
+    border: 2px solid black;
+    border-radius: 5px; 
+    border-style: dashed;
+    background-color: white;
+    margin: 1px;
+
+}
+
+.additional-info-container.h7 {
+    align-content: baseline;
+}

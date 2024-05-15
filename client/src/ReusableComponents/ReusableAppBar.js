@@ -69,7 +69,7 @@ export default function ReusableAppBar() {
   const navigateToLanding = () => navigateTo('/');
 
   return (
-    <AppBar position="static" sx={{backgroundColor: '#8a252c'}}>
+    <AppBar position="static" sx={{ backgroundColor: '#8a252c' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Typography
@@ -127,12 +127,12 @@ export default function ReusableAppBar() {
               ))}
             </Menu>
           </Box>
-          
+
           <Typography
             variant="h5"
             noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
+            component={Link} // Use Link for navigation
+            to="/"
             sx={{
               mr: 2,
               display: { xs: 'flex', md: 'none' },
@@ -146,6 +146,7 @@ export default function ReusableAppBar() {
           >
             EvntListnr
           </Typography>
+
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end' }}>
             {pages.map((page) => (
               <Button
@@ -186,6 +187,7 @@ export default function ReusableAppBar() {
             >
               {settings.map((setting) => (
                 <MenuItem key={setting} onClick={() => handleCloseUserMenu(setting)}>
+                <MenuItem key={setting} onClick={() => handleCloseUserMenu(setting)}>
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}
@@ -197,3 +199,4 @@ export default function ReusableAppBar() {
     </AppBar>
   );
 }
+

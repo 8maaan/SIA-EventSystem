@@ -12,6 +12,7 @@ import EventPage from './ReusableComponents/EventPage';
 import ReusableAppBar from './ReusableComponents/ReusableAppBar';
 import EventPageDisplay from './Pages/EventPageDisplay';
 import OrganizerApplicants from './Pages/OrganizerApplicants';
+import UserProfile from './Pages/UserProfile';
 
 
 function App() {
@@ -37,7 +38,9 @@ function App() {
 
             <Route path="/organizer-applicants" element={<OrganizerApplicants/>} />
 
-            <Route path="*" element={<PageNotFound/>}/>
+            <Route path="*" element={<PageNotFound/>}/>            <Route path="/profile" element={<UserProfile />} />
+
+
           </Routes>
         </BrowserRouter>
       </AuthContextProvider>
