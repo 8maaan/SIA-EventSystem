@@ -26,15 +26,18 @@ const ReusableDialog = ({ status, onClose, title, context, confirmText = "Confir
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
+        {/* The title for the dialog */}
         <DialogTitle id="alert-dialog-title">
           {title}
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
+            {/* Add any additional content here if needed */}
             {context}
           </DialogContentText>
         </DialogContent>
         <DialogActions style={{ justifyContent: 'center' }}>
+          {/* Options */}
           {!isSuccess && (
             <>
               <Button 
@@ -84,6 +87,7 @@ const ReusableDialog = ({ status, onClose, title, context, confirmText = "Confir
               Close
             </Button>
           )}
+          
         </DialogActions>
       </Dialog>
     </React.Fragment>
