@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
 import { AuthContextProvider } from './Context-and-routes/AuthContext';
-import { ProtectedRoute } from './Context-and-routes/Routes';
+import { ProtectedRoute, OrganizerRoute } from './Context-and-routes/Routes';
 import CreateEvent from './Pages/CreateEvent';
 import Homepage from './Pages/Homepage';
 import LandingPage from './Pages/LandingPage';
@@ -30,10 +30,10 @@ function App() {
             <Route path="/event-page/:eventId" element={<EventPageDisplay/>} />
 
             {/*PROTECTED ROUTES */}
-            <Route path="/manage-event" element={<ProtectedRoute><ManageEventPage/></ProtectedRoute>}/>
-            <Route path="/edit-event/:eventId" element={<ProtectedRoute><EditEvent/></ProtectedRoute>}/>
-            <Route path="/manage-event/:eventId" element={<ProtectedRoute><EventPage/></ProtectedRoute>}/>
-            <Route path="/create-event" element={<ProtectedRoute><CreateEvent/></ProtectedRoute>}/>
+            <Route path="/manage-event" element={<OrganizerRoute><ManageEventPage/></OrganizerRoute>}/>
+            <Route path="/edit-event/:eventId" element={<OrganizerRoute><EditEvent/></OrganizerRoute>}/>
+            <Route path="/manage-event/:eventId" element={<OrganizerRoute><EventPage/></OrganizerRoute>}/>
+            <Route path="/create-event" element={<OrganizerRoute><CreateEvent/></OrganizerRoute>}/>
 
             <Route path="/organizer-applicants" element={<OrganizerApplicants/>} />
 

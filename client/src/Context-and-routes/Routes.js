@@ -8,7 +8,20 @@ import PageNotFound from '../Pages/PageNotFound';
 // TO BE OPTIMIZED
 
 // IF USER NOT LOGGED IN, PREVENT ACCESS, REDIRECT TO /LOGIN
-export const ProtectedRoute = ({ children }) => {
+export const ProtectedRoute = ({children}) => {
+  const { user, loading } = UserAuth();
+
+  if(loading){
+      return <div><ReusableLoadingAnim/></div>
+  }
+
+  if(user){
+      return children;
+  }
+  return <PageNotFound/>
+}
+
+export const OrganizerRoute = ({ children }) => {
     const { user } = UserAuth();
     const userEmail = user ? user.email : null;
     const [isOrganizer, setIsOrganizer] = useState(null); 
