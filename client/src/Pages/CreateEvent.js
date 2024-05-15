@@ -27,7 +27,6 @@ function AddEvent() {
         eventDescription: "",
     };
     const [departments, setDepartments] = useState(null);
-    const [organizer, setOrganizer] = useState(null);
     const [eventData, setEventData] = useState(eventDataInitialValues);
 
     const [eventDataError, setEventDataError] = useState({

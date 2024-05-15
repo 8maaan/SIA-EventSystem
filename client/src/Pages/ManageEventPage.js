@@ -101,26 +101,26 @@ const ManageEventPage = () => {
     }, []);
 
     return (
-        <div style={{ display: 'flex', marginTop: '1.5%', flexDirection:'column'}}>
+        <div style={{ display: 'flex', marginTop: '1.5%', flexDirection:'column', margin: '2.5%'}}>
             <h1 style={{ fontSize: '40px', color: 'maroon' }}>Manage Events</h1>
             <div style={{ display: 'flex', justifyContent: 'right' }}>
                 <Button
                     variant="contained"
-                    sx={{ marginBottom: '30px', marginRight: '1%', background: '#faaa0a', color: 'white', fontWeight: '600', '&:hover': { backgroundColor: '#d69500' } }}
+                    sx={{ marginBottom: '30px', background: '#faaa0a', color: 'white', fontWeight: '600', '&:hover': { backgroundColor: '#d69500' } }}
                     onClick={handleCreate}
                 >
                     Create Event
                 </Button>
             </div>
-            <Grid container spacing={2} sx={{ backgroundColor: 'rgba(44, 44, 44, 1)', display: 'flex', justifyContent: 'left', padding: '1.5%', flexWrap: 'wrap'}}>
+            <Grid container columns={{ xs: 4, sm: 8, md: 12 }} sx={{ backgroundColor: 'rgba(44, 44, 44, 1)', display: 'flex', justifyContent: 'left', padding: '1.5%', flexWrap: 'wrap'}}>
                 {events === null ? (
                     <CircularProgress color="inherit" />
                 ) : events.length === 0 ? (
                     <Typography variant="h6" color="white">No Events</Typography>
                 ) : (
                     events.map((event, idx) => (
-                        <Grid item key={event.id}>
-                            <Card sx={{ backgroundColor: 'rgba(88, 88, 88, 1)', color: 'white'}}>
+                        <Grid item xs={12} sm={6} md={3} lg={3}key={event.id}>
+                            <Card sx={{ backgroundColor: 'rgba(88, 88, 88, 1)', color: 'white', transition: 'transform 0.2s ease-in-out','&:hover': { transform: 'scale(1.05)',}}}>
                                 <Link to={`/manage-event/${event.id}`} key={idx} style={{ textDecoration: 'none', color: 'inherit' }}>
                                     <CardContent>
                                         <Typography variant="h5" style={{ textAlign: 'left' }}>
