@@ -21,7 +21,7 @@ const UserProfile = () => {
 
   useEffect(() => {
     const checkIfOrganizer = async () => {
-      if (user) {
+      if (user && user.email) {
         const organizersRef = collection(db, 'organizers');
         const q = query(organizersRef, where("email", "==", user.email));
         const querySnapshot = await getDocs(q);
@@ -36,6 +36,14 @@ const UserProfile = () => {
   }, [user]);
 
   const handleApplyAsOrganizer = async () => {
+    if (!user || !user.email) {
+      setDialogTitle('Error');
+      setDialogMessage('User information is not available. Please try again later.');
+      setIsSuccess(false);
+      setOpenDialog(true);
+      return;
+    }
+
     try {
       await addDoc(collection(db, 'organizerApplicants'), {
         id_number: user.school_id_number || '00-0000-000',
@@ -68,16 +76,13 @@ const UserProfile = () => {
   };
 
   const handleCloseDialog = (confirmed) => {
+    setOpenDialog(false);
     if (confirmed && confirmAction) {
-      confirmAction().then(() => {
-        setOpenDialog(false);
-        setConfirmAction(null);
-      }).catch(() => {
-        setOpenDialog(false);
+      const action = confirmAction;
+      setConfirmAction(null);
+      action().catch(() => {
         setConfirmAction(null);
       });
-    } else {
-      setOpenDialog(false);
     }
   };
 
@@ -126,9 +131,9 @@ const UserProfile = () => {
               />
             )}
             <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <TextField label="First Name" variant="outlined" defaultValue={user.displayName || 'John'} />
-              <TextField label="Id" variant="outlined" defaultValue={user.school_id_number || '00-0000-000'} />
-              <TextField label="Email Address" variant="outlined" defaultValue={user.email || 'user@email.com'} disabled />
+              <TextField label="First Name" variant="outlined" defaultValue={user?.displayName || 'John'} />
+              <TextField label="Id" variant="outlined" defaultValue={user?.school_id_number || '00-0000-000'} />
+              <TextField label="Email Address" variant="outlined" defaultValue={user?.email || 'user@email.com'} disabled />
               <Button
                 component="a"
                 href="https://account.microsoft.com/profile/"
@@ -144,7 +149,7 @@ const UserProfile = () => {
       <NotificationModal
         open={openNotificationModal}
         handleClose={handleCloseNotificationModal}
-        userEmail={user.email}
+        userEmail={user?.email}
       />
       <ReusableDialog
         status={openDialog}
@@ -158,6 +163,8 @@ const UserProfile = () => {
 };
 
 export default UserProfile;
+
+
 
 
 
