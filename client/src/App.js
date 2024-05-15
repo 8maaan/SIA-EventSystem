@@ -29,6 +29,8 @@ function App() {
             <Route path="/home" element={<Homepage/> }/>
             <Route path="/event/:eventId" element={<EventPage/>} />
             <Route path="/event-page/:eventId" element={<EventPageDisplay/>} />
+            <Route path="/profile" element={<UserProfile/>}/>
+>>>>>>>>> Temporary merge branch 2
 
             {/*PROTECTED ROUTES */}
             <Route path="/manage-event" element={<OrganizerRoute><ManageEventPage/></OrganizerRoute>}/>

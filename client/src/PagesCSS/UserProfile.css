@@ -1,60 +1,71 @@
-/* UserProfile.css */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+}
+
+.container-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f0f2f5;
+  min-height: 100vh;
+  padding: 2rem;
+}
 
 .user-profile-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+  display: flex;
+  width: 100%;
+  max-width: 1200px;
+  background-color: #8a252c;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
-.profile-container {
-    width: 80%; /* Adjust the width as needed */
-    max-width: 600px; /* Limit the maximum width */
-    padding: 20px;
-    background-color: #f7f7f7;
-    border: 2px solid gray; 
-    border-radius: 5px; 
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+.sidebar {
+  background-color: #8a252c;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
 }
 
-.profile-section {
-    display: inline-block;
-    width: 100%;
-    height: 100%;
+.profile-details {
+  padding: 3rem;
+  flex: 1;
+  background-color: #fff;
+  border-radius: 0 10px 10px 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-
-
-.profile-image-container {
-    display: contents;
-    margin-right: 20px; 
-    align-self: flex-start;
+.MuiTextField-root {
+  width: 100%;
+  background-color: #fff;
 }
 
-.welcome-message-container {
-    flex: 1; 
+.MuiButton-root {
+  align-self: flex-start;
+  background-color: #8a252c !important;
+  color: #fff;
+  padding: 0.5rem 1.5rem;
+  border-radius: 4px;
+  text-transform: none;
 }
 
-.additional-info {
-    display: flex;
-    flex-direction: column; 
-    align-items: flex-start; 
-    margin-top: 50px;
-
+.MuiButton-root:hover {
+  background-color: #6d1d22 !important;
 }
 
+@media (max-width: 960px) {
+  .user-profile-wrapper {
+    flex-direction: column;
+  }
 
-.additional-info-container{
-    align-content: start;
-    min-width: 90% !important;
-    border: 2px solid black;
-    border-radius: 5px; 
-    border-style: dashed;
-    background-color: white;
-    margin: 1px;
-
-}
-
-.additional-info-container.h7 {
-    align-content: baseline;
+  .profile-details {
+    border-radius: 0 0 10px 10px;
+    padding: 2rem;
+  }
 }

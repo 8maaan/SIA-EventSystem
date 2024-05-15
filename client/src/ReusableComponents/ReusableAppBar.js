@@ -58,6 +58,9 @@ export default function ReusableAppBar() {
       case 'Manage Events':
         navigateTo('/manage-event')
         break;
+      case 'Profile':
+        navigateTo('/profile');
+        break;
       case 'Logout':
         handleSignOut();
         break;
