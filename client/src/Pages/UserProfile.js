@@ -90,16 +90,16 @@ const UserProfile = () => {
               sx={{ width: '7rem', height: '7rem', mb: 2 }}
             />
             <List>
-              <ListItem button>
+              <ListItem >
                 <ListItemText primary="Profile" />
               </ListItem>
-              <ListItem button onClick={handleOpenNotificationModal}>
+              <ListItem  onClick={handleOpenNotificationModal}>
                 <ListItemText primary="Notifications" />
                 <IconButton edge="end" color="inherit" onClick={handleOpenNotificationModal}>
                   <NotificationsIcon />
                 </IconButton>
               </ListItem>
-              <ListItem button onClick={handleOpenDialog}>
+              <ListItem onClick={handleOpenDialog}>
                 <ListItemText primary="Apply as Organizer" />
               </ListItem>
             </List>

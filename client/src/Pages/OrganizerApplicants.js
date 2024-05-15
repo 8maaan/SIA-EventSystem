@@ -55,7 +55,7 @@ const OrganizerApplicants = () => {
           });
           await deleteDoc(doc(db, 'organizerApplicants', id));
 
-          // Create notification for the applicant
+          // notification need pa ug polish
           await addDoc(collection(db, 'notification'), {
             recipient: applicant.email,
             message: 'Your application to become an organizer has been approved.',
