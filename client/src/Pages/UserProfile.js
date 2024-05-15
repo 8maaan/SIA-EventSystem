@@ -48,12 +48,15 @@ const UserProfile = () => {
       setOpenDialog(true);
     } catch (e) {
       console.error('Error adding document: ', e);
-      alert('Failed to submit application.');
+      setDialogTitle('Error');
+      setDialogMessage('Failed to submit application.');
+      setIsSuccess(true);
+      setOpenDialog(true);
     }
   };
 
   const handleConfirm = () => {
-    handleApplyAsOrganizer();
+    return handleApplyAsOrganizer();
   };
 
   const handleOpenDialog = () => {
@@ -65,9 +68,16 @@ const UserProfile = () => {
   };
 
   const handleCloseDialog = (confirmed) => {
-    setOpenDialog(false);
     if (confirmed && confirmAction) {
-      confirmAction();
+      confirmAction().then(() => {
+        setOpenDialog(false);
+        setConfirmAction(null);
+      }).catch(() => {
+        setOpenDialog(false);
+        setConfirmAction(null);
+      });
+    } else {
+      setOpenDialog(false);
     }
   };
 
@@ -93,7 +103,7 @@ const UserProfile = () => {
               <ListItem >
                 <ListItemText primary="Profile" />
               </ListItem>
-              <ListItem  onClick={handleOpenNotificationModal}>
+              <ListItem onClick={handleOpenNotificationModal}>
                 <ListItemText primary="Notifications" />
                 <IconButton edge="end" color="inherit" onClick={handleOpenNotificationModal}>
                   <NotificationsIcon />
@@ -148,6 +158,7 @@ const UserProfile = () => {
 };
 
 export default UserProfile;
+
 
 
 
