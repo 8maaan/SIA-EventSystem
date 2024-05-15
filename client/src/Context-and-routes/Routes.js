@@ -1,7 +1,4 @@
 import { UserAuth } from './AuthContext'
-import { useEffect, useState } from 'react';
-import { db } from '../Firebase/firebaseConfig';
-import { collection, getDocs } from 'firebase/firestore';
 import ReusableLoadingAnim from '../ReusableComponents/ReusableLoadingAnim'
 import PageNotFound from '../Pages/PageNotFound';
 import { useUserRoles } from '../ReusableComponents/useUserRoles';
