@@ -21,7 +21,7 @@ const UserProfile = () => {
 
   useEffect(() => {
     const checkIfOrganizer = async () => {
-      if (user) {
+      if (user && user.email) {
         const organizersRef = collection(db, 'organizers');
         const q = query(organizersRef, where("email", "==", user.email));
         const querySnapshot = await getDocs(q);
@@ -36,6 +36,14 @@ const UserProfile = () => {
   }, [user]);
 
   const handleApplyAsOrganizer = async () => {
+    if (!user || !user.email) {
+      setDialogTitle('Error');
+      setDialogMessage('User information is not available!');
+      setIsSuccess(false);
+      setOpenDialog(true);
+      return;
+    }
+
     try {
       await addDoc(collection(db, 'organizerApplicants'), {
         id_number: user.school_id_number || '00-0000-000',
@@ -48,12 +56,15 @@ const UserProfile = () => {
       setOpenDialog(true);
     } catch (e) {
       console.error('Error adding document: ', e);
-      alert('Failed to submit application.');
+      setDialogTitle('Error');
+      setDialogMessage('Failed to submit application.');
+      setIsSuccess(true);
+      setOpenDialog(true);
     }
   };
 
   const handleConfirm = () => {
-    handleApplyAsOrganizer();
+    return handleApplyAsOrganizer();
   };
 
   const handleOpenDialog = () => {
@@ -67,7 +78,11 @@ const UserProfile = () => {
   const handleCloseDialog = (confirmed) => {
     setOpenDialog(false);
     if (confirmed && confirmAction) {
-      confirmAction();
+      const action = confirmAction;
+      setConfirmAction(null);
+      action().catch(() => {
+        setConfirmAction(null);
+      });
     }
   };
 
@@ -80,6 +95,7 @@ const UserProfile = () => {
   };
 
   return (
+
     <Box className="container-page">
       <Box className="user-profile-wrapper" sx={{ mt: 4 }}>
         <Grid container>
@@ -93,7 +109,7 @@ const UserProfile = () => {
               <ListItem >
                 <ListItemText primary="Profile" />
               </ListItem>
-              <ListItem  onClick={handleOpenNotificationModal}>
+              <ListItem onClick={handleOpenNotificationModal}>
                 <ListItemText primary="Notifications" />
                 <IconButton edge="end" color="inherit" onClick={handleOpenNotificationModal}>
                   <NotificationsIcon />
@@ -116,10 +132,11 @@ const UserProfile = () => {
               />
             )}
             <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <TextField label="First Name" variant="outlined" defaultValue={user.displayName || 'John'} />
-              <TextField label="Id" variant="outlined" defaultValue={user.school_id_number || '00-0000-000'} />
-              <TextField label="Email Address" variant="outlined" defaultValue={user.email || 'user@email.com'} disabled />
+              <TextField label="First Name" variant="outlined" defaultValue={user?.displayName || 'John'} className="customTextField"/>
+              <TextField label="Id" variant="outlined" defaultValue={user?.school_id_number || '00-0000-000'} className="customTextField" />
+              <TextField label="Email Address" variant="outlined" defaultValue={user?.email || 'user@email.com'} className="customTextField" disabled />
               <Button
+                className='customButton'
                 component="a"
                 href="https://account.microsoft.com/profile/"
                 variant="contained"
@@ -134,7 +151,7 @@ const UserProfile = () => {
       <NotificationModal
         open={openNotificationModal}
         handleClose={handleCloseNotificationModal}
-        userEmail={user.email}
+        userEmail={user?.email}
       />
       <ReusableDialog
         status={openDialog}
@@ -148,6 +165,9 @@ const UserProfile = () => {
 };
 
 export default UserProfile;
+
+
+
 
 
 

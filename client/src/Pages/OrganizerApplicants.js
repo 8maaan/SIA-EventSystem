@@ -24,7 +24,7 @@ const OrganizerApplicants = () => {
     fetchApplicants();
   }, []);
 
-  const handleDelete = async (id) => {
+  const handleDelete = (id) => {
     setConfirmAction(() => async () => {
       try {
         await deleteDoc(doc(db, 'organizerApplicants', id));
@@ -43,7 +43,7 @@ const OrganizerApplicants = () => {
     setDialogOpen(true);
   };
 
-  const handleApprove = async (id) => {
+  const handleApprove = (id) => {
     setConfirmAction(() => async () => {
       try {
         const applicant = applicants.find(applicant => applicant.id === id);
@@ -55,7 +55,6 @@ const OrganizerApplicants = () => {
           });
           await deleteDoc(doc(db, 'organizerApplicants', id));
 
-          // notification need pa ug polish
           await addDoc(collection(db, 'notification'), {
             recipient: applicant.email,
             message: 'Your application to become an organizer has been approved.',
@@ -78,10 +77,12 @@ const OrganizerApplicants = () => {
     setDialogOpen(true);
   };
 
-  const handleCloseDialog = (confirmed) => {
+  const handleCloseDialog = async (confirmed) => {
     setDialogOpen(false);
     if (confirmed && confirmAction) {
-      confirmAction();
+      const action = confirmAction;
+      setConfirmAction(null);
+      await action();
     }
   };
 
@@ -131,6 +132,7 @@ const OrganizerApplicants = () => {
 };
 
 export default OrganizerApplicants;
+
 
 
 
