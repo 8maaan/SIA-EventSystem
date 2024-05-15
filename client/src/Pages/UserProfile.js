@@ -132,9 +132,9 @@ const UserProfile = () => {
               />
             )}
             <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <TextField label="First Name" variant="outlined" defaultValue={user?.displayName || 'John'} className="customerTextField"/>
-              <TextField label="Id" variant="outlined" defaultValue={user?.school_id_number || '00-0000-000'} className="customerTextField" />
-              <TextField label="Email Address" variant="outlined" defaultValue={user?.email || 'user@email.com'} className="customerTextField" disabled />
+              <TextField label="First Name" variant="outlined" defaultValue={user?.displayName || 'John'} className="customTextField"/>
+              <TextField label="Id" variant="outlined" defaultValue={user?.school_id_number || '00-0000-000'} className="customTextField" />
+              <TextField label="Email Address" variant="outlined" defaultValue={user?.email || 'user@email.com'} className="customTextField" disabled />
               <Button
                 className='customButton'
                 component="a"
