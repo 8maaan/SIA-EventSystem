@@ -4,6 +4,7 @@ import { db } from '../Firebase/firebaseConfig';
 import { collection, getDocs } from 'firebase/firestore';
 import ReusableLoadingAnim from '../ReusableComponents/ReusableLoadingAnim'
 import PageNotFound from '../Pages/PageNotFound';
+import { useUserRoles } from '../ReusableComponents/useUserRoles';
 
 // TO BE OPTIMIZED
 
@@ -22,38 +23,19 @@ export const ProtectedRoute = ({children}) => {
 }
 
 export const OrganizerRoute = ({ children }) => {
-    const { user } = UserAuth();
-    const userEmail = user ? user.email : null;
-    const [isOrganizer, setIsOrganizer] = useState(null); 
-    const [isLoading, setIsLoading] = useState(true); 
-  
-    useEffect(() => {
-      const checkIsOrganizer = async () => {
-        try {
-          const querySnapshot = await getDocs(collection(db, "organizers"));
-          const organizers = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-          const userIsOrganizer = organizers.some((organizer) => organizer.email === userEmail);
-          setIsOrganizer(userIsOrganizer);
-        } catch (error) {
-          setIsOrganizer(false);
-        } finally {
-          setIsLoading(false); 
-        }
-      };
-  
-      checkIsOrganizer();
-    }, [userEmail]);
-  
-    if (isLoading) {
-        return <div><ReusableLoadingAnim /></div>;
-    }
-  
-    if (user && isOrganizer) {
-      return children;
-    }
-  
+  const { user } = UserAuth();
+  const { isOrganizer } = useUserRoles(user ? user.email : null);
+
+  if (!user) {
     return <PageNotFound />;
-  };
+  }
+
+  if (isOrganizer === null) {
+    return <div><ReusableLoadingAnim /></div>;
+  }
+
+  return isOrganizer ? children : <PageNotFound />;
+};
 
 // SIMILAR TO ProtectedRoute() BUT FOR LOGGED IN USERS
 export const GuestRoute = ({children}) => {
