@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -6,7 +6,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
-const ReusableDialog = ({ status, onClose, title, context}) => {
+const ReusableDialog = ({ status, onClose, title, context, confirmText = "Confirm", cancelText = "Cancel", isSuccess = false }) => {
   const [open, setOpen] = useState(status);
 
   useEffect(() => {
@@ -15,7 +15,6 @@ const ReusableDialog = ({ status, onClose, title, context}) => {
 
   const handleClose = (confirmed) => {
     setOpen(false);
-    // Pass the status value to the callback function
     onClose && onClose(confirmed);
   };
 
@@ -27,47 +26,64 @@ const ReusableDialog = ({ status, onClose, title, context}) => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        {/* The title for the dialog */}
         <DialogTitle id="alert-dialog-title">
           {title}
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            {/* Add any additional content here if needed */}
             {context}
           </DialogContentText>
         </DialogContent>
         <DialogActions style={{ justifyContent: 'center' }}>
-          {/* Options */}
-          <Button 
-            variant="contained" 
-            onClick={() => handleClose(true)} 
-            autoFocus
-            sx={{
-                backgroundColor: '#faaa0a', 
+          {!isSuccess && (
+            <>
+              <Button 
+                variant="contained" 
+                onClick={() => handleClose(true)} 
+                autoFocus
+                sx={{
+                  backgroundColor: '#faaa0a', 
+                  color: 'white', 
+                  borderRadius: '5px', 
+                  fontWeight: '600',
+                  width: '30%',
+                  '&:hover': { backgroundColor: '#d69500' }
+                }}
+              >
+                {confirmText}
+              </Button>
+              <Button 
+                variant="contained" 
+                onClick={() => handleClose(false)}
+                sx={{
+                  backgroundColor: '#8a252c', 
+                  color: 'white', 
+                  borderRadius: '5px', 
+                  fontWeight: '600',
+                  width: '30%',
+                  '&:hover': { backgroundColor: '#4d0606' }
+                }}
+              >
+                {cancelText}
+              </Button>
+            </>
+          )}
+          {isSuccess && (
+            <Button 
+              variant="contained" 
+              onClick={() => handleClose(false)}
+              sx={{
+                backgroundColor: '#1976d2', 
                 color: 'white', 
                 borderRadius: '5px', 
-                fontWeight:'600',
-                width:'30%',
-                '&:hover': {backgroundColor: '#d69500'}
-            }}
-        >
-            Confirm
-          </Button>
-          <Button 
-            variant="contained" 
-            onClick={() => handleClose(false)}
-            sx={{
-                backgroundColor: '#8a252c', 
-                color: 'white', 
-                borderRadius: '5px', 
-                fontWeight:'600',
-                width:'30%',
-                '&:hover': {backgroundColor: '#4d0606'}
-            }}
-        >
-            Cancel
-          </Button>
+                fontWeight: '600',
+                width: '30%',
+                '&:hover': { backgroundColor: '#145ca0' }
+              }}
+            >
+              Close
+            </Button>
+          )}
         </DialogActions>
       </Dialog>
     </React.Fragment>

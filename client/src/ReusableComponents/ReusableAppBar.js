@@ -1,7 +1,7 @@
 import MenuIcon from '@mui/icons-material/Menu';
 import { AppBar, Avatar, Box, Button, Container, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography } from '@mui/material';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { UserAuth } from '../Context-and-routes/AuthContext';
 import WildCatsLogo from '../Images/WildCatsLogo.jpg';
 import LoginModal from './LoginModal';
@@ -57,6 +57,9 @@ export default function ReusableAppBar() {
     switch (page) {
       case 'Manage Events':
         navigateTo('/manage-event')
+        break;
+      case 'Profile':
+        navigateTo('/profile');
         break;
       case 'Logout':
         handleSignOut();
