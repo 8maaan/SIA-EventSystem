@@ -11,6 +11,7 @@ import EditEvent from './ReusableComponents/EditEvent';
 import EventPage from './ReusableComponents/EventPage';
 import ReusableAppBar from './ReusableComponents/ReusableAppBar';
 import EventPageDisplay from './Pages/EventPageDisplay';
+import OrganizerApplicants from './Pages/OrganizerApplicants';
 
 
 function App() {
@@ -33,6 +34,8 @@ function App() {
             <Route path="/edit-event/:eventId" element={<ProtectedRoute><EditEvent/></ProtectedRoute>}/>
             <Route path="/manage-event/:eventId" element={<ProtectedRoute><EventPage/></ProtectedRoute>}/>
             <Route path="/create-event" element={<ProtectedRoute><CreateEvent/></ProtectedRoute>}/>
+
+            <Route path="/organizer-applicants" element={<OrganizerApplicants/>} />
 
             <Route path="*" element={<PageNotFound/>}/>
           </Routes>
