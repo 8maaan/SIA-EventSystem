@@ -38,7 +38,7 @@ const UserProfile = () => {
   const handleApplyAsOrganizer = async () => {
     if (!user || !user.email) {
       setDialogTitle('Error');
-      setDialogMessage('User information is not available. Please try again later.');
+      setDialogMessage('User information is not available!');
       setIsSuccess(false);
       setOpenDialog(true);
       return;
@@ -95,6 +95,7 @@ const UserProfile = () => {
   };
 
   return (
+
     <Box className="container-page">
       <Box className="user-profile-wrapper" sx={{ mt: 4 }}>
         <Grid container>
@@ -131,10 +132,11 @@ const UserProfile = () => {
               />
             )}
             <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <TextField label="First Name" variant="outlined" defaultValue={user?.displayName || 'John'} />
-              <TextField label="Id" variant="outlined" defaultValue={user?.school_id_number || '00-0000-000'} />
-              <TextField label="Email Address" variant="outlined" defaultValue={user?.email || 'user@email.com'} disabled />
+              <TextField label="First Name" variant="outlined" defaultValue={user?.displayName || 'John'} className="customerTextField"/>
+              <TextField label="Id" variant="outlined" defaultValue={user?.school_id_number || '00-0000-000'} className="customerTextField" />
+              <TextField label="Email Address" variant="outlined" defaultValue={user?.email || 'user@email.com'} className="customerTextField" disabled />
               <Button
+                className='customButton'
                 component="a"
                 href="https://account.microsoft.com/profile/"
                 variant="contained"

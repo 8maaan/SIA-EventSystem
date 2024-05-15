@@ -41,12 +41,12 @@ html, body {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.MuiTextField-root {
+.customTextField {
   width: 100%;
   background-color: #fff;
 }
 
-.MuiButton-root {
+.customButton {
   align-self: flex-start;
   background-color: #8a252c !important;
   color: #fff;
@@ -55,7 +55,7 @@ html, body {
   text-transform: none;
 }
 
-.MuiButton-root:hover {
+.customButton:hover {
   background-color: #6d1d22 !important;
 }
 
