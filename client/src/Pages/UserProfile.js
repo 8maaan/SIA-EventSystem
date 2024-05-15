@@ -95,7 +95,6 @@ const UserProfile = () => {
   };
 
   return (
-
     <Box className="container-page">
       <Box className="user-profile-wrapper" sx={{ mt: 4 }}>
         <Grid container>
@@ -106,7 +105,7 @@ const UserProfile = () => {
               sx={{ width: '7rem', height: '7rem', mb: 2 }}
             />
             <List>
-              <ListItem >
+              <ListItem>
                 <ListItemText primary="Profile" />
               </ListItem>
               <ListItem onClick={handleOpenNotificationModal}>
@@ -115,7 +114,7 @@ const UserProfile = () => {
                   <NotificationsIcon />
                 </IconButton>
               </ListItem>
-              <ListItem onClick={handleOpenDialog}>
+              <ListItem onClick={handleOpenDialog} disabled={isOrganizer}>
                 <ListItemText primary="Apply as Organizer" />
               </ListItem>
             </List>
@@ -132,7 +131,7 @@ const UserProfile = () => {
               />
             )}
             <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <TextField label="First Name" variant="outlined" defaultValue={user?.displayName || 'John'} className="customTextField"/>
+              <TextField label="First Name" variant="outlined" defaultValue={user?.displayName || 'John'} className="customTextField" />
               <TextField label="Id" variant="outlined" defaultValue={user?.school_id_number || '00-0000-000'} className="customTextField" />
               <TextField label="Email Address" variant="outlined" defaultValue={user?.email || 'user@email.com'} className="customTextField" disabled />
               <Button
@@ -165,6 +164,7 @@ const UserProfile = () => {
 };
 
 export default UserProfile;
+
 
 
 
