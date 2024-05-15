@@ -131,7 +131,8 @@ export default function ReusableAppBar() {
           <Typography
             variant="h5"
             noWrap
-            component={Link} // Use Link for navigation
+            component="a"
+            onClick={navigateToLanding}
             to="/"
             sx={{
               mr: 2,
@@ -186,7 +187,6 @@ export default function ReusableAppBar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={() => handleCloseUserMenu(setting)}>
                 <MenuItem key={setting} onClick={() => handleCloseUserMenu(setting)}>
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
