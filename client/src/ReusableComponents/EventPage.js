@@ -1,16 +1,15 @@
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { db } from "../Firebase/firebaseConfig";
-import ReusableLoadingAnim from "../ReusableComponents/ReusableLoadingAnim"
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import ReusableLoadingAnim from "../ReusableComponents/ReusableLoadingAnim";
 
 const EventPage = () => {
 
     const params = useParams();
     const eventId = params.eventId;
     const [event, setEvent] = useState(null);
-    console.log(event);
 
     useEffect(() => {
         const getEvent = async () => {
@@ -61,6 +60,7 @@ const EventPage = () => {
             <p style={{display: 'flex', textAlign:'justify'}}>{event.eventDescription}</p>
             <div style={{background: 'grey', paddingTop: '5px', paddingBottom: '5px'}}>
                 <h4 style={{display: 'flex'}}>{dateFormatter(event.eventTimestamp)} - {event.eventLocation}</h4>
+                <h4 style={{display: 'flex'}}>Organizer: {event.eventOrganizer ? event.eventOrganizer : 'null'}</h4>
             </div>
             <br/>
             <br/>

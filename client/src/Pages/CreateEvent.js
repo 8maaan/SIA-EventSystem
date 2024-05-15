@@ -1,17 +1,23 @@
-import { useEffect, useState } from 'react';
-import { TextField, Button, Box, FormControl, Select, MenuItem, InputLabel, CircularProgress } from '@mui/material';
+import { Box, Button, CircularProgress, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import "../PagesCSS/CreateEvent.css"
-import ImageUploader from '../ReusableComponents/ImageUploader'
 import dayjs from 'dayjs';
 import { addDoc, collection, getDocs } from 'firebase/firestore';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { UserAuth } from '../Context-and-routes/AuthContext';
 import { db } from '../Firebase/firebaseConfig';
-import ReusableSnackBar from '../ReusableComponents/ReusableSnackBar'
+import "../PagesCSS/CreateEvent.css";
+import ImageUploader from '../ReusableComponents/ImageUploader';
 import ReusableDialog from '../ReusableComponents/ReusableDialog';
+import ReusableSnackBar from '../ReusableComponents/ReusableSnackBar';
 
 function AddEvent() {
+
+    const navigateTo = useNavigate();
+    const {user} = UserAuth();
+
     const eventDataInitialValues = {
         eventName: "",
         eventTimestamp: "",
@@ -21,7 +27,6 @@ function AddEvent() {
         eventDescription: "",
     };
     const [departments, setDepartments] = useState(null);
-    
     const [eventData, setEventData] = useState(eventDataInitialValues);
 
     const [eventDataError, setEventDataError] = useState({
@@ -32,19 +37,20 @@ function AddEvent() {
         eventImage: null
     });
 
-    useEffect(()=>{
-        const getDepartments = async () => {
-            try {
-                const querySnapshot = await getDocs(collection(db, "departments"));
-                const departments = querySnapshot.docs.map(doc => {
-                    const data = doc.data();
-                    return {id: doc.id, ...data};
-                });
-                    setDepartments(departments)
-            } catch (e) {
-                console.log(e.message)
-            }
+    const getDepartments = async () => {
+        try {
+            const querySnapshot = await getDocs(collection(db, "departments"));
+            const departments = querySnapshot.docs.map(doc => {
+                const data = doc.data();
+                return {id: doc.id, ...data};
+            });
+                setDepartments(departments)
+        } catch (e) {
+            console.log(e.message)
         }
+    }
+
+    useEffect(()=>{
         getDepartments();
     },[]);
 
@@ -113,10 +119,16 @@ function AddEvent() {
                 eventDepartment: eventData.eventDepartment,
                 eventDescription: eventData.eventDescription,
                 eventImage: eventData.eventImage,
+                eventOrganizer: user.displayName,
+                eventOrganizerID: user.uid,
                 eventParticipants: []
             })
             emptyTextFields();
             handleSnackbarOpen("success", "Event has been created successfully 🎉")
+
+            setTimeout(() => {
+                navigateTo('/manage-event')
+            }, 1000)
         }catch(e){
             console.error(e);
             handleSnackbarOpen("error", "Error creating an event, try again later.")
