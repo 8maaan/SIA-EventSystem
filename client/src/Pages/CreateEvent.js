@@ -27,7 +27,7 @@ function AddEvent() {
         eventDescription: "",
     };
     const [departments, setDepartments] = useState(null);
-    
+    const [organizer, setOrganizer] = useState(null);
     const [eventData, setEventData] = useState(eventDataInitialValues);
 
     const [eventDataError, setEventDataError] = useState({
@@ -38,19 +38,20 @@ function AddEvent() {
         eventImage: null
     });
 
-    useEffect(()=>{
-        const getDepartments = async () => {
-            try {
-                const querySnapshot = await getDocs(collection(db, "departments"));
-                const departments = querySnapshot.docs.map(doc => {
-                    const data = doc.data();
-                    return {id: doc.id, ...data};
-                });
-                    setDepartments(departments)
-            } catch (e) {
-                console.log(e.message)
-            }
+    const getDepartments = async () => {
+        try {
+            const querySnapshot = await getDocs(collection(db, "departments"));
+            const departments = querySnapshot.docs.map(doc => {
+                const data = doc.data();
+                return {id: doc.id, ...data};
+            });
+                setDepartments(departments)
+        } catch (e) {
+            console.log(e.message)
         }
+    }
+
+    useEffect(()=>{
         getDepartments();
     },[]);
 
@@ -120,6 +121,7 @@ function AddEvent() {
                 eventDescription: eventData.eventDescription,
                 eventImage: eventData.eventImage,
                 eventOrganizer: user.displayName,
+                eventOrganizerID: user.uid,
                 eventParticipants: []
             })
             emptyTextFields();
