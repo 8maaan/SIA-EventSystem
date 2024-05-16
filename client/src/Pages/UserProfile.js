@@ -18,6 +18,7 @@ const UserProfile = () => {
   const [isOrganizer, setIsOrganizer] = useState(false);
   const [hasApplied, setHasApplied] = useState(false);
   const [openNotificationModal, setOpenNotificationModal] = useState(false);
+  const [confirmAction, setConfirmAction] = useState(null);
 
   useEffect(() => {
     const checkIfOrganizer = async () => {
@@ -46,7 +47,16 @@ const UserProfile = () => {
     checkIfOrganizer();
   }, [user]);
 
-  const handleApplyAsOrganizer = async () => {
+  const handleApplyAsOrganizer = () => {
+    setDialogTitle('Confirm Application');
+    setDialogMessage('Are you sure you want to apply as an organizer?');
+    setIsSuccess(false);
+    setConfirmAction(() => handleConfirmApply);
+    setOpenDialog(true);
+  };
+
+  const handleConfirmApply = async () => {
+    setOpenDialog(false);
     if (!user || !user.email) {
       setDialogTitle('Error');
       setDialogMessage('User information is not available!');
@@ -61,30 +71,25 @@ const UserProfile = () => {
         displayName: user.displayName || 'John Doe',
         email: user.email || 'user@email.com'
       });
-      setDialogTitle('Success');
-      setDialogMessage('Application submitted successfully!');
-      setIsSuccess(true);
-      setOpenDialog(true);
-      setHasApplied(true);  // mao ni mag pugong sa user para mo apply balik kung ni apply na
+      setHasApplied(true);  // Update the state para mo reflect nga ni submit ang user
     } catch (e) {
       console.error('Error adding document: ', e);
       setDialogTitle('Error');
       setDialogMessage('Failed to submit application.');
-      setIsSuccess(true);
+      setIsSuccess(false);
       setOpenDialog(true);
     }
-  };
-
-  const handleOpenNotificationModal = () => {
-    setOpenNotificationModal(true);
   };
 
   const handleCloseNotificationModal = () => {
     setOpenNotificationModal(false);
   };
 
-  const handleCloseDialog = () => {
+  const handleCloseDialog = (confirmed) => {
     setOpenDialog(false);
+    if (confirmed && confirmAction) {
+      confirmAction();
+    }
   };
 
   return (
@@ -101,9 +106,9 @@ const UserProfile = () => {
               <ListItem>
                 <ListItemText primary="Profile" />
               </ListItem>
-              <ListItem onClick={handleOpenNotificationModal}>
+              <ListItem onClick={handleCloseNotificationModal}>
                 <ListItemText primary="Notifications" />
-                <IconButton edge="end" color="inherit" onClick={handleOpenNotificationModal}>
+                <IconButton edge="end" color="inherit" onClick={handleCloseNotificationModal}>
                   <NotificationsIcon />
                 </IconButton>
               </ListItem>
@@ -164,6 +169,7 @@ const UserProfile = () => {
 };
 
 export default UserProfile;
+
 
 
 
