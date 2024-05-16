@@ -15,19 +15,30 @@ const UserProfile = () => {
   const [dialogMessage, setDialogMessage] = useState('');
   const [dialogTitle, setDialogTitle] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
-  const [confirmAction, setConfirmAction] = useState(null);
   const [isOrganizer, setIsOrganizer] = useState(false);
+  const [hasApplied, setHasApplied] = useState(false);
   const [openNotificationModal, setOpenNotificationModal] = useState(false);
 
   useEffect(() => {
     const checkIfOrganizer = async () => {
       if (user && user.email) {
         const organizersRef = collection(db, 'organizers');
-        const q = query(organizersRef, where("email", "==", user.email));
-        const querySnapshot = await getDocs(q);
+        const applicantsRef = collection(db, 'organizerApplicants');
 
-        if (!querySnapshot.empty) {
+        const qOrganizer = query(organizersRef, where("email", "==", user.email));
+        const qApplicant = query(applicantsRef, where("email", "==", user.email));
+
+        const [organizerSnapshot, applicantSnapshot] = await Promise.all([
+          getDocs(qOrganizer),
+          getDocs(qApplicant),
+        ]);
+
+        if (!organizerSnapshot.empty) {
           setIsOrganizer(true);
+        }
+
+        if (!applicantSnapshot.empty) {
+          setHasApplied(true);
         }
       }
     };
@@ -54,6 +65,7 @@ const UserProfile = () => {
       setDialogMessage('Application submitted successfully!');
       setIsSuccess(true);
       setOpenDialog(true);
+      setHasApplied(true);  // mao ni mag pugong sa user para mo apply balik kung ni apply na
     } catch (e) {
       console.error('Error adding document: ', e);
       setDialogTitle('Error');
@@ -63,35 +75,16 @@ const UserProfile = () => {
     }
   };
 
-  const handleConfirm = () => {
-    return handleApplyAsOrganizer();
-  };
-
-  const handleOpenDialog = () => {
-    setDialogTitle('Confirm Action');
-    setDialogMessage('Are you sure you want to apply as an organizer?');
-    setIsSuccess(false);
-    setConfirmAction(() => handleConfirm);
-    setOpenDialog(true);
-  };
-
-  const handleCloseDialog = (confirmed) => {
-    setOpenDialog(false);
-    if (confirmed && confirmAction) {
-      const action = confirmAction;
-      setConfirmAction(null);
-      action().catch(() => {
-        setConfirmAction(null);
-      });
-    }
-  };
-
   const handleOpenNotificationModal = () => {
     setOpenNotificationModal(true);
   };
 
   const handleCloseNotificationModal = () => {
     setOpenNotificationModal(false);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
   };
 
   return (
@@ -114,7 +107,7 @@ const UserProfile = () => {
                   <NotificationsIcon />
                 </IconButton>
               </ListItem>
-              <ListItem onClick={handleOpenDialog} disabled={isOrganizer}>
+              <ListItem onClick={handleApplyAsOrganizer} disabled={isOrganizer || hasApplied}>
                 <ListItemText primary="Apply as Organizer" />
               </ListItem>
             </List>
@@ -127,6 +120,13 @@ const UserProfile = () => {
               <Chip
                 label="Organizer"
                 color="success"
+                sx={{ mb: 2 }}
+              />
+            )}
+            {hasApplied && !isOrganizer && (
+              <Chip
+                label="Application Submitted"
+                color="warning"
                 sx={{ mb: 2 }}
               />
             )}
@@ -164,6 +164,8 @@ const UserProfile = () => {
 };
 
 export default UserProfile;
+
+
 
 
 
