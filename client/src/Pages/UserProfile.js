@@ -97,12 +97,12 @@ const UserProfile = () => {
   return (
     <Box className="container-page">
       <Box className="user-profile-wrapper" sx={{ mt: 4 }}>
-        <Grid container>
-          <Grid item xs={12} md={4} className="sidebar" sx={{ p: 2 }}>
+        <Grid container >
+          <Grid item xs={12} md={4} className="sidebar" sx={{ p: 2, marginTop: '2rem' }}>
             <Avatar
               alt="Profile Picture"
               src={user.photoURL || WildCatsLogo}
-              sx={{ width: '7rem', height: '7rem', mb: 2 }}
+              sx={{ width: '5rem', height: '5rem', mb: 2 }}
             />
             <List>
               <ListItem className="custom-list-item">
