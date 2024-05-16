@@ -15,19 +15,31 @@ const UserProfile = () => {
   const [dialogMessage, setDialogMessage] = useState('');
   const [dialogTitle, setDialogTitle] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
-  const [confirmAction, setConfirmAction] = useState(null);
   const [isOrganizer, setIsOrganizer] = useState(false);
+  const [hasApplied, setHasApplied] = useState(false);
   const [openNotificationModal, setOpenNotificationModal] = useState(false);
+  const [confirmAction, setConfirmAction] = useState(null);
 
   useEffect(() => {
     const checkIfOrganizer = async () => {
       if (user && user.email) {
         const organizersRef = collection(db, 'organizers');
-        const q = query(organizersRef, where("email", "==", user.email));
-        const querySnapshot = await getDocs(q);
+        const applicantsRef = collection(db, 'organizerApplicants');
 
-        if (!querySnapshot.empty) {
+        const qOrganizer = query(organizersRef, where("email", "==", user.email));
+        const qApplicant = query(applicantsRef, where("email", "==", user.email));
+
+        const [organizerSnapshot, applicantSnapshot] = await Promise.all([
+          getDocs(qOrganizer),
+          getDocs(qApplicant),
+        ]);
+
+        if (!organizerSnapshot.empty) {
           setIsOrganizer(true);
+        }
+
+        if (!applicantSnapshot.empty) {
+          setHasApplied(true);
         }
       }
     };
@@ -35,7 +47,16 @@ const UserProfile = () => {
     checkIfOrganizer();
   }, [user]);
 
-  const handleApplyAsOrganizer = async () => {
+  const handleApplyAsOrganizer = () => {
+    setDialogTitle('Confirm Application');
+    setDialogMessage('Are you sure you want to apply as an organizer?');
+    setIsSuccess(false);
+    setConfirmAction(() => handleConfirmApply);
+    setOpenDialog(true);
+  };
+
+  const handleConfirmApply = async () => {
+    setOpenDialog(false);
     if (!user || !user.email) {
       setDialogTitle('Error');
       setDialogMessage('User information is not available!');
@@ -50,52 +71,28 @@ const UserProfile = () => {
         displayName: user.displayName || 'John Doe',
         email: user.email || 'user@email.com'
       });
-      setDialogTitle('Success');
-      setDialogMessage('Application submitted successfully!');
-      setIsSuccess(true);
-      setOpenDialog(true);
+      setHasApplied(true);  // Update the state para mo reflect nga ni submit ang user
     } catch (e) {
       console.error('Error adding document: ', e);
       setDialogTitle('Error');
       setDialogMessage('Failed to submit application.');
-      setIsSuccess(true);
+      setIsSuccess(false);
       setOpenDialog(true);
     }
-  };
-
-  const handleConfirm = () => {
-    return handleApplyAsOrganizer();
-  };
-
-  const handleOpenDialog = () => {
-    setDialogTitle('Confirm Action');
-    setDialogMessage('Are you sure you want to apply as an organizer?');
-    setIsSuccess(false);
-    setConfirmAction(() => handleConfirm);
-    setOpenDialog(true);
-  };
-
-  const handleCloseDialog = (confirmed) => {
-    setOpenDialog(false);
-    if (confirmed && confirmAction) {
-      const action = confirmAction;
-      setConfirmAction(null);
-      action().catch(() => {
-        setConfirmAction(null);
-      });
-    }
-  };
-
-  const handleOpenNotificationModal = () => {
-    setOpenNotificationModal(true);
   };
 
   const handleCloseNotificationModal = () => {
     setOpenNotificationModal(false);
   };
 
-  return (
+  const handleCloseDialog = (confirmed) => {
+    setOpenDialog(false);
+    if (confirmed && confirmAction) {
+      confirmAction();
+    }
+  };
 
+  return (
     <Box className="container-page">
       <Box className="user-profile-wrapper" sx={{ mt: 4 }}>
         <Grid container>
@@ -106,16 +103,16 @@ const UserProfile = () => {
               sx={{ width: '7rem', height: '7rem', mb: 2 }}
             />
             <List>
-              <ListItem >
+              <ListItem>
                 <ListItemText primary="Profile" />
               </ListItem>
-              <ListItem onClick={handleOpenNotificationModal}>
+              <ListItem onClick={handleCloseNotificationModal}>
                 <ListItemText primary="Notifications" />
-                <IconButton edge="end" color="inherit" onClick={handleOpenNotificationModal}>
+                <IconButton edge="end" color="inherit" onClick={handleCloseNotificationModal}>
                   <NotificationsIcon />
                 </IconButton>
               </ListItem>
-              <ListItem onClick={handleOpenDialog}>
+              <ListItem onClick={handleApplyAsOrganizer} disabled={isOrganizer || hasApplied}>
                 <ListItemText primary="Apply as Organizer" />
               </ListItem>
             </List>
@@ -131,8 +128,15 @@ const UserProfile = () => {
                 sx={{ mb: 2 }}
               />
             )}
+            {hasApplied && !isOrganizer && (
+              <Chip
+                label="Application Submitted"
+                color="warning"
+                sx={{ mb: 2 }}
+              />
+            )}
             <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <TextField label="First Name" variant="outlined" defaultValue={user?.displayName || 'John'} className="customTextField"/>
+              <TextField label="First Name" variant="outlined" defaultValue={user?.displayName || 'John'} className="customTextField" />
               <TextField label="Id" variant="outlined" defaultValue={user?.school_id_number || '00-0000-000'} className="customTextField" />
               <TextField label="Email Address" variant="outlined" defaultValue={user?.email || 'user@email.com'} className="customTextField" disabled />
               <Button
@@ -165,6 +169,10 @@ const UserProfile = () => {
 };
 
 export default UserProfile;
+
+
+
+
 
 
 
