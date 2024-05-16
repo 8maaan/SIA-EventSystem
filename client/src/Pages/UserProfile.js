@@ -6,15 +6,16 @@ import "../PagesCSS/UserProfile.css";
 import WildCatsLogo from '../Images/WildCatsLogo.jpg';
 import { db } from '../Firebase/firebaseConfig';
 import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
-import ReusableDialog from '../ReusableComponents/ReusableDialog';
 import NotificationModal from '../ReusableComponents/Notifications';
+import SnackbarComponent from '../ReusableComponents/ReusableSnackBar';
+import ReusableDialog from '../ReusableComponents/ReusableDialog';
 
 const UserProfile = () => {
   const { user } = UserAuth();
   const [openDialog, setOpenDialog] = useState(false);
-  const [dialogMessage, setDialogMessage] = useState('');
-  const [dialogTitle, setDialogTitle] = useState('');
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const [isOrganizer, setIsOrganizer] = useState(false);
   const [hasApplied, setHasApplied] = useState(false);
   const [openNotificationModal, setOpenNotificationModal] = useState(false);
@@ -48,20 +49,22 @@ const UserProfile = () => {
   }, [user]);
 
   const handleApplyAsOrganizer = () => {
-    setDialogTitle('Confirm Application');
-    setDialogMessage('Are you sure you want to apply as an organizer?');
-    setIsSuccess(false);
-    setConfirmAction(() => handleConfirmApply);
-    setOpenDialog(true);
+    if (!isOrganizer && !hasApplied) {
+      setOpenDialog(true);
+      setConfirmAction(() => handleConfirmApply);
+    } else {
+      setSnackbarMessage('You have already applied or are an organizer.');
+      setSnackbarSeverity('warning');
+      setOpenSnackbar(true);
+    }
   };
 
   const handleConfirmApply = async () => {
     setOpenDialog(false);
     if (!user || !user.email) {
-      setDialogTitle('Error');
-      setDialogMessage('User information is not available!');
-      setIsSuccess(false);
-      setOpenDialog(true);
+      setSnackbarMessage('User information is not available!');
+      setSnackbarSeverity('error');
+      setOpenSnackbar(true);
       return;
     }
 
@@ -71,18 +74,24 @@ const UserProfile = () => {
         displayName: user.displayName || 'John Doe',
         email: user.email || 'user@email.com'
       });
-      setHasApplied(true);  // Update the state para mo reflect nga ni submit ang user
+      setHasApplied(true); 
+      setSnackbarMessage('Application submitted successfully!');
+      setSnackbarSeverity('success');
     } catch (e) {
       console.error('Error adding document: ', e);
-      setDialogTitle('Error');
-      setDialogMessage('Failed to submit application.');
-      setIsSuccess(false);
-      setOpenDialog(true);
+      setSnackbarMessage('Failed to submit application.');
+      setSnackbarSeverity('error');
+    } finally {
+      setOpenSnackbar(true);
     }
   };
 
   const handleCloseNotificationModal = () => {
     setOpenNotificationModal(false);
+  };
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
   };
 
   const handleCloseDialog = (confirmed) => {
@@ -157,30 +166,20 @@ const UserProfile = () => {
         handleClose={handleCloseNotificationModal}
         userEmail={user?.email}
       />
+      <SnackbarComponent
+        open={openSnackbar}
+        onClose={handleCloseSnackbar}
+        severity={snackbarSeverity}
+        message={snackbarMessage}
+      />
       <ReusableDialog
         status={openDialog}
         onClose={handleCloseDialog}
-        title={dialogTitle}
-        context={dialogMessage}
-        isSuccess={isSuccess}
+        title="Confirm Application"
+        context="Are you sure you want to apply as an organizer?"
       />
     </Box>
   );
 };
 
 export default UserProfile;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
