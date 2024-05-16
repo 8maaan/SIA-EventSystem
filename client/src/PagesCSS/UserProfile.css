@@ -58,6 +58,14 @@ html, body {
 .customButton:hover {
   background-color: #6d1d22 !important;
 }
+.custom-list-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+}
+
+.custom-list-item:hover .custom-list-item-text {
+  color: #fff;
+}
 
 @media (max-width: 960px) {
   .user-profile-wrapper {

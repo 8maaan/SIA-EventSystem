@@ -13,7 +13,6 @@ import ReusableAppBar from './ReusableComponents/ReusableAppBar';
 import EventPageDisplay from './Pages/EventPageDisplay';
 import OrganizerApplicants from './Pages/OrganizerApplicants';
 import UserProfile from './Pages/UserProfile';
-import Notification from './ReusableComponents/Notifications';
 function App() {
 
   return (
@@ -29,7 +28,6 @@ function App() {
             <Route path="/event/:eventId" element={<EventPage/>} />
             <Route path="/event-page/:eventId" element={<EventPageDisplay/>} />
             <Route path="/profile" element={<UserProfile/>}/>
-            <Route path="/notification" element={<Notification/>} />
 
             {/*PROTECTED ROUTES */}
             <Route path="/manage-event" element={<ProtectedRoute><ManageEventPage/></ProtectedRoute>}/>

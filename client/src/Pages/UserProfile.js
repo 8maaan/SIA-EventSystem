@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { UserAuth } from '../Context-and-routes/AuthContext';
-import { Typography, Avatar, Box, Button, List, ListItem, ListItemText, TextField, Grid, Chip, IconButton } from '@mui/material';
-import NotificationsIcon from '@mui/icons-material/Notifications';
+import { Typography, Avatar, Box, Button, List, ListItem, ListItemText, TextField, Grid, Chip} from '@mui/material';
 import "../PagesCSS/UserProfile.css";
 import WildCatsLogo from '../Images/WildCatsLogo.jpg';
 import { db } from '../Firebase/firebaseConfig';
 import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
-import NotificationModal from '../ReusableComponents/Notifications';
 import SnackbarComponent from '../ReusableComponents/ReusableSnackBar';
 import ReusableDialog from '../ReusableComponents/ReusableDialog';
 
@@ -18,7 +16,6 @@ const UserProfile = () => {
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const [isOrganizer, setIsOrganizer] = useState(false);
   const [hasApplied, setHasApplied] = useState(false);
-  const [openNotificationModal, setOpenNotificationModal] = useState(false);
   const [confirmAction, setConfirmAction] = useState(null);
 
   useEffect(() => {
@@ -86,10 +83,6 @@ const UserProfile = () => {
     }
   };
 
-  const handleCloseNotificationModal = () => {
-    setOpenNotificationModal(false);
-  };
-
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
   };
@@ -112,17 +105,11 @@ const UserProfile = () => {
               sx={{ width: '7rem', height: '7rem', mb: 2 }}
             />
             <List>
-              <ListItem>
-                <ListItemText primary="Profile" />
+              <ListItem className="custom-list-item">
+                <ListItemText primary="Profile" className="custom-list-item-text" />
               </ListItem>
-              <ListItem onClick={handleCloseNotificationModal}>
-                <ListItemText primary="Notifications" />
-                <IconButton edge="end" color="inherit" onClick={handleCloseNotificationModal}>
-                  <NotificationsIcon />
-                </IconButton>
-              </ListItem>
-              <ListItem onClick={handleApplyAsOrganizer} disabled={isOrganizer || hasApplied}>
-                <ListItemText primary="Apply as Organizer" />
+              <ListItem className="custom-list-item" onClick={handleApplyAsOrganizer} disabled={isOrganizer || hasApplied}>
+                <ListItemText primary="Apply as Organizer" className="custom-list-item-text" />
               </ListItem>
             </List>
           </Grid>
@@ -161,11 +148,6 @@ const UserProfile = () => {
           </Grid>
         </Grid>
       </Box>
-      <NotificationModal
-        open={openNotificationModal}
-        handleClose={handleCloseNotificationModal}
-        userEmail={user?.email}
-      />
       <SnackbarComponent
         open={openSnackbar}
         onClose={handleCloseSnackbar}
