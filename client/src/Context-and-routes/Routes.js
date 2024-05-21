@@ -4,21 +4,6 @@ import PageNotFound from '../Pages/PageNotFound';
 import { useUserRoles } from '../ReusableComponents/useUserRoles';
 
 // TO BE OPTIMIZED
-
-// IF USER NOT LOGGED IN, PREVENT ACCESS, REDIRECT TO /LOGIN
-export const ProtectedRoute = ({children}) => {
-  const { user, loading } = UserAuth();
-
-  if(loading){
-      return <div><ReusableLoadingAnim/></div>
-  }
-
-  if(user){
-      return children;
-  }
-  return <PageNotFound/>
-}
-
 export const OrganizerRoute = ({ children }) => {
   const { user } = UserAuth();
   const { isOrganizer } = useUserRoles(user ? user.email : null);
@@ -34,17 +19,18 @@ export const OrganizerRoute = ({ children }) => {
   return isOrganizer ? children : <PageNotFound />;
 };
 
-// SIMILAR TO ProtectedRoute() BUT FOR LOGGED IN USERS
-export const GuestRoute = ({children}) => {
-    const { user, loading} = UserAuth();
+export const AdminRoute = ({children}) => {
+  const { user } = UserAuth();
+  const { isAdmin } = useUserRoles(user ? user.email : null);
+  
+  if (!user) {
+    return <PageNotFound />;
+  }
 
-    if(loading){
-        return <div>Loading...</div>;
-    }
-    
-    if(!user){
-        return children
-    }
-
-    return <div>Page Not Found</div>
+  if (isAdmin === null){
+    return <div><ReusableLoadingAnim/></div>;
+  }
+  return isAdmin ? children : <PageNotFound />;
 }
+
+

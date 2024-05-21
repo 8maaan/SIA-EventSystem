@@ -16,6 +16,7 @@ import ParticlesComponent from '../ReusableComponents/particles';
 import { UserAuth } from '../Context-and-routes/AuthContext';
 import ReusableLoadingAnim from '../ReusableComponents/ReusableLoadingAnim';
 import ReusableSnackBar from '../ReusableComponents/ReusableSnackBar';
+import PageNotFound from './PageNotFound';
 
 
 const settings = {
@@ -48,6 +49,7 @@ const EventPageDisplay = () => {
     const { eventId } = useParams();
     const [btnText, setBtnText] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [eventNotFound, setEventNotFound] = useState(false);
 
     // FOR SNACKBAR
     const [snackbar, setSnackbar] = useState({ status: false, severity: '', message: ''});
@@ -73,6 +75,7 @@ const EventPageDisplay = () => {
                 setEvent(eventData);
             } else {
                 console.error("No such document!");
+                setEventNotFound(true);
             }
         };
 
@@ -137,9 +140,14 @@ const EventPageDisplay = () => {
         fontFamily: '"Biome W01 Regular", Arial, sans-serif'
     };
 
-    if (!event) {
+    // CHANGE LATER IF FOUND ERROR
+    if (!event && eventNotFound) {
+        return <PageNotFound/>
+    }else if(!event && !eventNotFound){
         return <ReusableLoadingAnim/>
     }
+
+    console.log(event);
 
     const handleToggleBtn = async () => {
         setLoading(true);

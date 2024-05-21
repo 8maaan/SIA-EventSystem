@@ -116,7 +116,7 @@ const ManageEventPage = () => {
                 {events === null ? (
                     <CircularProgress color="inherit" />
                 ) : events.length === 0 ? (
-                    <Typography variant="h6" color="white">No Events</Typography>
+                    <Typography variant="h6" color="white">No Event/s Managed </Typography>
                 ) : (
                     events.map((event, idx) => (
                         <Grid item xs={12} sm={6} md={3} lg={3}key={event.id}>

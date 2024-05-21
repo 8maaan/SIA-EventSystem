@@ -89,25 +89,31 @@ const Homepage = () => {
             </div>
             <div className='event-info-container'>
               {filteredEvents ? (
-                filteredEvents.map((event, id) => (
-                  <div className='event-info-card' key={event.id}>
-                    <Link style={{ textDecoration: 'none', color: 'inherit' }} to={`/event-page/${event.id}`} key={id}>
-                      <div className="event-info-card-image">
-                        <img src={event.eventImage}  loading="lazy" alt="event-img" />
-                      </div>
-                      <div className="event-info-card-details">
-                        <h3>{event.eventName}</h3>
-                        <p>Date and Time: {dateFormatter(event.eventTimestamp)}</p>
-                      </div>
-                    </Link>
+                filteredEvents.length > 0 ? (
+                  filteredEvents.map((event) => (
+                    <div className='event-info-card' key={event.id}>
+                      <Link style={{ textDecoration: 'none', color: 'inherit' }} to={`/event-page/${event.id}`}>
+                        <div className="event-info-card-image">
+                          <img src={event.eventImage} loading="lazy" alt="event-img" />
+                        </div>
+                        <div className="event-info-card-details">
+                          <h3>{event.eventName}</h3>
+                          <p>Date and Time: {dateFormatter(event.eventTimestamp)}</p>
+                        </div>
+                      </Link>
+                    </div>
+                  ))
+                ) : (
+                  <div className='event-noEvent'>
+                    <p>No events found 😴</p>
                   </div>
-                ))
+                )
               ) : (
                 Array.from({ length: 8 }, (_, index) => (
                   <div key={index}>
-                    <Skeleton animation="wave" key={index} variant="rectangular" width={275} height={180} />
-                    <Skeleton animation="wave"/>
-                    <Skeleton animation="wave"/>
+                    <Skeleton animation="wave" variant="rectangular" width={275} height={180} />
+                    <Skeleton animation="wave" />
+                    <Skeleton animation="wave" />
                   </div>
                 ))
               )}

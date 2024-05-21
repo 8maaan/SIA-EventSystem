@@ -60,7 +60,7 @@ const UserProfile = () => {
       setOpenDialog(true);
       setConfirmAction(() => handleConfirmApply);
     } else {
-      setSnackbarMessage('You have already applied or are an organizer.');
+      setSnackbarMessage('You have already applied or are already an organizer.');
       setSnackbarSeverity('warning');
       setOpenSnackbar(true);
     }

@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
 import { AuthContextProvider } from './Context-and-routes/AuthContext';
-import { ProtectedRoute, OrganizerRoute } from './Context-and-routes/Routes';
+import { OrganizerRoute, AdminRoute } from './Context-and-routes/Routes';
 import CreateEvent from './Pages/CreateEvent';
 import Homepage from './Pages/Homepage';
 import LandingPage from './Pages/LandingPage';
@@ -13,7 +13,7 @@ import ReusableAppBar from './ReusableComponents/ReusableAppBar';
 import EventPageDisplay from './Pages/EventPageDisplay';
 import OrganizerApplicants from './Pages/OrganizerApplicants';
 import UserProfile from './Pages/UserProfile';
-import Notification from './ReusableComponents/Notifications';
+// import Notification from './ReusableComponents/Notifications';
 function App() {
 
   return (
@@ -29,17 +29,18 @@ function App() {
             <Route path="/event/:eventId" element={<EventPage/>} />
             <Route path="/event-page/:eventId" element={<EventPageDisplay/>} />
             <Route path="/profile" element={<UserProfile/>}/>
-            <Route path="/notification" element={<Notification/>} />
+            {/* <Route path="/notification" element={<Notification/>} /> */}
 
-            {/*PROTECTED ROUTES */}
+            {/* ORGANIZER ROUTES*/}
             <Route path="/manage-event" element={<OrganizerRoute><ManageEventPage/></OrganizerRoute>}/>
             <Route path="/edit-event/:eventId" element={<OrganizerRoute><EditEvent/></OrganizerRoute>}/>
             <Route path="/manage-event/:eventId" element={<OrganizerRoute><EventPage/></OrganizerRoute>}/>
             <Route path="/create-event" element={<OrganizerRoute><CreateEvent/></OrganizerRoute>}/>
 
-            <Route path="/organizer-applicants" element={<OrganizerApplicants/>} />
+            {/* ADMIN ROUTES */}
+            <Route path="/organizer-applicants" element={<AdminRoute><OrganizerApplicants/></AdminRoute>} />
 
-            <Route path="*" element={<PageNotFound/>}/>            <Route path="/profile" element={<UserProfile />} />
+            <Route path="*" element={<PageNotFound/>}/>            
 
 
           </Routes>

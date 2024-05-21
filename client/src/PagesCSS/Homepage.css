@@ -101,6 +101,19 @@
     margin-bottom: 1%;
 }
 
+.event-noEvent{
+    width: 100%;
+    min-height: 30vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.event-noEvent p {
+    font-size: 1.5rem;
+    color: #6e6d6b;
+}
+
 @media (max-width: 768px),(max-width: 1245px) {
     .event-info-container {
       flex-direction: column;
