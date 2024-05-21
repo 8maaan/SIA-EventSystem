@@ -5,6 +5,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import { db } from '../Firebase/firebaseConfig';
 import { collection, getDocs, deleteDoc, doc, setDoc, addDoc } from 'firebase/firestore';
 import ReusableDialog from '../ReusableComponents/ReusableDialog';
+import SnackbarComponent from '../ReusableComponents/ReusableSnackBar';
 
 const OrganizerApplicants = () => {
   const [applicants, setApplicants] = useState([]);
@@ -12,7 +13,9 @@ const OrganizerApplicants = () => {
   const [dialogContext, setDialogContext] = useState('');
   const [dialogTitle, setDialogTitle] = useState('');
   const [confirmAction, setConfirmAction] = useState(null);
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
   useEffect(() => {
     const fetchApplicants = async () => {
@@ -29,17 +32,18 @@ const OrganizerApplicants = () => {
       try {
         await deleteDoc(doc(db, 'organizerApplicants', id));
         setApplicants(applicants.filter(applicant => applicant.id !== id));
-        setDialogTitle('Success');
-        setDialogContext('Applicant successfully deleted.');
-        setIsSuccess(true);
-        setDialogOpen(true);
+        setSnackbarMessage('Applicant successfully deleted.');
+        setSnackbarSeverity('success');
       } catch (error) {
         console.error('Error deleting applicant: ', error);
+        setSnackbarMessage('Failed to delete applicant.');
+        setSnackbarSeverity('error');
+      } finally {
+        setSnackbarOpen(true);
       }
     });
     setDialogTitle('Confirm Delete');
     setDialogContext('Are you sure you want to decline this applicant?');
-    setIsSuccess(false);
     setDialogOpen(true);
   };
 
@@ -62,18 +66,19 @@ const OrganizerApplicants = () => {
           });
 
           setApplicants(applicants.filter(applicant => applicant.id !== id));
-          setDialogTitle('Success');
-          setDialogContext('Applicant successfully approved.');
-          setIsSuccess(true);
-          setDialogOpen(true);
+          setSnackbarMessage('Applicant successfully approved.');
+          setSnackbarSeverity('success');
         }
       } catch (error) {
         console.error('Error approving applicant: ', error);
+        setSnackbarMessage('Failed to approve applicant.');
+        setSnackbarSeverity('error');
+      } finally {
+        setSnackbarOpen(true);
       }
     });
     setDialogTitle('Confirm Approve');
     setDialogContext('Are you sure you want to approve this applicant?');
-    setIsSuccess(false);
     setDialogOpen(true);
   };
 
@@ -84,6 +89,10 @@ const OrganizerApplicants = () => {
       setConfirmAction(null);
       await action();
     }
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
   };
 
   return (
@@ -125,15 +134,15 @@ const OrganizerApplicants = () => {
         onClose={handleCloseDialog}
         title={dialogTitle}
         context={dialogContext}
-        isSuccess={isSuccess}
+      />
+      <SnackbarComponent
+        open={snackbarOpen}
+        onClose={handleCloseSnackbar}
+        severity={snackbarSeverity}
+        message={snackbarMessage}
       />
     </div>
   );
 };
 
 export default OrganizerApplicants;
-
-
-
-
-
