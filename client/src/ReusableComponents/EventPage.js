@@ -22,10 +22,10 @@ const EventPage = () => {
                     data.eventTimestamp = data.eventTimestamp.toDate();
                     setEvent(data)
                 } else {
-                    console.log("No such document!");
+                    console.error("No such document!");
                 }
             } catch(e) {
-                console.log(e.message)
+                console.error(e.message)
             }
         }
 

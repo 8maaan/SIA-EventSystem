@@ -21,14 +21,14 @@ const ImageUploader = ({ eventImage, handleTxtFieldChange, errorTxt, isEdit, res
       },
       function (error, result) {
         if (!error && result && result.event === 'success') {
-          console.log(result.info.secure_url);
+          // console.log(result.info.secure_url);
 
           // Instead of calling updateEventImage directly, call handleTxtFieldChange
           handleTxtFieldChange(result.info.secure_url, 'eventImage');
         }
         if (!error && result && result.event === 'queues-end') {
           const fileName = result.info.files[0].name;
-          console.log('Uploaded File Name:', fileName);
+          // console.log('Uploaded File Name:', fileName);
           setUploadedImgName(fileName);
         }
       }

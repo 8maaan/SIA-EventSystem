@@ -31,7 +31,6 @@ export default function LoginModal({ open, onClose}) {
     setLoading(true);
     try{
       const signInWithEmail = await signIn(email, password);
-      console.log(signInWithEmail);
       onClose();
     }catch(e){
       console.error(e);
@@ -52,7 +51,7 @@ export default function LoginModal({ open, onClose}) {
           );
           onClose();
       }catch(e){
-        console.error(e);
+        console.error("Log in error. Try again later.");
       }
   }
 
@@ -69,7 +68,7 @@ export default function LoginModal({ open, onClose}) {
         { merge: true }
       );
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   };
 

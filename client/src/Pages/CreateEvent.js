@@ -46,7 +46,7 @@ function AddEvent() {
             });
                 setDepartments(departments)
         } catch (e) {
-            console.log(e.message)
+            console.error("Server side error. Try again later (Departments")
         }
     }
 
@@ -102,7 +102,6 @@ function AddEvent() {
         setLoading(true);
 
         if(eventData.eventImage.trim() === ''){
-            console.log('Empty')
             updateEventTxtError('eventImage', true);
             setLoading(false);
             return;
@@ -161,7 +160,6 @@ function AddEvent() {
     const handleConfirmationDialogClose = (confirmed) => {
         setOpenDialog(false);
         setConfirmationStatus(confirmed);
-        console.log(confirmationStatus);
 
         if (confirmed) {
             handleSubmit();

@@ -65,7 +65,7 @@ function EditEvent() {
                 });
                     setDepartments(departments)
             } catch (e) {
-                console.log(e.message)
+                console.error("Server side error")
             }
         }
         getDepartments();
@@ -82,8 +82,6 @@ function EditEvent() {
             [fieldName]: value
         }));
     };
-
-    console.log(eventData);
 
     const handleTxtFieldChange = (value, name) => {
         setEventData((prevEventData) => {
@@ -114,7 +112,6 @@ function EditEvent() {
         setLoadingUpdate(true);
 
         if(eventData.eventImage.trim() === ''){
-            console.log('Empty')
             updateEventTxtError('eventImage', true);
             return;
         }else{
@@ -159,9 +156,9 @@ function EditEvent() {
         setLoadingDelete(false);
     }
 
-    if(eventData){
-        console.log(prevEventDate === eventData.eventTimestamp);
-    }
+    // if(eventData){
+    //     console.log(prevEventDate === eventData.eventTimestamp);
+    // }
 
     const [snackbar, setSnackbar] = useState({ status: false, severity: '', message: ''});
     const handleSnackbarOpen = (severity, message) => {
@@ -185,7 +182,7 @@ function EditEvent() {
     const handleConfirmationDialogClose = (confirmed) => {
         setOpenDialog(false);
         setConfirmationStatus(confirmed);
-        console.log(confirmationStatus);
+        // console.log(confirmationStatus);
 
         if (confirmed) {
             handleDelete();

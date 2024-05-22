@@ -28,7 +28,7 @@ export default function ReusableAppBar() {
       await logOut();
       navigateTo('/');
     } catch (e) {
-      console.log(e.message);
+      console.e("Couldn't log out. Server side error.");
     }
   }
 

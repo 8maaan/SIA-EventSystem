@@ -42,7 +42,7 @@ const Homepage = () => {
       });
       setEvents(events);
     } catch (e) {
-      console.log(e.message);
+      console.e("Server side error, try again later. (Homepage Events)");
     }
   };
 
