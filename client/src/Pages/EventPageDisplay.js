@@ -171,7 +171,7 @@ const EventPageDisplay = () => {
             <div style={{ position: 'relative', zIndex: 2, marginTop: '12.5 rem' }}>
                 <Container maxWidth="md" sx={{ ...settings.paper }}>
                     <Typography variant="h3" sx={{alignSelf:"center", color:'white', marginTop:'5%'}}>{event.eventName}</Typography>
-                    <Paper elevation={3} sx={{ padding: '32px', borderRadius: '20 px', background: 'inherit', color:'#fff'}}>
+                    <Paper elevation={3} sx={{ padding: '32px', borderRadius: '20 px', background: 'inherit'}}>
                         <Countdown date={event.eventTimestamp} renderer={renderer} />
                     </Paper>
                 </Container>

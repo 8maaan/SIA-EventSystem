@@ -15,12 +15,10 @@
     box-shadow:0 1px 0 2px rgba(231, 231, 231, 231);
     font-size: 36px;  
     font-weight: bold;
-    color:#fff;
 }
 
 .countdown-label {
     font-size: 18px;  
-    color: #fff;
     margin-top: 10px;  
     text-transform: uppercase;
     letter-spacing: 2px;
