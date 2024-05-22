@@ -69,9 +69,9 @@ const EventPageDisplay = () => {
     const Completionist = () => <span>The event has started!</span>;
 
     const CountdownBox = ({ value, label }) => (
-        <div className="countdown-box">
-            <div>{value}</div>
-            <div className="countdown-label">{label}</div>
+        <div className="countdown-box" >
+            <div  style={{ color: '#fff' }}>{value}</div>
+            <div className="countdown-label"  style={{ color: '#fff' }}>{label}</div>
         </div>
     );
 
@@ -171,7 +171,7 @@ const EventPageDisplay = () => {
             <div style={{ position: 'relative', zIndex: 2, marginTop: '12.5 rem' }}>
                 <Container maxWidth="md" sx={{ ...settings.paper }}>
                     <Typography variant="h3" sx={{alignSelf:"center", color:'white', marginTop:'5%'}}>{event.eventName}</Typography>
-                    <Paper elevation={3} sx={{ padding: '32px', borderRadius: '20 px', background: 'inherit', boxShadow:'none', color: 'white' }}>
+                    <Paper elevation={3} sx={{ padding: '32px', borderRadius: '20 px', background: 'inherit', color:'#fff'}}>
                         <Countdown date={event.eventTimestamp} renderer={renderer} />
                     </Paper>
                 </Container>
