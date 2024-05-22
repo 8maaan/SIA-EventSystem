@@ -44,6 +44,9 @@ export default function ReusableAppBar() {
       case 'Home':
         navigateTo('/home');
         break;
+      case 'Community':
+        window.open('https://www.facebook.com/CITUniversity/', '_blank');
+        break;
       case 'Applicants':
         navigateTo('/organizer-applicants');
         break;
