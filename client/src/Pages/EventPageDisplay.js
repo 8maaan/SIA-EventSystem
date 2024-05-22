@@ -23,9 +23,9 @@ const settings = {
         flexDirection: 'column',
         gap: '24px',  
         padding: '0px',
-        background: 'linear-gradient(45deg, #DE3161 30%, #FF8E53 90%)',
-        color: 'white',
+        background: 'inherit',
         borderRadius: '20px',
+        background: '#8a252c',
         boxShadow: '0 0 10px rgba(255, 0, 0, 0.5)',
         overflow: 'hidden',
         height: '400px',  
@@ -80,7 +80,7 @@ const EventPageDisplay = () => {
             return <Completionist />;
         } else {
             return (
-                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
                     <CountdownBox value={days} label="Days" />
                     <CountdownBox value={hours} label="Hours" />
                     <CountdownBox value={minutes} label="Minutes" />
@@ -96,7 +96,7 @@ const EventPageDisplay = () => {
         padding: '0.625rem', 
         borderRadius:'12px',
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-        color: 'black',
+        color: 'white',
         fontSize: '1.125rem',
         fontFamily: 'Biome W01 Regular',
         '&:hover': {
@@ -170,8 +170,8 @@ const EventPageDisplay = () => {
             </ParticlesWrapper>
             <div style={{ position: 'relative', zIndex: 2, marginTop: '12.5 rem' }}>
                 <Container maxWidth="md" sx={{ ...settings.paper }}>
-                    <Typography variant="h3" align="center">{event.eventName}</Typography>
-                    <Paper elevation={3} sx={{ padding: '32px', borderRadius: '20 px', background: 'inherit', boxShadow:'none' }}>
+                    <Typography variant="h3" sx={{alignSelf:"center", color:'white', marginTop:'5%'}}>{event.eventName}</Typography>
+                    <Paper elevation={3} sx={{ padding: '32px', borderRadius: '20 px', background: 'inherit', boxShadow:'none', color: 'white' }}>
                         <Countdown date={event.eventTimestamp} renderer={renderer} />
                     </Paper>
                 </Container>
@@ -190,7 +190,7 @@ const EventPageDisplay = () => {
 
                     {/* Image */}
                     <Paper elevation={6} sx={{
-                        background: 'linear-gradient(45deg, #DE3161 30%, #FF8E53 90%)',
+                        background: '#8a252c',
                         marginBottom: 2, 
                         overflow: 'hidden',
                         borderRadius: '20px',
@@ -221,7 +221,8 @@ const EventPageDisplay = () => {
                             boxShadow: 'none',
                             marginBottom: 1,
                             direction: 'row',
-                            fontFamily: 'Biome W01 Regular'
+                            fontFamily: 'Biome W01 Regular',
+                            color: 'white'
 
                         }}>
                             {/* Date */}
@@ -243,10 +244,11 @@ const EventPageDisplay = () => {
                     <Paper elevation={6} sx={{
                         padding: 2,
                         backgroundColor: '#ffffff',
-                        background: 'linear-gradient(45deg, #DE3161 30%, #FF8E53 90%)',
+                        background: '#8a252c',
                         borderRadius: '1.25 rem',
                         boxShadow: '0 10px 1.875 30px rgba(0, 0, 0, 0.1)',
-                        marginBottom: 2 
+                        marginBottom: 2,
+                        color: 'white'
                     }}>  
                         <Typography variant="h4" style={style} sx={{ fontWeight: 'bold', marginBottom: 1 }}>{event.eventName}
                         </Typography>

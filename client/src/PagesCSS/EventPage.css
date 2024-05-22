@@ -10,23 +10,21 @@
     width: 200px;  
     height: 150px;  
     background-color: inherit;  
-    color: #333;  
     margin: 10px;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow:0 1px 0 4px rgba(231, 231, 231, 231);
     font-size: 36px;  
     font-weight: bold;
 }
 
 .countdown-label {
     font-size: 18px;  
-    color: #555;
+    color: #fff;
     margin-top: 10px;  
     text-transform: uppercase;
     letter-spacing: 2px;
 }
 
->>>>>>> origin/homepage
 @font-face {
     font-family: "Biome W01 Regular";
     src: url("https://db.onlinewebfonts.com/t/dba3e777ccc7fa4a896dcf7e7f5b3bfb.eot");
