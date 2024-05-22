@@ -34,7 +34,7 @@ const LandingPage = () => {
           <div className="second-section">
             <div className='second-section-content'>
               <div className='second-section-img'>
-                <img src="https://pbs.twimg.com/media/Ceh4YjeWIAEh3Mq.jpg"/>
+                <img src="https://cit.edu/wp-content/uploads/2023/07/Case-Room.jpg"/>
               </div>
               <p>This project is made with</p>
               <div className='second-section-tech-stack'>

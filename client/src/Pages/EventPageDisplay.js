@@ -38,7 +38,7 @@ const settings = {
         width: '100%',
         fontFamily: '"Biome W01 Regular", Arial, sans-serif',
         '& *': {
-            color: 'black',
+            color: '#ededed',
         },
     },
 };
@@ -147,7 +147,7 @@ const EventPageDisplay = () => {
         return <ReusableLoadingAnim/>
     }
 
-    console.log(event);
+    // console.log(event);
 
     const handleToggleBtn = async () => {
         setLoading(true);
@@ -162,46 +162,69 @@ const EventPageDisplay = () => {
     };
 
     const handleJoinBtn = async () => {
-        
-        const currentDate = new Date().toLocaleString();  
+        const currentDate = new Date().toLocaleString();
         const userData = {
-            uid: user.uid, 
-            name:user.displayName,
+            uid: user.uid,
+            name: user.displayName,
             email: user.email,
             dateJoined: currentDate
-            
         };
     
-        // Get a reference to the Firestore document
-        const docRef = doc(db, 'event', eventId);
+        const userEventData = {
+            eventId: eventId,
+            eventName: event.eventName,
+            dateJoined: currentDate
+        };
+    
+        // Get references to Firestore documents
+        const eventDocRef = doc(db, 'event', eventId);
+        const userDocRef = doc(db, 'user', user.uid);
     
         try {
-            // Retrieve the current document data
-            const docSnap = await getDoc(docRef);
+            // Retrieve the current event document data
+            const eventDocSnap = await getDoc(eventDocRef);
     
-            if (docSnap.exists()) {
+            if (eventDocSnap.exists()) {
                 // Get the current event data
-                const eventData = docSnap.data();
+                const eventData = eventDocSnap.data();
+    
+                // Ensure eventParticipants array exists
+                if (!Array.isArray(eventData.eventParticipants)) {
+                    eventData.eventParticipants = [];
+                }
     
                 // Check if the user is already a participant
-                const isParticipant = eventData.eventParticipants.some(participant => 
-                    participant.uid === userData.uid
-                );
+                const isParticipant = eventData.eventParticipants.some(participant => participant.uid === userData.uid);
     
                 if (isParticipant) {
-                    console.log("User already joined the event!");
+                    console.error("User already joined the event!");
                     return; // Exit early if the user is already a participant
                 }
     
                 // Add the new participant to the eventParticipants array
-                eventData.eventParticipants = [
-                    ...(eventData.eventParticipants || []),
-                    userData
-                ];
+                eventData.eventParticipants.push(userData);
     
-                // Update the document in Firestore with the modified data
-                await setDoc(docRef, eventData);
-
+                // Update the event document in Firestore with the modified data
+                await setDoc(eventDocRef, eventData);
+    
+                // Retrieve the current user document data
+                const userDocSnap = await getDoc(userDocRef);
+    
+                if (userDocSnap.exists()) {
+                    const userDocData = userDocSnap.data();
+                    // Ensure eventsJoined array exists
+                    if (!Array.isArray(userDocData.eventsJoined)) {
+                        userDocData.eventsJoined = [];
+                    }
+                    // Add the event to the user's eventsJoined array
+                    userDocData.eventsJoined.push(userEventData);
+                    // Update the user document in Firestore with the modified data
+                    await setDoc(userDocRef, userDocData);
+                } else {
+                    // If the user document does not exist, create it with the eventsJoined array
+                    await setDoc(userDocRef, { eventsJoined: [userEventData] });
+                }
+    
                 handleSnackbarOpen('success', 'You have successfully joined the event!');
                 setBtnText('Cancel Attendance');
             } else {
@@ -212,18 +235,23 @@ const EventPageDisplay = () => {
             console.error("Error updating document: ", error);
         }
     };
-
+    
     const handleCancelBtn = async () => {
-        // Get a reference to the Firestore document
-        const docRef = doc(db, 'event', eventId);
+        const eventDocRef = doc(db, 'event', eventId);
+        const userDocRef = doc(db, 'user', user.uid);
     
         try {
-            // Retrieve the current document data
-            const docSnap = await getDoc(docRef);
+            // Retrieve the current event document data
+            const eventDocSnap = await getDoc(eventDocRef);
     
-            if (docSnap.exists()) {
+            if (eventDocSnap.exists()) {
                 // Get the current event data
-                const eventData = docSnap.data();
+                const eventData = eventDocSnap.data();
+    
+                // Ensure eventParticipants array exists
+                if (!Array.isArray(eventData.eventParticipants)) {
+                    eventData.eventParticipants = [];
+                }
     
                 // Find the index of the current user in the participant list
                 const participantIndex = eventData.eventParticipants.findIndex(participant => participant.uid === user.uid);
@@ -232,11 +260,26 @@ const EventPageDisplay = () => {
                     // Remove the participant from the eventParticipants array
                     eventData.eventParticipants.splice(participantIndex, 1);
     
-                    // Update the document in Firestore with the modified data
-                    await setDoc(docRef, eventData);
+                    // Update the event document in Firestore with the modified data
+                    await setDoc(eventDocRef, eventData);
     
-                    handleSnackbarOpen('success', 'You have successfully withdrawn from the event.');
-                    setBtnText('Join Event');
+                    // Retrieve the current user document data
+                    const userDocSnap = await getDoc(userDocRef);
+    
+                    if (userDocSnap.exists()) {
+                        const userDocData = userDocSnap.data();
+                        // Ensure eventsJoined array exists
+                        if (!Array.isArray(userDocData.eventsJoined)) {
+                            userDocData.eventsJoined = [];
+                        }
+                        // Remove the event from the user's eventsJoined array
+                        userDocData.eventsJoined = userDocData.eventsJoined.filter(event => event.eventId !== eventId);
+                        // Update the user document in Firestore with the modified data
+                        await setDoc(userDocRef, userDocData);
+    
+                        handleSnackbarOpen('success', 'You have successfully withdrawn from the event.');
+                        setBtnText('Join Event');
+                    }
                 } else {
                     handleSnackbarOpen('warning', 'User is not a participant of this event!');
                 }
@@ -307,7 +350,8 @@ const EventPageDisplay = () => {
                             boxShadow: 'none',
                             marginBottom: 1,
                             direction: 'row',
-                            fontFamily: 'Biome W01 Regular'
+                            fontFamily: 'Biome W01 Regular',
+                            color: '#ededed'
 
                         }}>
                             {/* Date */}
@@ -336,7 +380,8 @@ const EventPageDisplay = () => {
                         background: 'linear-gradient(45deg, #DE3161 30%, #FF8E53 90%)',
                         borderRadius: '1.25 rem',
                         boxShadow: '0 10px 1.875 30px rgba(0, 0, 0, 0.1)',
-                        marginBottom: 2 
+                        marginBottom: 2,
+                        color: '#ededed'
                     }}>  
                         <Typography variant="h4" style={style} sx={{ fontWeight: 'bold', marginBottom: 1 }}>{event.eventName}</Typography>
                         <Typography variant="body1" style={style} textAlign={'justify'}>{event.eventDescription}</Typography>

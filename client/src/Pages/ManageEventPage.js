@@ -8,6 +8,7 @@ import { db } from "../Firebase/firebaseConfig";
 import '../PagesCSS/ManageEventPage.css';
 import ReusableDialog from '../ReusableComponents/ReusableDialog';
 import ReusableSnackBar from '../ReusableComponents/ReusableSnackBar';
+import { useUserRoles } from '../ReusableComponents/useUserRoles';
 
 const ManageEventPage = () => {
     const navigateTo = useNavigate();
@@ -15,6 +16,7 @@ const ManageEventPage = () => {
     const [events, setEvents] = useState(null); 
     const [loadingDelete, setLoadingDelete] = useState(false);
     const [snackbar, setSnackbar] = useState({ status: false, severity: '', message: '' });
+    const { isAdmin } = useUserRoles(user ? user.email : null);
 
     const handleSnackbarOpen = (severity, message) => {
         setSnackbar({ status: true, severity, message });
@@ -66,19 +68,6 @@ const ManageEventPage = () => {
         navigateTo(`/edit-event/${event.id}`);
     };
 
-    const getEvents = async () => {
-        try {
-            const querySnapshot = await getDocs(collection(db, "event"));
-            const events = querySnapshot.docs.map(doc => {
-                const data = doc.data();
-                data.eventTimestamp = data.eventTimestamp.toDate();
-                return { id: doc.id, ...data };
-            }).filter(event => user.uid === event.eventOrganizerID);
-            setEvents(events);
-        } catch (e) {
-            console.error(e);
-        }
-    };
 
     const dateFormatter = (timestamp) => {
         const formatDate = timestamp.toLocaleDateString('en-GB', {
@@ -97,8 +86,23 @@ const ManageEventPage = () => {
     };
 
     useEffect(() => {
+        const getEvents = async () => {
+            try {
+                const querySnapshot = await getDocs(collection(db, "event"));
+                const events = querySnapshot.docs.map(doc => {
+                    const data = doc.data();
+                    data.eventTimestamp = data.eventTimestamp.toDate();
+                    return { id: doc.id, ...data };
+                });
+        
+                const filteredEvents = isAdmin ? events : events.filter(event => user.uid === event.eventOrganizerID);
+                setEvents(filteredEvents);
+            } catch (e) {
+                console.error(e);
+            }
+        };
         getEvents();
-    }, []);
+    }, [isAdmin, user.uid]);
 
     return (
         <div style={{ display: 'flex', marginTop: '1.5%', flexDirection:'column', margin: '2.5%'}}>
@@ -112,7 +116,7 @@ const ManageEventPage = () => {
                     Create Event
                 </Button>
             </div>
-            <Grid container columns={{ xs: 4, sm: 8, md: 12 }} sx={{ backgroundColor: 'rgba(44, 44, 44, 1)', display: 'flex', justifyContent: 'left', padding: '1.5%', flexWrap: 'wrap'}}>
+            <Grid container columnSpacing={2} rowSpacing={1}columns={{ xs: 4, sm: 8, md: 12 }} sx={{ backgroundColor: 'rgba(44, 44, 44, 1)', display: 'flex', justifyContent: 'left', padding: '1.5%', flexWrap: 'wrap'}}>
                 {events === null ? (
                     <CircularProgress color="inherit" />
                 ) : events.length === 0 ? (

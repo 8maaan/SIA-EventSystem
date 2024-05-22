@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { UserAuth } from '../Context-and-routes/AuthContext';
-import { Typography, Avatar, Box, Button, List, ListItem, ListItemText, TextField, Grid, Chip} from '@mui/material';
+import { Typography, Avatar, Box, Button, List, ListItem, ListItemText, TextField, Grid, Chip, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper }  from '@mui/material';
 import "../PagesCSS/UserProfile.css";
 import WildCatsLogo from '../Images/WildCatsLogo.jpg';
 import { db } from '../Firebase/firebaseConfig';
@@ -104,10 +104,6 @@ const UserProfile = () => {
     }
   };
 
-  if(!user || !userInfo){
-    return <ReusableLoadingAnim/>
-  }
-
   return (
     <Box className="container-page">
       <Box className="user-profile-wrapper" sx={{ mt: 4 }}>
@@ -174,6 +170,32 @@ const UserProfile = () => {
         title="Confirm Application"
         context="Are you sure you want to apply as an organizer?"
       />
+      {userInfo ? (
+        <><div style={{ marginTop: '2.5%', fontWeight: '600', color: 'gray', fontSize: '1.25rem' }}>
+          <p>Events Joined</p>
+        </div><div className='user-joined-events'>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell align="center">Event Name</TableCell>
+                    <TableCell align="center">Date and Time Joined</TableCell>
+                    {/* Add more columns as needed */}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {/* MAP THE USER'S JOINED EVENTS HERE */}
+                  {userInfo[0] && userInfo[0].eventsJoined && userInfo[0].eventsJoined.map(events => (
+                    <TableRow key={events.eventId}>
+                      <TableCell align="center">{events.eventName}</TableCell>
+                      <TableCell align="center">{events.dateJoined}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </div></>
+      ) : null}
     </Box>
   );
 };
